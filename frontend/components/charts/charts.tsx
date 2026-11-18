@@ -13,8 +13,10 @@ export interface SeriesDef { key: string; label: string; color?: string; dashed?
 const fmtTick = (v: unknown) =>
   typeof v === "number" ? (Math.abs(v) >= 1000 ? Math.round(v).toLocaleString("en-US") : String(+v.toPrecision(4))) : String(v);
 
-export function TimeLine({ data, x, series, height = 260, yDomain, yFormat, xFormat, reference, dots, legend = true }: {
+export function TimeLine({ data, x, series, height = 260, yDomain, yFormat, xFormat, reference, dots, legend = true, connectNulls = false }: {
   data: Row[]; x: string; series: SeriesDef[]; height?: number; yDomain?: [number | string, number | string]; dots?: boolean; legend?: boolean;
+  /** draw lines across dates where a series has no value (e.g. merged team histories) */
+  connectNulls?: boolean;
   yFormat?: (v: number) => string; xFormat?: (v: string) => string; reference?: { y: number; label: string };
 }) {
   return (
@@ -29,7 +31,7 @@ export function TimeLine({ data, x, series, height = 260, yDomain, yFormat, xFor
           {reference && <ReferenceLine y={reference.y} stroke={CHART.axis} strokeDasharray="4 4" label={{ value: reference.label, fill: CHART.text, fontSize: 11, position: "insideTopRight" }} />}
           {series.map((s, i) => (
             <Line key={s.key} type="monotone" dataKey={s.key} name={s.label} stroke={s.color || CHART.series[i]} strokeWidth={1.8}
-              strokeDasharray={s.dashed ? "5 4" : undefined} dot={dots || data.length <= 12 ? { r: 3, fill: s.color || CHART.series[i], strokeWidth: 0 } : false} connectNulls={false} isAnimationActive={false} />
+              strokeDasharray={s.dashed ? "5 4" : undefined} dot={dots || data.length <= 12 ? { r: 3, fill: s.color || CHART.series[i], strokeWidth: 0 } : false} connectNulls={connectNulls} isAnimationActive={false} />
           ))}
         </LineChart>
       </ResponsiveContainer>

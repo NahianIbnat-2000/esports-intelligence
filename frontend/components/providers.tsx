@@ -10,6 +10,11 @@ export const GAMES: { slug: GameSlug; name: string; short: string }[] = [
   { slug: "cs2", name: "Counter-Strike 2", short: "CS2" },
 ];
 
+/** Games shown in the interface. VALORANT and CS2 stay hidden until they have verified data;
+ * set NEXT_PUBLIC_VISIBLE_GAMES=lol,valorant,cs2 to show them again. */
+const visible = (process.env.NEXT_PUBLIC_VISIBLE_GAMES || "lol").split(",").map((x) => x.trim());
+export const VISIBLE_GAMES = GAMES.filter((g) => visible.includes(g.slug));
+
 const GameContext = createContext<{ game: GameSlug; setGame: (g: GameSlug) => void }>({
   game: "lol",
   setGame: () => {},
@@ -33,7 +38,7 @@ export function Providers({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const saved = window.localStorage.getItem(STORAGE_KEY);
-      if (saved === "lol" || saved === "valorant" || saved === "cs2") setGameState(saved);
+      if (VISIBLE_GAMES.some((g) => g.slug === saved)) setGameState(saved as GameSlug);
     } catch {
       /* storage unavailable: keep default */
     }

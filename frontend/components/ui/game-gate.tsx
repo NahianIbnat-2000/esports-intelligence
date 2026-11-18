@@ -1,15 +1,16 @@
 "use client";
 
-import { GAMES, useGame } from "@/components/providers";
+import { GAMES, VISIBLE_GAMES, useGame } from "@/components/providers";
 import { IntegrationPending, Segmented } from "@/components/ui/primitives";
 import type { ReactNode } from "react";
 
 export function GameSwitch() {
   const { game, setGame } = useGame();
+  if (VISIBLE_GAMES.length < 2) return null;
   return (
     <div className="lg:hidden">
       <Segmented label="Game" value={game} onChange={setGame}
-        options={GAMES.map((g) => ({ value: g.slug, label: g.short }))} />
+        options={VISIBLE_GAMES.map((g) => ({ value: g.slug, label: g.short }))} />
     </div>
   );
 }

@@ -112,12 +112,14 @@ def build() -> dict:
         def team_perf(params: dict):
             # the page also draws Elo trajectories of the first five teams in the ranking
             body = s.get("/analytics/team-performance", params)
-            teams = ((body or {}).get("data") or {}).get("teams") or []
-            if teams:
-                s.get("/analytics/team-trajectories", {"game": "lol", "teams": ",".join(t["slug"] for t in teams[:5])})
+            data = (body or {}).get("data") or {}
+            slugs = data.get("default_trajectory_teams") or [t["slug"] for t in (data.get("teams") or [])[:5]]
+            if slugs:
+                s.get("/analytics/team-trajectories", {"game": "lol", "teams": ",".join(slugs)})
 
         for mm in ["10", "30", "60", "100"]:
-            team_perf({"game": "lol", "min_matches": mm})
+            for scope in ["", "all"]:
+                team_perf({"game": "lol", "min_matches": mm, "scope": scope})
         for lg in leagues[:40]:
             team_perf({"game": "lol", "league": lg, "min_matches": "30"})
         for m in PLAYER_METRICS:
@@ -135,7 +137,9 @@ def build() -> dict:
                 s.get("/teams", {"game": "lol", "sort": sort, "min_matches": "10", "page": page, "page_size": 25})
             s.get("/players", {"game": "lol", "sort": "matches", "min_matches": "10", "page": page, "page_size": 25})
             s.get("/tournaments", {"game": "lol", "sort": "recent", "page": page, "page_size": 25})
-            s.get("/matches", {"game": "lol", "page": page, "page_size": 30})
+            s.get("/series", {"game": "lol", "page": page, "page_size": 30})
+        for lg in leagues[:40]:
+            s.get("/series", {"game": "lol", "league": lg, "page": 1, "page_size": 30})
 
         # detail pages of the most-viewed entities
         top_teams = client.get("/api/v1/teams", params={"game": "lol", "sort": "elo", "min_matches": 10,

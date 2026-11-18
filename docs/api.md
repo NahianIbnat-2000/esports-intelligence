@@ -70,3 +70,12 @@ date), 429 (rate limit).
 Rules: `as_of` must be after the end of the validation period; both teams need
 5 earlier games; only games before `as_of` are used. The response lists each
 model's probability, version, the inputs and the caveats.
+
+## Additions in v1.3
+
+| Method | Path | Notes |
+|---|---|---|
+| GET | `/api/v1/series` | Games grouped into approximate series (same pair and tournament, under 3 h apart, or up to 12 h when the source game number continues). Params: `league`, `team`, `page`, `page_size`. |
+| GET | `/api/v1/matches/{id}` | Match centre: team and player lines, Elo before/after, stored predictions, series, form. |
+| GET, HEAD | `/api/v1/health` | HEAD is accepted for uptime monitors. |
+| GET | `/api/v1/analytics/team-performance` | New `scope` = `linked` (default: active teams from internationally linked leagues) or `all`; response adds `default_trajectory_teams`, `ranking_scope_note`, `linked_leagues`. |

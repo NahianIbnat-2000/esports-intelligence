@@ -263,8 +263,11 @@ def analysis(db: Session, game: Game, key: str) -> tuple[dict | None, object]:
     return (row.payload, row.generated_at) if row else (None, None)
 
 
+TRAJECTORY_LEAGUES = ("LCK", "LPL")
+
+
 @ttl_cache(300)
-def team_performance(db: Session, game: Game, league: str | None, min_matches: int) -> dict:
+def team_performance(db: Session, game: Game, league: str | None, min_matches: int, scope: str = "linked") -> dict:
     teams, total = list_teams(db, game, 1, 200, None, league, min_matches, "elo")
     elos = [t.current_elo for t in teams if t.current_elo is not None]
     hist = []
@@ -272,7 +275,32 @@ def team_performance(db: Session, game: Game, league: str | None, min_matches: i
         lo, hi = int(min(elos) // 25 * 25), int(max(elos) // 25 * 25 + 25)
         for b in range(lo, hi, 25):
             hist.append({"bin": f"{b}-{b + 25}", "lower": b, "teams": sum(1 for e in elos if b <= e < b + 25)})
-    return {"teams": [t.model_dump() for t in teams], "n_teams": total, "elo_histogram": hist,
+    # Default teams for the Elo-trajectory chart. Without a league filter: the five highest-rated teams
+    # of LCK and LPL that played in the last 180 days of data, because ratings are best identified for
+    # leagues that meet each other often (see ELO_SCALE_NOTE). With a league filter: that league's top five.
+    last = max((t.last_match_date for t in teams if t.last_match_date), default=None)
+    recent = [t for t in teams if last and t.last_match_date and (last - t.last_match_date).days <= 180]
+    linked = international_leagues_linked(db, game)
+    # Ranking: without a league filter and with the default scope, only teams active in the last 180 days
+    # from leagues linked through international play (the same rule as the Overview ranking).
+    if not league and scope != "all" and linked:
+        ranked = [t for t in recent if t.primary_league in linked]
+        scope_note = ("Ranking shows teams active in the last 180 days of data from leagues linked through "
+                      f"international play ({', '.join(linked)}). Choose 'All teams' to include every league "
+                      "and inactive teams.")
+    else:
+        ranked = teams
+        scope_note = None
+    if league:
+        pick, note = (recent or teams)[:5], f"Five highest-rated {league} teams active in the last 180 days of data."
+    else:
+        major = [t for t in recent if t.primary_league in TRAJECTORY_LEAGUES]
+        pick = (major or recent or teams)[:5]
+        note = ("Default: five highest-rated LCK and LPL teams active in the last 180 days of data "
+                "(the leagues whose ratings are best linked through international games).")
+    return {"teams": [t.model_dump() for t in ranked], "n_teams": total, "n_ranked": len(ranked),
+            "ranking_scope_note": scope_note, "linked_leagues": linked, "elo_histogram": hist,
+            "default_trajectory_teams": [t.slug for t in pick], "default_trajectory_note": note,
             "definition": f"Teams with at least {min_matches} games. Win rate = wins / games over all recorded "
                           "games. Elo = rating after the team's last recorded game (inactive teams keep their "
                           "last rating). " + ELO_SCALE_NOTE + " Filter by league to compare like with like."}

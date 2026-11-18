@@ -14,6 +14,7 @@ from fastapi import HTTPException
 from sqlalchemy import and_, desc, or_, select
 from sqlalchemy.orm import Session
 
+from backend.app.services.series import NOTE as SERIES_NOTE, continues
 from backend.app.models import (EloRating, Game, LolPlayerMatchStats, LolTeamMatchStats, Match, ModelPrediction,
                                 ModelVersion, Player, PlayerMatchStatistic, Team, TeamMatchStatistic, Tournament)
 
@@ -27,7 +28,6 @@ ROLE_ORDER = {"top": 0, "jng": 1, "mid": 2, "bot": 3, "sup": 4}
 TOP_RULE = ("Top performer = player on the winning team with the highest KDA ((kills + assists) / max(deaths, 1)); "
             "ties broken by damage share. A simple descriptive rule, not an official MVP award.")
 FORM_GAMES = 10
-SERIES_GAP = timedelta(hours=3)
 
 
 def _kda(k, d, a):
@@ -135,18 +135,20 @@ def match_detail(db: Session, game: Game, match_id: int) -> dict:
     predictions = [{"model_key": k, "display_name": n, "version": v, "prob_blue_win": p, "split": s}
                    for k, n, v, p, s in preds]
 
-    # ---- approximate series: same two teams and tournament, games chained while gaps are under 3 hours
+    # ---- approximate series: same rule as the series list (services/series.py)
     pair = or_(and_(Match.blue_team_id == m.blue_team_id, Match.red_team_id == m.red_team_id),
                and_(Match.blue_team_id == m.red_team_id, Match.red_team_id == m.blue_team_id))
     near = db.scalars(select(Match).where(Match.tournament_id == m.tournament_id, pair,
-                                          Match.match_date >= m.match_date - timedelta(hours=18),
-                                          Match.match_date <= m.match_date + timedelta(hours=18))
+                                          Match.match_date >= m.match_date - timedelta(hours=60),
+                                          Match.match_date <= m.match_date + timedelta(hours=60))
                       .order_by(Match.match_date, Match.id)).all()
     idx = next(i for i, g in enumerate(near) if g.id == m.id)
     lo = hi = idx
-    while lo > 0 and near[lo].match_date - near[lo - 1].match_date <= SERIES_GAP:
+    def cont(a, b):
+        return continues(a.match_date, a.game_in_series, b.match_date, b.game_in_series)
+    while lo > 0 and cont(near[lo - 1], near[lo]):
         lo -= 1
-    while hi < len(near) - 1 and near[hi + 1].match_date - near[hi].match_date <= SERIES_GAP:
+    while hi < len(near) - 1 and cont(near[hi], near[hi + 1]):
         hi += 1
     series_games = near[lo:hi + 1]
     series = []
@@ -180,7 +182,7 @@ def match_detail(db: Session, game: Game, match_id: int) -> dict:
         "data_completeness": m.data_completeness,
         "tournament": {"name": t.name, "slug": t.slug, "league": t.league, "year": t.year, "split": t.split},
         "blue": side(m.blue_team_id), "red": side(m.red_team_id),
-        "series": series, "series_note": "Series are approximated: games between the same two teams in the same tournament, less than 3 hours apart.",
+        "series": series, "series_note": SERIES_NOTE,
         "top_performer": top and {**top, "team_slug": teams[m.winner_team_id].slug,
                                   "tournament_role_median": top_cmp},
         "top_performer_rule": TOP_RULE,

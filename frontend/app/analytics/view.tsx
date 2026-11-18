@@ -65,14 +65,18 @@ function Gate({ game }: { game: string }) {
 function TeamModule() {
   const [league, setLeague] = useState("");
   const [minM, setMinM] = useState("30");
+  const [scope, setScope] = useState("");
   const filters = useApi<{ leagues: { league: string }[] }>("/tournaments/filters", { game: "lol" });
-  const q = useApi<{ teams: TeamSummary[]; n_teams: number; elo_histogram: { bin: string; teams: number }[]; definition: string }>(
-    "/analytics/team-performance", { game: "lol", league, min_matches: minM });
+  const q = useApi<{ teams: TeamSummary[]; n_teams: number; elo_histogram: { bin: string; teams: number }[]; definition: string;
+    default_trajectory_teams?: string[]; default_trajectory_note?: string; ranking_scope_note?: string | null }>(
+    "/analytics/team-performance", { game: "lol", league, min_matches: minM, scope: league ? "" : scope });
   return (
     <>
       <div className="mb-4 grid gap-3 sm:grid-cols-3">
         <Select label="Primary league" value={league} onChange={setLeague} options={[{ value: "", label: "All leagues" }, ...(filters.data?.data?.leagues || []).map((l) => ({ value: l.league, label: l.league }))]} />
         <Select label="Minimum games" value={minM} onChange={setMinM} options={["10", "30", "60", "100"].map((v) => ({ value: v, label: `${v}+` }))} />
+        {!league && <Select label="Ranking scope" value={scope} onChange={setScope}
+          options={[{ value: "", label: "Active teams, linked leagues" }, { value: "all", label: "All teams" }]} />}
       </div>
       <DataState query={q}>
         {(d, meta) => (
@@ -84,9 +88,10 @@ function TeamModule() {
             </Card>
             <Card className="xl:col-span-3" eyebrow="Ranking" title="Teams by current Elo" info={d.definition}
               actions={<DownloadCsv rows={d.teams as unknown as Record<string, unknown>[]} filename="team_performance" />}>
+              {d.ranking_scope_note && <p className="-mt-1 mb-3 text-2xs text-ink-3">{d.ranking_scope_note}</p>}
               <div className="max-h-[420px] overflow-y-auto"><TeamTable rows={d.teams.slice(0, 50)} /></div>
             </Card>
-            <div className="xl:col-span-5"><Trajectories slugs={d.teams.slice(0, 5).map((t) => t.slug)} /></div>
+            <div className="xl:col-span-5"><Trajectories slugs={d.default_trajectory_teams ?? d.teams.slice(0, 5).map((t) => t.slug)} note={d.default_trajectory_note} /></div>
             <div className="xl:col-span-5"><Consistency /></div>
             <div className="xl:col-span-5"><SourceNote meta={meta} /></div>
           </div>
@@ -96,7 +101,7 @@ function TeamModule() {
   );
 }
 
-function Trajectories({ slugs }: { slugs: string[] }) {
+function Trajectories({ slugs, note }: { slugs: string[]; note?: string }) {
   const q = useApi<{ slug: string; name: string; history: { date: string; elo: number }[] }[]>(slugs.length ? "/analytics/team-trajectories" : null, { game: "lol", teams: slugs.join(",") });
   const series = q.data?.data || [];
   const merged = new Map<string, Record<string, number | string>>();
@@ -106,9 +111,10 @@ function Trajectories({ slugs }: { slugs: string[] }) {
   }));
   const rows = Array.from(merged.values()).sort((a, b) => String(a.date).localeCompare(String(b.date)));
   return (
-    <Card eyebrow="Elo trajectories" title="Rating paths of the five highest-rated teams in this view"
-      info="Elo (with league offsets) after each game. Gaps = no games in that period.">
-      {series.length ? <TimeLine data={rows} x="date" series={series.map((t, i) => ({ key: t.slug, label: t.name, color: CHART.series[i] }))} height={300} />
+    <Card eyebrow="Elo trajectories" title="Rating paths of leading teams"
+      info={`Elo (with league offsets) after each game. Gaps = no games in that period. ${note ?? ""}`}>
+      {note && <p className="-mt-1 mb-3 text-2xs text-ink-3">{note} Use the league filter above to see another league.</p>}
+      {series.length ? <TimeLine data={rows} x="date" connectNulls series={series.map((t, i) => ({ key: t.slug, label: t.name, color: CHART.series[i] }))} height={300} />
         : <p className="text-sm text-ink-2">No teams to show.</p>}
     </Card>
   );

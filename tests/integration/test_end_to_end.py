@@ -249,3 +249,36 @@ def test_match_centre(client, loaded):
     if d["top_performer"]:
         assert d["top_performer"]["slug"] in {p["slug"] for p in win["players"]}
     assert client.get("/api/v1/matches/999999999?game=lol").status_code == 404
+
+
+def test_health_accepts_head(client):
+    assert client.head("/api/v1/health").status_code == 200
+    assert client.get("/api/v1/health").json()["database"] == "ok"
+
+
+def test_series_grouping(client, loaded):
+    body = client.get("/api/v1/series?game=lol&page_size=200").json()
+    rows = body["data"]
+    assert rows and body["meta"]["pagination"]["total"] >= len(rows)
+    total_games = client.get("/api/v1/matches?game=lol&page_size=1").json()["meta"]["pagination"]["total"]
+    all_rows = client.get(f"/api/v1/series?game=lol&page_size=200").json()["meta"]["pagination"]["total"]
+    assert all_rows <= total_games
+    for r in rows:
+        assert r["wins_a"] + r["wins_b"] == r["n_games"] == len(r["games"])
+        if r["winner_slug"]:
+            assert r["winner_slug"] in (r["team_a_slug"], r["team_b_slug"])
+    ends = [r["end"] for r in rows]
+    assert ends == sorted(ends, reverse=True)
+    # the match centre groups a game into the same series
+    r = next(r for r in rows if r["n_games"] > 1) if any(r["n_games"] > 1 for r in rows) else rows[0]
+    d = client.get(f"/api/v1/matches/{r['games'][0]['id']}?game=lol").json()["data"]
+    assert [g["id"] for g in d["series"]] == [g["id"] for g in r["games"]]
+
+
+def test_trajectory_defaults(client, loaded):
+    d = client.get("/api/v1/analytics/team-performance?game=lol&min_matches=1&scope=all").json()["data"]
+    assert 0 < len(d["default_trajectory_teams"]) <= 5
+    assert set(d["default_trajectory_teams"]) <= {t["slug"] for t in d["teams"]}
+    linked = client.get("/api/v1/analytics/team-performance?game=lol&min_matches=1").json()["data"]
+    assert linked["n_ranked"] <= d["n_ranked"]
+    assert all(t["primary_league"] in linked["linked_leagues"] for t in linked["teams"]) or not linked["linked_leagues"]

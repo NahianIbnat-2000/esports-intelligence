@@ -16,7 +16,7 @@ from backend.app.models import DatasetVersion, DataSource, Game, Match
 from backend.app.providers.adapters import all_providers
 from backend.app.schemas.common import (Envelope, GameInfo, MatchSummary, Meta, PlayerSummary, PredictionRequest,
                                         PredictionResponse, TeamSummary, TournamentSummary)
-from backend.app.services import entities, explorer, match_detail, overview, predictions, research
+from backend.app.services import entities, explorer, match_detail, overview, predictions, research, series
 from backend.app.services.common import get_game, meta_for, paginate
 
 router = APIRouter(prefix="/api/v1")
@@ -35,6 +35,7 @@ def _pending(db: Session, game: Game) -> Envelope | None:
 
 
 # ---------------------------------------------------------------- system
+# HEAD is accepted too: uptime monitors (e.g. UptimeRobot) check with HEAD by default
 @router.api_route("/health", methods=["GET", "HEAD"], tags=["system"], summary="Service and database health")
 def health(db: DB) -> dict:
     try:
@@ -203,6 +204,18 @@ def list_matches(db: DB, game: GameQ = "lol", page: Page = 1, page_size: PageSiz
     return Envelope(data=rows, meta=meta_for(db, g, pagination=paginate(total, page, page_size)))
 
 
+@router.get("/series", tags=["matches"], summary="Games grouped into approximate series, newest first")
+def list_series(db: DB, game: GameQ = "lol", page: Page = 1, page_size: PageSize = 25, league: str | None = None,
+                team: str | None = None) -> Envelope[list[dict]]:
+    g = get_game(db, game)
+    if (p := _pending(db, g)):
+        return p
+    rows, total = series.list_series(db, g, page, page_size, league, team)
+    meta = meta_for(db, g, pagination=paginate(total, page, page_size))
+    meta.notes = [*(meta.notes or []), series.NOTE]
+    return Envelope(data=rows, meta=meta)
+
+
 @router.get("/matches/{match_id}", tags=["matches"], summary="Match centre: one game with team, player, Elo and model data")
 def get_match(match_id: int, db: DB, game: GameQ = "lol") -> Envelope[dict]:
     g = get_game(db, game)
@@ -214,11 +227,12 @@ def get_match(match_id: int, db: DB, game: GameQ = "lol") -> Envelope[dict]:
 # -------------------------------------------------------------- analytics
 @router.get("/analytics/team-performance", tags=["analytics"])
 def team_performance(db: DB, game: GameQ = "lol", league: str | None = None,
-                     min_matches: Annotated[int, Query(ge=1)] = 20) -> Envelope[dict]:
+                     min_matches: Annotated[int, Query(ge=1)] = 20,
+                     scope: Annotated[str, Query(pattern="^(linked|all)$")] = "linked") -> Envelope[dict]:
     g = get_game(db, game)
     if (p := _pending(db, g)):
         return p
-    return Envelope(data=overview.team_performance(db, g, league, min_matches), meta=meta_for(db, g))
+    return Envelope(data=overview.team_performance(db, g, league, min_matches, scope), meta=meta_for(db, g))
 
 
 @router.get("/analytics/player-performance", tags=["analytics"])

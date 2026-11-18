@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { CalendarDays, ChevronDown, ChevronsRight, Menu, Search, X } from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
-import { GAMES, useGame, type GameSlug } from "@/components/providers";
+import { VISIBLE_GAMES, useGame, type GameSlug } from "@/components/providers";
 import { cx } from "@/components/ui/primitives";
 import { useApi } from "@/hooks/use-api";
 import { API_URL, type GameInfo } from "@/lib/api";
@@ -128,7 +128,7 @@ function GameSwitch() {
   const status = (slug: string) => games.data?.data?.find((g) => g.slug === slug)?.status;
   return (
     <div role="radiogroup" aria-label="Select game" className="flex items-center gap-0.5 px-1">
-      {GAMES.map((g) => {
+      {VISIBLE_GAMES.map((g) => {
         const s = status(g.slug);
         return (
           <button key={g.slug} role="radio" aria-checked={game === g.slug} onClick={() => setGame(g.slug as GameSlug)}
@@ -175,8 +175,7 @@ function Header() {
         <div className="ml-auto hidden items-center gap-3 lg:flex">
           <div className="flex items-center rounded-card border border-cyan/40 bg-bg-2">
             <SearchButton />
-            <span className="h-5 w-px bg-line" />
-            <GameSwitch />
+            {VISIBLE_GAMES.length > 1 && <><span className="h-5 w-px bg-line" /><GameSwitch /></>}
           </div>
           <DataDate />
           <Link href="/predictions" className="flex h-9 items-center gap-6 rounded-card bg-cyan px-4 text-[13px] font-semibold text-white shadow-[0_0_24px_-6px_rgba(229,57,79,0.7)] hover:bg-cyan/85">
@@ -203,7 +202,7 @@ function Header() {
               <button className="btn h-8 w-8 p-0" aria-label="Close navigation" onClick={() => setOpen(false)}><X size={16} /></button>
             </div>
             <div className="mb-4 flex items-center justify-between rounded-card border border-line bg-bg p-1">
-              <SearchButton /><GameSwitch />
+              <SearchButton />{VISIBLE_GAMES.length > 1 && <GameSwitch />}
             </div>
             <nav aria-label="Main mobile" className="space-y-4">
               {NAV_GROUPS.map((g) => (
