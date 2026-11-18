@@ -1,0 +1,22 @@
+# Render Blueprint for the API (free instance). Database: Supabase or another
+# managed PostgreSQL; set DATABASE_URL in the Render dashboard. Migrations run
+# at start-up, which also works on the free instance type.
+# See docs/deployment.md.
+services:
+  - type: web
+    name: esports-intelligence-api
+    runtime: python
+    plan: free
+    rootDir: .
+    buildCommand: pip install -r requirements.txt
+    startCommand: cd backend && python -m alembic upgrade head && cd .. && uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.1
+      - key: DATABASE_URL
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: ALLOW_CSV_EXPORT
+        value: "true"

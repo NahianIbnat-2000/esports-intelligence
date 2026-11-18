@@ -1,0 +1,15 @@
+# Python 3.12+ (tested on 3.13). Pinned to the versions the test suite ran against.
+fastapi==0.115.6
+starlette==0.41.3
+uvicorn[standard]==0.32.1
+SQLAlchemy==2.0.36
+alembic==1.14.0
+pydantic==2.13.5
+pydantic-settings==2.7.0
+psycopg[binary]==3.2.3
+httpx==0.28.1
+pandas==3.0.5
+numpy==2.5.3
+pyarrow==26.0.1
+scikit-learn==1.9.1
+joblib==1.6.0

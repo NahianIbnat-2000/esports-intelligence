@@ -1,0 +1,27 @@
+# secrets
+.env
+.env.*
+!.env.example
+# python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+# data: raw source files are not redistributed; processed outputs are rebuilt
+data/raw/**
+data/intermediate/**
+data/processed/**
+data/reports/**
+!data/**/.gitkeep
+# Model artifacts (coefficients and evaluation JSON, no source data) ARE
+# committed so the hosted API can load them.
+# node
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/*.tsbuildinfo
+# os
+.DS_Store
+data-import/*
+!data-import/.gitkeep
