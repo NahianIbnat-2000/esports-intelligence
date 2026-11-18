@@ -25,16 +25,20 @@ services:
       - ./data:/app/data
       - ./data-import:/data-import:ro
       - ./machine_learning/models/artifacts:/app/machine_learning/models/artifacts
+      - ./frontend/public/snapshot:/app/frontend/public/snapshot
     depends_on:
       db: { condition: service_healthy }
   web:
     image: node:22-alpine
     working_dir: /app
-    # reinstall packages only when package-lock.json changed
+    # reinstall packages only when package-lock.json changed (saves disk writes and start time)
     command: sh -c "cmp -s package-lock.json node_modules/.installed-lock || (npm ci && cp package-lock.json node_modules/.installed-lock); npm run dev -- -H 0.0.0.0"
     environment:
       NEXT_PUBLIC_API_URL: http://localhost:8000
+      # Windows/WSL bind mounts do not send file-change events; poll instead
       WATCHPACK_POLLING: "true"
+      # local development always uses the live local API; the snapshot is for the hosted site
+      NEXT_PUBLIC_SNAPSHOT: "off"
     ports: ["3000:3000"]
     volumes: [./frontend:/app, web_node_modules:/app/node_modules]
     depends_on: [api]

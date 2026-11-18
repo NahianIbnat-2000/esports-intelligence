@@ -52,6 +52,12 @@ Full results: `docs/RESULTS_2020_2026.md` and `docs/AUDIT_AND_IMPROVEMENTS_v1.2.
 - **Research and data:** three research reports, data quality report, data provenance and a
   Data Explorer with CSV downloads.
 
+## Hosting
+
+Hybrid: the default views of every page are pre-computed into a static snapshot served by the
+website host, so they load instantly at any time; other requests go to the live API, which is
+kept awake by a free uptime monitor. See `docs/deployment.md`.
+
 ## What is in the box
 
 | Part | Folder | Stack |

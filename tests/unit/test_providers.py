@@ -79,3 +79,10 @@ def test_database_url_normalised_for_psycopg():
     assert Settings(database_url="sqlite:///x.db").database_url == "sqlite:///x.db"
     assert Settings(cors_origins="https://a.vercel.app/, http://localhost:3000").cors_origin_list == [
         "https://a.vercel.app", "http://localhost:3000"]
+
+
+def test_snapshot_key_rules():
+    from backend.app.snapshot import canonical, fnv1a
+    assert canonical("/teams", {"sort": "elo", "game": "lol", "league": "", "page": 1, "q": None}) == "/teams?game=lol&page=1&sort=elo"
+    assert canonical("/x", {"flag": True}) == "/x?flag=true"
+    assert fnv1a("") == "811c9dc5"

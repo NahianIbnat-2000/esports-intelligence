@@ -2,6 +2,8 @@
  * API client. The frontend never holds provider credentials: it only talks
  * to the Esports Intelligence backend, whose URL is public configuration.
  */
+import { fromSnapshot, trackSlow } from "@/lib/snapshot";
+
 export const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000").replace(/\/$/, "");
 
 export type DataStatus = "available" | "empty" | "integration_pending" | "unavailable" | "insufficient_data";
@@ -16,6 +18,8 @@ export interface Meta {
   pagination: { page: number; page_size: number; total: number; pages: number } | null;
   generated_at: string;
   notes: string[];
+  /** set when the response was served from the static snapshot */
+  snapshot_generated_at?: string;
 }
 
 export interface Envelope<T> {
@@ -54,11 +58,13 @@ async function parseError(res: Response): Promise<never> {
 }
 
 export async function apiGet<T>(path: string, params?: Params): Promise<Envelope<T>> {
+  const snap = await fromSnapshot<Envelope<T>>(path, params);
+  if (snap) return snap;
   let res: Response;
   try {
-    res = await fetch(buildUrl(path, params), { headers: { Accept: "application/json" } });
+    res = await trackSlow(fetch(buildUrl(path, params), { headers: { Accept: "application/json" } }));
   } catch {
-    throw new ApiError(0, `Cannot reach the API at ${API_URL}. Is the backend running?`);
+    throw new ApiError(0, `Cannot reach the live API at ${API_URL}. It may be asleep or offline; try again in a minute.`);
   }
   if (!res.ok) return parseError(res);
   return res.json();
@@ -67,13 +73,13 @@ export async function apiGet<T>(path: string, params?: Params): Promise<Envelope
 export async function apiPost<T>(path: string, body: unknown): Promise<T> {
   let res: Response;
   try {
-    res = await fetch(buildUrl(path), {
+    res = await trackSlow(fetch(buildUrl(path), {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify(body),
-    });
+    }));
   } catch {
-    throw new ApiError(0, `Cannot reach the API at ${API_URL}. Is the backend running?`);
+    throw new ApiError(0, `Cannot reach the live API at ${API_URL}. It may be asleep or offline; try again in a minute.`);
   }
   if (!res.ok) return parseError(res);
   return res.json();

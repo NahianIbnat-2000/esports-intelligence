@@ -6,6 +6,7 @@
 #   make analytics      compute research indicators
 #   make all FILES=...  data + models + analytics
 #   make reload FILES=... same, after dropping all tables (for hosted databases)
+#   make snapshot       write the website's static snapshot from the current database
 #   make api / make web run the servers
 #   make test           backend + frontend tests
 
@@ -27,7 +28,11 @@ models:
 analytics:
 	$(PY) -m analytics.run_all
 
-all: data models analytics
+all: data models analytics snapshot
+
+# static snapshot of the API for the website (frontend/public/snapshot); run after any reload
+snapshot:
+	$(PY) -m backend.app.snapshot
 
 # Rebuild from scratch: drop all tables first, then load. Use this on small
 # hosted databases (e.g. Supabase free, 500 MB) so a reload does not need
@@ -50,4 +55,4 @@ test:
 build-web:
 	cd frontend && npm run build
 
-.PHONY: install db data models analytics all reset-db reload api web test build-web
+.PHONY: install db data models analytics snapshot all reset-db reload api web test build-web

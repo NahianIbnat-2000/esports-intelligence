@@ -206,6 +206,7 @@ export function SourceNote({ meta, extra }: { meta?: Meta | null; extra?: string
       <span>Source: {meta.source || "n/a"}{meta.data_type === "historical" ? " (historical archive, not live)" : ""}</span>
       {meta.sample_period?.start && <span>Sample: {fmtPeriod(meta.sample_period)}</span>}
       <span>Generated {fmtDateTime(meta.generated_at)}</span>
+      {meta.snapshot_generated_at && <span>Served from the static snapshot of {fmtDateTime(meta.snapshot_generated_at)}</span>}
       {extra && <span>{extra}</span>}
     </p>
   );

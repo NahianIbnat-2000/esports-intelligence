@@ -9,6 +9,7 @@ import { cx } from "@/components/ui/primitives";
 import { useApi } from "@/hooks/use-api";
 import { API_URL, type GameInfo } from "@/lib/api";
 import { fmtDate } from "@/lib/format";
+import { onSlowRequests } from "@/lib/snapshot";
 
 type NavItem = { href: string; label: string };
 type NavGroup = { label: string; href: string; items: NavItem[]; match: string[] };
@@ -239,6 +240,19 @@ function Footer() {
   );
 }
 
+/** Shown while a live API request takes longer than 3 s (free hosting sleeps when idle). */
+function WakeNotice() {
+  const [slow, setSlow] = useState(0);
+  useEffect(() => onSlowRequests(setSlow), []);
+  if (!slow) return null;
+  return (
+    <div role="status" aria-live="polite" className="fixed bottom-4 right-4 z-50 max-w-sm rounded-card border border-amber/40 bg-bg-elev p-3 text-xs text-ink-2 shadow-card">
+      <p className="flex items-center gap-2 font-semibold text-amber"><span className="h-2 w-2 animate-pulse rounded-full bg-amber" />Waking up the live server</p>
+      <p className="mt-1">This page needs the live API, which sleeps when nobody has used it for a while. The first request can take up to a minute; later ones are fast.</p>
+    </div>
+  );
+}
+
 export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen">
@@ -248,6 +262,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         {children}
         <Footer />
       </main>
+      <WakeNotice />
     </div>
   );
 }

@@ -1,8 +1,21 @@
-# Deployment: Supabase + Render + Vercel (all free tiers)
+# Deployment: Supabase + Render + Vercel (all free tiers), hybrid
 
 ```
-Browser ──► Vercel (Next.js website) ──► Render (FastAPI API) ──► Supabase (PostgreSQL)
+Browser ──► Vercel (website + static snapshot) ──► Render (FastAPI API) ──► Supabase (PostgreSQL)
+                                   ▲
+                    UptimeRobot pings /api/v1/health every 5 minutes
 ```
+
+Hybrid hosting. The default views of every page (overview, research, model evaluation,
+analytics, data quality, list pages, and detail pages of the most-viewed teams, players,
+tournaments and the latest 400 games) are saved as JSON files in `frontend/public/snapshot/`
+by `make snapshot`. Vercel serves them directly, so these pages load instantly even when the
+API sleeps. Everything else (older games, filtered views, Data Explorer, custom predictions)
+calls the live API; while it wakes up the site shows a "Waking up the live server" notice.
+
+The snapshot must be generated from the same database the live API uses (match and entity
+ids must agree), so it is written in the same run that loads Supabase (step 3). Local
+development turns it off (`NEXT_PUBLIC_SNAPSHOT=off` in docker-compose.yml).
 
 Free-tier limits that matter (checked November 2026; check again):
 - Supabase free: 500 MB database; the project goes read-only above that and pauses after
@@ -49,16 +62,17 @@ With Docker running, in the project folder (Git Bash):
 
 ```bash
 MSYS_NO_PATHCONV=1 docker compose run --rm -e DATABASE_URL="<supabase session pooler URL>" \
-  api make reload FILES="/app/data/raw/oracles_elixir/*.csv"
+  api make reload snapshot FILES="/app/data/raw/oracles_elixir/*.csv"
 ```
 
-This takes longer than locally (the data travels over the internet), roughly 10 to 20
-minutes. It trains the models again and writes new files to
-`machine_learning/models/artifacts/`. Commit and push those:
+This takes longer than locally (the data travels over the internet), roughly 20 to 45
+minutes. It trains the models again, writes new files to `machine_learning/models/artifacts/`
+and writes the static snapshot (about 1,000 files, about 22 MB) to `frontend/public/snapshot/`.
+Commit and push both:
 
 ```bash
-git add machine_learning/models/artifacts
-git commit -m "Model artifacts"
+git add machine_learning/models/artifacts frontend/public/snapshot
+git commit -m "Model artifacts and static snapshot"
 git push
 ```
 
@@ -85,10 +99,20 @@ In Render → the service → Environment, set
 `CORS_ORIGINS=https://esports-intelligence.vercel.app` (your exact Vercel address), save,
 and let it redeploy. Open the Vercel address: the Overview should show 75,830 games.
 
+## 7. Keep it awake (UptimeRobot, free)
+
+1. uptimerobot.com → sign up → **Add New Monitor**.
+2. Monitor type **HTTP(s)**, URL `https://<service>.onrender.com/api/v1/health`,
+   interval 5 minutes.
+3. Save. The API now never reaches 15 idle minutes, so it does not sleep, and every check runs a
+   database query, so Supabase does not pause for inactivity. One always-on free service uses at
+   most 744 of Render's 750 free hours a month; keep no other free service on the same Render
+   account. UptimeRobot also emails you if the site goes down.
+
 ## Updating later
 
-New data: put the new CSV in `data/raw/oracles_elixir/`, run step 3 again (`make reload`),
-then commit and push the new artifacts. Render redeploys automatically on push.
+New data: put the new CSV in `data/raw/oracles_elixir/`, run step 3 again
+(`make reload snapshot`), then commit and push the new artifacts and snapshot. Render redeploys automatically on push.
 Code changes: push to GitHub; Render and Vercel redeploy automatically.
 
 ## Security checklist
