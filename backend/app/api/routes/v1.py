@@ -35,7 +35,7 @@ def _pending(db: Session, game: Game) -> Envelope | None:
 
 
 # ---------------------------------------------------------------- system
-@router.get("/health", tags=["system"], summary="Service and database health")
+@router.api_route("/health", methods=["GET", "HEAD"], tags=["system"], summary="Service and database health")
 def health(db: DB) -> dict:
     try:
         db.execute(text("SELECT 1"))
