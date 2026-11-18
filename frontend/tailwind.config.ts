@@ -23,8 +23,8 @@ const config: Config = {
         team: { a: "#E9B23C", b: "#33C17A" },
       },
       fontFamily: {
-        sans: ['"Inter Variable"', "Inter", "system-ui", "sans-serif"],
-        display: ['"Space Grotesk Variable"', '"Space Grotesk"', "Inter", "sans-serif"],
+        sans: ["Barlow", "system-ui", "sans-serif"],
+        display: ['"Chakra Petch"', "Barlow", "sans-serif"],
         mono: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
       fontSize: {

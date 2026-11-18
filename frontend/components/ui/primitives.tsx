@@ -62,7 +62,7 @@ export function PageHeader({ index, eyebrow, title, description, children }: {
       </p>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="max-w-3xl">
-          <h1 className="text-2xl font-semibold text-ink sm:text-3xl">{title}</h1>
+          <h1 className="font-display text-2xl font-bold uppercase tracking-wide text-ink sm:text-3xl">{title}</h1>
           {description && <p className="mt-2 text-sm leading-relaxed text-ink-2">{description}</p>}
         </div>
         {children}
@@ -92,7 +92,7 @@ export function Stat({ label, value, sub, accent, info }: {
     <div className="card relative overflow-hidden p-4">
       <span className={cx("absolute left-0 top-0 h-full w-[2px]", bar)} aria-hidden />
       <p className="eyebrow flex items-center gap-1.5">{label}{info && <InfoTip text={info} />}</p>
-      <p className="num mt-2 text-2xl font-semibold text-ink sm:text-[1.7rem]">{value}</p>
+      <p className="num-display mt-2 text-2xl font-semibold tabular-nums text-ink sm:text-[1.7rem]">{value}</p>
       {sub && <p className="mt-1 text-xs text-ink-2">{sub}</p>}
     </div>
   );

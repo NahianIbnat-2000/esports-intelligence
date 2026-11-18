@@ -18,7 +18,7 @@ export function Crest({ name, color, size = 40 }: { name: string; color: string;
     <svg width={size} height={size} viewBox="0 0 40 40" role="img" aria-label={name}>
       <path d="M20 2 L35 8 V19 C35 28 28.5 34.5 20 38 C11.5 34.5 5 28 5 19 V8 Z" fill={`${color}22`} stroke={color} strokeWidth="2" />
       <text x="20" y="23.5" textAnchor="middle" fontSize={ini.length > 2 ? 9.5 : 12} fontWeight="700" fill={color}
-        fontFamily="Space Grotesk Variable, Inter, sans-serif">{ini}</text>
+        fontFamily="Chakra Petch, Barlow, sans-serif">{ini}</text>
     </svg>
   );
 }

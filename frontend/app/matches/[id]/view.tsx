@@ -258,9 +258,9 @@ function SeriesStrip({ d }: { d: Detail }) {
               <Crest name={g.winner} color={color} size={26} />
               <span className="text-2xs text-ink-3">{fmtDuration(g.duration_seconds)}</span>
             </div>
-            <div className="relative flex items-end justify-between">
-              <span className="text-xs font-semibold">Game {g.number}</span>
-              <span className="truncate pl-2 text-2xs" style={{ color }}>{g.winner}</span>
+            <div className="relative min-w-0">
+              <span className="block whitespace-nowrap font-display text-xs font-semibold uppercase">Game {g.number}</span>
+              <span className="block truncate text-2xs" style={{ color }}>{g.winner}</span>
             </div>
           </Link>
         );

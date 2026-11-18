@@ -1,5 +1,11 @@
-@import "@fontsource-variable/inter";
-@import "@fontsource-variable/space-grotesk";
+/* Body: Barlow (sports-broadcast grotesk, tabular figures). Display: Chakra Petch (angular, HUD-like). */
+@import "@fontsource/barlow/400.css";
+@import "@fontsource/barlow/500.css";
+@import "@fontsource/barlow/600.css";
+@import "@fontsource/barlow/700.css";
+@import "@fontsource/chakra-petch/500.css";
+@import "@fontsource/chakra-petch/600.css";
+@import "@fontsource/chakra-petch/700.css";
 
 @tailwind base;
 @tailwind components;
@@ -21,13 +27,14 @@
 }
 
 @layer components {
-  .num { @apply font-display tabular-nums; }
+  .num { @apply font-sans tabular-nums; }
+  .num-display { @apply font-display; }
   .eyebrow { @apply text-2xs font-semibold uppercase text-ink-2; letter-spacing: 0.14em; }
   .card {
     @apply rounded-card border border-line bg-bg-card shadow-card;
     background-image: linear-gradient(180deg, rgba(255,255,255,0.018), transparent 120px);
   }
-  .panel-title { @apply text-[13px] font-semibold tracking-tight text-cyan; }
+  .panel-title { @apply font-display text-[13px] font-semibold uppercase tracking-wide text-cyan; }
   .card-pad { @apply p-4 sm:p-5; }
   .link { @apply text-cyan hover:underline underline-offset-4; }
   .input {
