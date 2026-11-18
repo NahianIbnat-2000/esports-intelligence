@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Does machine learning beat Elo in League of Legends? | Nahian Ibnat</title>
+<meta name="description" content="A test on 75,830 professional League of Legends games: machine learning beats Elo, but by about 0.3%. Most of the gain came from fixing the rating itself.">
+<meta property="og:title" content="Does machine learning beat Elo in League of Legends?">
+<meta property="og:description" content="75,830 professional games, a time-ordered test period, and a result that is significant but small.">
+<meta property="og:image" content="https://raw.githubusercontent.com/NahianIbnat-2000/esports-intelligence/master/docs/screenshots/match-centre.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Barlow+Semi+Condensed:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --paper: #F5F2EB; --ink: #1D1C1A; --ink2: #55524B; --ink3: #8B877D; --rule: #D9D4C7; --red: #B42A2A; --gold: #B8860B; }
+  * { box-sizing: border-box; }
+  html { background: var(--paper); }
+  body { margin: 0; color: var(--ink); font-family: Newsreader, Georgia, serif; font-size: 20px; line-height: 1.6; }
+  a { color: var(--red); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  .label { font-family: "Barlow Semi Condensed", "Arial Narrow", sans-serif; font-weight: 600; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink3); }
+  .num { font-variant-numeric: tabular-nums lining-nums; }
+
+  header.top { border-bottom: 1px solid var(--rule); }
+  header.top .in { max-width: 1040px; margin: 0 auto; padding: 14px 24px; display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
+  header.top a { color: var(--ink2); text-decoration: none; font-family: "Barlow Semi Condensed", sans-serif; font-size: 15px; }
+  header.top a:hover { color: var(--ink); }
+
+  article { max-width: 680px; margin: 0 auto; padding: 56px 24px 40px; }
+  h1 { font-weight: 500; font-size: clamp(36px, 5.4vw, 52px); line-height: 1.1; letter-spacing: -.01em; margin: 10px 0 18px; }
+  .dek { font-size: 23px; line-height: 1.45; color: var(--ink2); margin: 0 0 22px; }
+  .byline { font-family: "Barlow Semi Condensed", sans-serif; font-size: 15px; color: var(--ink3); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 10px 0; display: flex; flex-wrap: wrap; gap: 6px 18px; }
+  .byline b { color: var(--ink); font-weight: 600; }
+  h2 { font-weight: 600; font-size: 26px; margin: 46px 0 8px; }
+  p { margin: 0 0 18px; }
+  .dropcap::first-letter { float: left; font-size: 66px; line-height: .85; padding: 6px 8px 0 0; font-weight: 500; }
+  sup a { text-decoration: none; font-size: 13px; padding-left: 1px; }
+
+  figure { margin: 34px 0; }
+  figure.wide { max-width: 980px; margin-left: 50%; transform: translateX(-50%); width: calc(100vw - 48px); }
+  figcaption { font-family: "Barlow Semi Condensed", sans-serif; font-size: 15px; color: var(--ink2); line-height: 1.45; margin-top: 10px; }
+  figcaption b { color: var(--ink); }
+  figure img { width: 100%; display: block; border: 1px solid var(--rule); }
+  svg text { font-family: "Barlow Semi Condensed", "Arial Narrow", sans-serif; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 18px; margin: 8px 0 0; }
+  th { font-family: "Barlow Semi Condensed", sans-serif; font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink3); text-align: left; border-bottom: 1px solid var(--ink); padding: 6px 0; }
+  td { padding: 7px 0; border-bottom: 1px solid var(--rule); }
+  .r { text-align: right; }
+  tr.dim td { color: var(--ink3); }
+
+  .aside { border-left: 3px solid var(--red); padding: 2px 0 2px 18px; color: var(--ink2); font-style: italic; margin: 28px 0; }
+  ul.site { padding-left: 20px; margin: 0 0 18px; }
+  ul.site li { margin-bottom: 8px; }
+  .notes { border-top: 1px solid var(--rule); margin-top: 48px; padding-top: 14px; font-size: 16px; color: var(--ink2); }
+  .notes ol { padding-left: 20px; }
+  .notes li { margin-bottom: 8px; }
+  footer { max-width: 680px; margin: 0 auto; padding: 0 24px 60px; font-family: "Barlow Semi Condensed", sans-serif; font-size: 15px; color: var(--ink3); }
+  @media (max-width: 600px) { body { font-size: 18px; } .dek { font-size: 20px; } }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="in">
+    <a href="https://nahianibnat-2000.github.io/">Nahian Ibnat</a>
+    <span>
+      <a href="https://esports-intelligence.vercel.app">Live site</a> &nbsp;·&nbsp;
+      <a href="https://github.com/NahianIbnat-2000/esports-intelligence">Code</a>
+    </span>
+  </div>
+</header>
+
+<article>
+  <div class="label">Project · Sports analytics</div>
+  <h1>Does machine learning beat Elo in League of Legends?</h1>
+  <p class="dek">I tested it on 75,830 professional games. Machine learning won, but by about 0.3%. Most of the gain came from fixing the rating system itself.</p>
+  <div class="byline"><span>By <b>Nahian Ibnat</b></span><span>November 2026</span><span>Data: Oracle's Elixir, January 2020 to November 2026</span></div>
+
+  <p class="dropcap" style="margin-top:28px">Elo ratings are the default way to predict who wins a game. They are simple: every result moves the winner up and the loser down, by more when the result is a surprise. Machine learning models can use far more information, such as recent form, the strength of past opponents and experience. I wanted to know whether that extra information actually buys better predictions, and how much.</p>
+
+  <p>To find out, I built <a href="https://esports-intelligence.vercel.app">Esports Intelligence</a>, a research site on every professional League of Legends game recorded by Oracle's Elixir from 2020 to November 2026: 75,830 games, 1,914 teams and 10,239 players across 109 leagues.</p>
+
+  <h2>The test</h2>
+  <p>Every model was trained on games up to mid-August 2024, tuned on the following thirteen months, and then scored once on 10,087 games from 23 September 2025 to 14 November 2026 that it had never seen. Each prediction uses only games played before it.<sup><a href="#n1">1</a></sup> I score models with the Brier score, the average squared gap between the predicted probability and what happened. Lower is better, and a coin flip scores 0.25.</p>
+
+  <table class="num">
+    <thead><tr><th>Model</th><th class="r">Brier score</th><th class="r">Correct winner</th></tr></thead>
+    <tbody>
+      <tr class="dim"><td>Always predict the usual blue-side win rate</td><td class="r">0.2488</td><td class="r">53.5%</td></tr>
+      <tr><td>Elo with league levels</td><td class="r">0.2176</td><td class="r">64.7%</td></tr>
+      <tr><td>Calibrated Elo</td><td class="r">0.2170</td><td class="r">64.8%</td></tr>
+      <tr><td>Logistic regression</td><td class="r">0.2164</td><td class="r">64.9%</td></tr>
+    </tbody>
+  </table>
+  <p class="label" style="margin-top:8px;text-transform:none;letter-spacing:0;font-weight:500">Test period, 10,087 games. All models scored on the same games.</p>
+
+  <h2>Significant, but small</h2>
+  <p>The logistic regression has the best score, and the difference is real. Against calibrated Elo it lowers the Brier score by 0.00062, with a 95% interval of 0.00023 to 0.00104. The interval stays above zero when I resample whole series, and also when I resample whole tournaments.<sup><a href="#n2">2</a></sup></p>
+  <p>But 0.00062 is about 0.3% of the score, and both models pick the right winner about 65% of the time. Gradient boosting and random forests did no better than the logistic regression, so I left them out.</p>
+
+  <figure>
+    <svg viewBox="0 0 680 230" role="img" aria-labelledby="f1t" width="100%">
+      <title id="f1t">Bar chart: improvement in Brier score from adding league levels to Elo (0.0054) compared with the improvement from logistic regression over calibrated Elo (0.00062).</title>
+      <line x1="230" y1="20" x2="230" y2="170" stroke="#1D1C1A"/>
+      <g fill="#55524B" font-size="15">
+        <text x="220" y="62" text-anchor="end">League levels in Elo</text>
+        <text x="220" y="80" text-anchor="end" fill="#8B877D" font-size="13">vs. one flat Elo</text>
+        <text x="220" y="132" text-anchor="end">Machine learning</text>
+        <text x="220" y="150" text-anchor="end" fill="#8B877D" font-size="13">logistic vs. calibrated Elo</text>
+      </g>
+      <rect x="231" y="48" width="380" height="34" fill="#B42A2A"/>
+      <text x="619" y="71" font-size="16" fill="#1D1C1A" class="num">0.0054</text>
+      <rect x="231" y="118" width="44" height="34" fill="#B8860B"/>
+      <text x="283" y="141" font-size="16" fill="#1D1C1A" class="num">0.0006</text>
+      <g stroke="#D9D4C7"><line x1="231" y1="180" x2="611" y2="180"/></g>
+      <g fill="#8B877D" font-size="13">
+        <text x="231" y="198" text-anchor="middle">0</text>
+        <text x="421" y="198" text-anchor="middle">0.0027</text>
+        <text x="611" y="198" text-anchor="middle">0.0054</text>
+        <text x="421" y="222" text-anchor="middle">Reduction in Brier score (higher bar = bigger improvement)</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 1.</b> Where the improvement came from. Letting each league have its own rating level inside Elo helped about nine times more than the machine learning step that followed. Both measured on the same test games.</figcaption>
+  </figure>
+
+  <h2>The bigger lesson was about the rating</h2>
+  <p>My first Elo version put every team on one scale. It ranked teams from small regional leagues above the best teams in Korea and China, because those teams beat their own neighbours and rarely played anyone else. Elo points only move between leagues when their teams meet, so a single scale was not telling the truth.</p>
+  <p>The fix was to give each league its own level, learned from the games between leagues, with each team rated relative to its league. That one change lowered the Brier score by 0.0054, much more than anything the machine learning added afterwards.</p>
+  <p class="aside">Statistically significant and worth it are different questions. A model can be clearly better and still not matter much in practice.</p>
+
+  <figure class="wide">
+    <img src="https://raw.githubusercontent.com/NahianIbnat-2000/esports-intelligence/master/docs/screenshots/match-centre.png" alt="The match centre page of Esports Intelligence, showing a game's Elo change, top performer, pre-game win probabilities and Elo history for both teams" loading="lazy">
+    <figcaption><b>Figure 2.</b> The match centre on the site. Every game shows the Elo change, the pre-game probabilities and the player lines.</figcaption>
+  </figure>
+
+  <h2>What else is on the site</h2>
+  <ul class="site">
+    <li><a href="https://esports-intelligence.vercel.app/predictions">Prediction lab</a>: calibration, uncertainty intervals, and a prediction for any two teams with the reasons behind it.</li>
+    <li><a href="https://esports-intelligence.vercel.app/matches">Match centre</a>: every series and game since 2020.</li>
+    <li><a href="https://esports-intelligence.vercel.app/analytics">Statistics</a>: competitive balance by league and season (Gini, HHI, Lorenz curves). The best regular-season team went on to win the title in 52% of 408 splits.</li>
+    <li><a href="https://esports-intelligence.vercel.app/data-quality">Data quality report</a>: what was excluded and why.</li>
+  </ul>
+
+  <h2>Limits</h2>
+  <p>The source has no series identifier, so series are rebuilt from game times. Ratings are only comparable between leagues that play each other often. The models are fixed at the start of the test period, and there is only one test period, so the result is one look at the future, not a guarantee.</p>
+
+  <p>The full report, with every number and the code behind it, is on the <a href="https://esports-intelligence.vercel.app/research/can-machine-learning-beat-elo">site</a> and on <a href="https://github.com/NahianIbnat-2000/esports-intelligence">GitHub</a>.</p>
+
+  <div class="notes">
+    <div class="label">Notes</div>
+    <ol>
+      <li id="n1">The data is split by date, never at random: training until 11 August 2024, validation until 22 September 2025, test after that. Features such as recent form and head-to-head records use only games played earlier.</li>
+      <li id="n2">Paired bootstrap with 2,000 resamples. Games from the same series are resampled together, because they are not independent.</li>
+      <li id="n3">Built with Python (pandas, scikit-learn), FastAPI, PostgreSQL and Next.js. Data from Oracle's Elixir by Tim Sevenhuysen. Game statistics are the property of Riot Games; this project is not affiliated with Riot Games.</li>
+    </ol>
+  </div>
+</article>
+
+<footer>Nahian Ibnat · Economics and data science</footer>
+</body>
+</html>
