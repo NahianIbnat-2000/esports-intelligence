@@ -48,7 +48,7 @@ export default function OverviewView() {
   return (
     <>
       <PageHeader index="01" eyebrow="Overview" title="Professional esports, measured."
-        description="A research platform for competitive gaming data. Every figure on this page is calculated from imported historical records; nothing is estimated or filled in. Version 1.0 covers professional League of Legends from Oracle's Elixir.">
+        description="A research platform for competitive gaming data. Every figure on this page is calculated from imported historical records; nothing is estimated or filled in. It currently covers professional League of Legends from Oracle's Elixir.">
         <div className="flex flex-wrap items-end gap-3">
           <GameSwitch />
           {game === "lol" && (

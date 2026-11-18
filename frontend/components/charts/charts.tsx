@@ -52,7 +52,7 @@ export function Bars({ data, x, series, height = 260, layout = "horizontal", yFo
             ? <XAxis type="number" {...axisProps} tickFormatter={(yFormat || fmtTick) as never} />
             : <XAxis dataKey={x} {...axisProps} minTickGap={12} />}
           {vertical
-            ? <YAxis type="category" dataKey={x} {...axisProps} width={96} />
+            ? <YAxis type="category" dataKey={x} {...axisProps} width={96} interval={0} />
             : <YAxis {...axisProps} width={56} tickFormatter={(yFormat || fmtTick) as never} />}
           <Tooltip {...tooltipStyle} formatter={(v: number) => (yFormat ? yFormat(v) : fmtTick(v))} />
           {series.length > 1 && <Legend wrapperStyle={{ fontSize: 12, color: CHART.text }} />}

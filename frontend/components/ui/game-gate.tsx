@@ -7,8 +7,10 @@ import type { ReactNode } from "react";
 export function GameSwitch() {
   const { game, setGame } = useGame();
   return (
-    <Segmented label="Game" value={game} onChange={setGame}
-      options={GAMES.map((g) => ({ value: g.slug, label: g.short }))} />
+    <div className="lg:hidden">
+      <Segmented label="Game" value={game} onChange={setGame}
+        options={GAMES.map((g) => ({ value: g.slug, label: g.short }))} />
+    </div>
   );
 }
 
