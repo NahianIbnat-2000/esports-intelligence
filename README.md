@@ -174,7 +174,6 @@ Nahian Ibnat
 
 - Data: [Oracle's Elixir](https://oracleselixir.com) by Tim Sevenhuysen. Game statistics are
   the property of Riot Games. This project is not affiliated with or endorsed by Riot Games.
-- Much of the Code was written with the help of
-  [Claude](https://www.anthropic.com/claude) (Anthropic), an AI assistant. The research
-  question, methods, data integrity rules and final decisions are my own, and I reviewed
-  and tested the results.
+- Built with help from [Claude](https://www.anthropic.com/claude) (Anthropic), an AI assistant, for code and testing.
+The research question, data choices, evaluation design and interpretation of results are my own.
+
