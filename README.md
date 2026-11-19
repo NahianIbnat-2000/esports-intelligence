@@ -139,6 +139,15 @@ Not affiliated with Riot Games.
 `docs/RESULTS_2020_2026.md`, `docs/AUDIT_AND_IMPROVEMENTS_v1.2.md`,
 `docs/deployment.md`, `docs/DEVELOPMENT_REPORT.md`.
 
+
+## Acknowledgements
+
+Built with help from Claude (Anthropic), an AI assistant, for code, testing and documentation.
+The research question, data choices, evaluation design and interpretation of results are my own.
+
+
 ## Author
 
 Nahian Ibnat
+
+
