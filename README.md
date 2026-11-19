@@ -1,7 +1,5 @@
 # Esports Intelligence
 
-**Live site:** https://esports-intelligence.vercel.app
-
 **Beyond the Game. Inside the Data.**
 
 ![Match centre](docs/screenshots/match-centre.png)
@@ -39,6 +37,35 @@ Test period 23 Sep 2025 to 14 Nov 2026 (10,087 games), never used for fitting or
   validation period and were not deployed.
 
 Full results: `docs/RESULTS_2020_2026.md` and `docs/AUDIT_AND_IMPROVEMENTS_v1.2.md`.
+
+## Related work
+
+This project is not the first to compare ratings and machine learning for professional
+League of Legends.
+
+- **Riot Games and AWS, [LoL Esports Global Power Rankings](https://lolesports.com/en-GB/news/dev-diary-unveiling-the-global-power-rankings) (2024).**
+  A blended rating of team Elo and league Elo (80/20), where international events move the
+  league Elo. Riot reports about 65% predictive accuracy. The league-offset Elo here follows
+  the same idea; its 64.7% test accuracy is on different games, so the figures are not
+  directly comparable.
+- **Jadowski and Cunningham, [Statistical models for predicting results in professional League of Legends](https://e-space.mmu.ac.uk/629272) (2022).**
+  Models built on 2020 international competitions; best model correct on 67% of 306 games.
+- **[SBGames 2021 short paper](https://www.sbgames.org/proceedings2021/ComputacaoShort/217082.pdf)
+  (Federal University of Paraíba).** Several classification algorithms trained on the
+  Oracle's Elixir dataset, the same source used here.
+- **De Bois et al., [PandaSkill](https://arxiv.org/abs/2501.10049) (2025).** Player ratings
+  built from in-game statistics with machine learning, plus regional meta-ratings; reports
+  better outcome prediction than Elo and TrueSkill over five years of pro matches.
+- **Do et al., [Using Machine Learning to Predict Game Outcomes Based on Player-Champion Experience](https://arxiv.org/abs/2108.02799) (2021).**
+  Outcome prediction from player-champion experience in ranked (non-professional) games.
+
+**What this project adds.** The contribution is in the evaluation rather than a new model:
+a date-based split with a test period never used for fitting or tuning, constant baselines,
+series-clustered bootstrap intervals, and a separation between statistical and practical
+significance. Under these checks, machine learning on pre-game features adds little once
+league structure is in the rating. This is consistent with PandaSkill, whose gains come
+from player-level in-game data that these ratings do not use. Data processing, code and the
+data quality report are public, so the test can be rerun.
 
 ## What the platform shows
 
@@ -139,15 +166,15 @@ Not affiliated with Riot Games.
 `docs/RESULTS_2020_2026.md`, `docs/AUDIT_AND_IMPROVEMENTS_v1.2.md`,
 `docs/deployment.md`, `docs/DEVELOPMENT_REPORT.md`.
 
-
-## Acknowledgements
-
-Built with help from Claude (Anthropic), an AI assistant, for code, testing and documentation.
-The research question, data choices, evaluation design and interpretation of results are my own.
-
-
 ## Author
 
 Nahian Ibnat
 
+## Acknowledgements
 
+- Data: [Oracle's Elixir](https://oracleselixir.com) by Tim Sevenhuysen. Game statistics are
+  the property of Riot Games. This project is not affiliated with or endorsed by Riot Games.
+- Much of the Code was written with the help of
+  [Claude](https://www.anthropic.com/claude) (Anthropic), an AI assistant. The research
+  question, methods, data integrity rules and final decisions are my own, and I reviewed
+  and tested the results.

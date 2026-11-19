@@ -7,7 +7,10 @@
 <meta name="description" content="A test on 75,830 professional League of Legends games: machine learning beats Elo, but by about 0.3%. Most of the gain came from fixing the rating itself.">
 <meta property="og:title" content="Does machine learning beat Elo in League of Legends?">
 <meta property="og:description" content="75,830 professional games, a time-ordered test period, and a result that is significant but small.">
-<meta property="og:image" content="https://raw.githubusercontent.com/NahianIbnat-2000/esports-intelligence/master/docs/screenshots/match-centre.png">
+<meta property="og:image" content="https://nahianibnat-2000.github.io/esports-intelligence/esports-intelligence-linkedin.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Barlow+Semi+Condensed:wght@500;600&display=swap" rel="stylesheet">
@@ -140,6 +143,11 @@
     <li><a href="https://esports-intelligence.vercel.app/analytics">Statistics</a>: competitive balance by league and season (Gini, HHI, Lorenz curves). The best regular-season team went on to win the title in 52% of 408 splits.</li>
     <li><a href="https://esports-intelligence.vercel.app/data-quality">Data quality report</a>: what was excluded and why.</li>
   </ul>
+
+  <h2>How this fits with earlier work</h2>
+  <p>I am not the first to ask this question. Riot Games and AWS launched the <a href="https://lolesports.com/en-GB/news/dev-diary-unveiling-the-global-power-rankings">LoL Esports Global Power Rankings</a> at Worlds 2024. Their rating mixes a team Elo with a league Elo, weighted 80/20, and results at MSI and Worlds move the league Elo. That is close to the league-level Elo described above. Riot reports about 65% accuracy, and my Elo reaches 64.7% on my test games. The two numbers come from different games, so they are not a direct comparison, but they point the same way.</p>
+  <p>Machine learning on professional League games has been tried too. <a href="https://e-space.mmu.ac.uk/629272">Jadowski and Cunningham (2022)</a> correctly predicted 67% of 306 international games from 2020. A <a href="https://www.sbgames.org/proceedings2021/ComputacaoShort/217082.pdf">2021 SBGames paper</a> trained several classifiers on the same Oracle's Elixir data I use. <a href="https://arxiv.org/abs/2501.10049">PandaSkill (De Bois et al., 2025)</a> rates players from their in-game statistics, adds a rating for each region, and reports better predictions than Elo and TrueSkill over five years of pro matches. Accuracy figures across these studies come from different games and periods, so they cannot be ranked against each other.</p>
+  <p>What this project adds is mostly in how the models are checked, not in the models themselves: a split by date with a test period never used for tuning, constant baselines, uncertainty intervals that resample whole series, and a clear line between a gain that is statistically real and one that matters. Under those checks, the extra gain from machine learning on pre-game features is small, and league structure does most of the work. PandaSkill's gains come from player-level game data, which my ratings do not use, so the two results do not conflict. The data, code and data quality report are all public, so anyone can rerun the test.</p>
 
   <h2>Limits</h2>
   <p>The source has no series identifier, so series are rebuilt from game times. Ratings are only comparable between leagues that play each other often. The models are fixed at the start of the test period, and there is only one test period, so the result is one look at the future, not a guarantee.</p>
