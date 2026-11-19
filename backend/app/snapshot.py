@@ -100,6 +100,7 @@ def build() -> dict:
         for lg in leagues:
             s.get("/overview", {"game": "lol", "league": lg})
         s.get("/data-quality", {"game": "lol"})
+        s.get("/ticker", {"game": "lol"})
 
         # research reports
         reports = (client.get("/api/v1/research?game=lol").json().get("data") or [])

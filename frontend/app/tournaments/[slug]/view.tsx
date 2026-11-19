@@ -42,7 +42,7 @@ export default function TournamentDetail() {
                 <Stat label="Avg game length" value={d.stats.avg_duration_minutes ? `${fmtNum(d.stats.avg_duration_minutes, 1)} min` : "n/a"} accent="violet" />
                 <Stat label="Derived champion" value={<span className="text-lg">{t.derived_champion ?? "n/a"}</span>} accent="emerald" info={d.champion_note} />
               </div>
-              <div className="grid gap-6 xl:grid-cols-5">
+              <div className="grid gap-3 xl:grid-cols-5">
                 <Card className="xl:col-span-2" eyebrow="Standings" title="Game win-loss"
                   actions={<Segmented label="Stage" value={stage} onChange={setStage} options={[
                     { value: "regular", label: "Regular" }, ...(t.has_playoffs ? [{ value: "playoffs" as const, label: "Playoffs" }] : []), { value: "all", label: "All" }]} />}>

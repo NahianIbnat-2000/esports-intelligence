@@ -48,7 +48,7 @@ export default function TeamDetail() {
                   <div className="mt-3 flex flex-wrap gap-1" aria-label="Last 10 results, oldest first">{d.recent_form.map((r, i) => <WinLoss key={i} r={r} />)}</div>
                 </div>
               </div>
-              <div className="grid gap-6 xl:grid-cols-3">
+              <div className="grid gap-3 xl:grid-cols-3">
                 <Card className="xl:col-span-2" eyebrow="Performance trend" title="Elo rating over time"
                   info="Elo after each game. Every team starts at 1500; regions are linked only through international games.">
                   {elo.length ? <TimeLine data={elo} x="date" series={[{ key: "elo", label: "Elo" }]} reference={{ y: 1500, label: "start 1500" }} height={280} />
@@ -76,7 +76,7 @@ export default function TeamDetail() {
                   </div>
                 </Card>
               </div>
-              <div className="mt-6 grid gap-6 xl:grid-cols-2">
+              <div className="mt-6 grid gap-3 xl:grid-cols-2">
                 <Card eyebrow="Tournament history" title="By tournament">
                   <div className="max-h-96 overflow-y-auto">
                     <div className="overflow-x-auto"><table className="w-full"><thead className="border-b border-line"><tr><th className="th">Tournament</th><th className="th text-right">W-L</th><th className="th text-right">Win %</th></tr></thead>

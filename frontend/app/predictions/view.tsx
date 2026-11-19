@@ -78,7 +78,7 @@ function Lab({ models, meta }: { models: ModelInfo[]; meta: import("@/lib/api").
   const test = elo.periods?.test as { n: number; start: string; end: string } | undefined;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       <Card eyebrow="Request" title="Predict a single game">
         <form onSubmit={submit} className="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
           <div className="xl:col-span-2"><EntityPicker kind="teams" label="Team A" value={a} onChange={(s) => setA(s)} minMatches={5} /></div>

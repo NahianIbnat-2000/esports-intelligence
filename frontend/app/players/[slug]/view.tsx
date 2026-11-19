@@ -47,7 +47,7 @@ export default function PlayerDetail() {
                 <Stat label="Gold diff @15" value={fmtNum(c.golddiff_at_15, 0)} accent="emerald" info={d.metric_definitions.golddiff_at_15} />
                 <Stat label="Detailed-stat games" value={fmtInt(c.games_with_detailed_stats)} accent="emerald" info={d.notes[0]} />
               </div>
-              <div className="grid gap-6 xl:grid-cols-3">
+              <div className="grid gap-3 xl:grid-cols-3">
                 <Card className="xl:col-span-2" eyebrow="Career progression" title="By calendar year"
                   actions={<Select label="Metric" value={metric} onChange={setMetric} className="w-44"
                     options={TREND_METRICS.map((m) => ({ value: m, label: m.replace(/_/g, " ") }))} />}

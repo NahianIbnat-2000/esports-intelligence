@@ -18,7 +18,7 @@ function Inner() {
     <>
       <PageHeader eyebrow="Search" title={q ? `Results for "${q}"` : "Search"} description="Searches team, player and tournament names in the League of Legends archive." />
       {!q ? <EmptyState title="Type a name in the search box" /> : err ? <EmptyState title="Search failed">{err.message}</EmptyState> : (
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid gap-3 lg:grid-cols-3">
           <Card title="Teams">{teams.isLoading ? <Loading /> : (teams.data?.data || []).length === 0 ? <p className="text-sm text-ink-2">No teams.</p> :
             <ul className="divide-y divide-line-soft">{teams.data!.data!.map((t) => <li key={t.slug} className="flex justify-between py-2 text-sm"><Link className="hover:text-cyan" href={`/teams/${t.slug}`}>{t.name}</Link><span className="text-xs text-ink-3">{t.primary_league} | {fmtInt(t.n_matches)}</span></li>)}</ul>}</Card>
           <Card title="Players">{players.isLoading ? <Loading /> : (players.data?.data || []).length === 0 ? <p className="text-sm text-ink-2">No players.</p> :

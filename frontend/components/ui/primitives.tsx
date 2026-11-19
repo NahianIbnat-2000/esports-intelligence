@@ -16,7 +16,7 @@ export function Card({ children, className, title, eyebrow, actions, info }: {
   return (
     <section className={cx("card card-pad min-w-0", className)}>
       {(title || eyebrow || actions) && (
-        <header className="-mx-4 -mt-4 mb-4 flex flex-wrap items-start justify-between gap-3 border-b border-line-soft px-4 pb-3 pt-3 sm:-mx-5 sm:-mt-5 sm:px-5">
+        <header className="-mx-3 -mt-3 mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-line bg-bg-2 px-3 py-2 sm:-mx-4 sm:-mt-4 sm:px-4">
           <div className="min-w-0">
             {eyebrow && <p className="eyebrow mb-1">{eyebrow}</p>}
             {title && (
@@ -54,7 +54,7 @@ export function PageHeader({ index, eyebrow, title, description, children }: {
   index?: string; eyebrow: string; title: string; description?: ReactNode; children?: ReactNode;
 }) {
   return (
-    <header className="mb-6 border-b border-line pb-5">
+    <header className="mb-4 border-b border-line pb-4">
       <p className="eyebrow mb-2 flex items-center gap-2">
         {index && <span className="text-cyan">{index}</span>}
         {index && <span className="h-px w-6 bg-line" />}
@@ -62,7 +62,7 @@ export function PageHeader({ index, eyebrow, title, description, children }: {
       </p>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="max-w-3xl">
-          <h1 className="font-display text-2xl font-bold uppercase tracking-wide text-ink sm:text-3xl">{title}</h1>
+          <h1 className="font-display text-2xl font-semibold uppercase tracking-[0.02em] text-ink sm:text-[2rem] sm:leading-tight">{title}</h1>
           {description && <p className="mt-2 text-sm leading-relaxed text-ink-2">{description}</p>}
         </div>
         {children}
@@ -89,10 +89,10 @@ export function Stat({ label, value, sub, accent, info }: {
 }) {
   const bar = { cyan: "bg-cyan", violet: "bg-violet", emerald: "bg-emerald" }[accent || "cyan"];
   return (
-    <div className="card relative overflow-hidden p-4">
+    <div className="card relative overflow-hidden px-3 py-2.5">
       <span className={cx("absolute left-0 top-0 h-full w-[2px]", bar)} aria-hidden />
       <p className="eyebrow flex items-center gap-1.5">{label}{info && <InfoTip text={info} />}</p>
-      <p className="num-display mt-2 text-2xl font-semibold tabular-nums text-ink sm:text-[1.7rem]">{value}</p>
+      <p className="mt-1.5 font-mono text-xl font-medium tabular-nums text-ink sm:text-2xl">{value}</p>
       {sub && <p className="mt-1 text-xs text-ink-2">{sub}</p>}
     </div>
   );

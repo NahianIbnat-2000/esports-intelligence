@@ -2,8 +2,8 @@
 
 import { cx } from "@/components/ui/primitives";
 
-export const TEAM_A = "#E9B23C";
-export const TEAM_B = "#33C17A";
+export const TEAM_A = "#4DA3FF"; // blue side
+export const TEAM_B = "#FF5C5C"; // red side
 
 export function initials(name: string): string {
   const words = name.replace(/[^A-Za-z0-9 ]/g, " ").split(/\s+/).filter(Boolean);
@@ -18,7 +18,7 @@ export function Crest({ name, color, size = 40 }: { name: string; color: string;
     <svg width={size} height={size} viewBox="0 0 40 40" role="img" aria-label={name}>
       <path d="M20 2 L35 8 V19 C35 28 28.5 34.5 20 38 C11.5 34.5 5 28 5 19 V8 Z" fill={`${color}22`} stroke={color} strokeWidth="2" />
       <text x="20" y="23.5" textAnchor="middle" fontSize={ini.length > 2 ? 9.5 : 12} fontWeight="700" fill={color}
-        fontFamily="Chakra Petch, Barlow, sans-serif">{ini}</text>
+        fontFamily="IBM Plex Sans Condensed, IBM Plex Sans, sans-serif">{ini}</text>
     </svg>
   );
 }
@@ -49,6 +49,6 @@ export function ResultChip({ won, size = "sm" }: { won: boolean; size?: "sm" | "
   return (
     <span className={cx("inline-flex items-center justify-center rounded-sm font-bold",
       size === "sm" ? "h-5 w-5 text-[10px]" : "h-7 w-7 text-xs",
-      won ? "bg-emerald/15 text-emerald" : "bg-cyan/15 text-cyan")}>{won ? "W" : "L"}</span>
+      won ? "bg-emerald/15 text-emerald" : "bg-danger/15 text-danger")}>{won ? "W" : "L"}</span>
   );
 }

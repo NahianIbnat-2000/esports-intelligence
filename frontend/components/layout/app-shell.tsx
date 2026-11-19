@@ -10,6 +10,7 @@ import { useApi } from "@/hooks/use-api";
 import { API_URL, type GameInfo } from "@/lib/api";
 import { fmtDate } from "@/lib/format";
 import { onSlowRequests } from "@/lib/snapshot";
+import { Ticker } from "@/components/layout/ticker";
 
 type NavItem = { href: string; label: string };
 type NavGroup = { label: string; href: string; items: NavItem[]; match: string[] };
@@ -47,7 +48,7 @@ export function Emblem({ size = 40 }: { size?: number }) {
       </defs>
       <path d="M20 2 L35 8 V19 C35 28 28.5 34.5 20 38 C11.5 34.5 5 28 5 19 V8 Z" fill="#14161C" stroke="url(#em-g)" strokeWidth="2" />
       <path d="M11 25 L16.5 19 L21 22 L29 12" fill="none" stroke="url(#em-g)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="29" cy="12" r="2.4" fill="#E5394F" />
+      <circle cx="29" cy="12" r="2.4" fill="#FF9F1C" />
     </svg>
   );
 }
@@ -168,6 +169,7 @@ function Header() {
   return (
     <>
     <header className="sticky top-0 z-30 border-b border-line bg-bg/95 backdrop-blur">
+      <Ticker />
       <div className="mx-auto flex max-w-[1600px] items-center gap-4 px-4 pt-2 sm:px-6">
         <Logo />
         <nav aria-label="Main" className="hidden flex-1 items-center lg:flex">
@@ -179,7 +181,7 @@ function Header() {
             {VISIBLE_GAMES.length > 1 && <><span className="h-5 w-px bg-line" /><GameSwitch /></>}
           </div>
           <DataDate />
-          <Link href="/predictions" className="flex h-9 items-center gap-6 rounded-card bg-cyan px-4 text-[13px] font-semibold text-white shadow-[0_0_24px_-6px_rgba(229,57,79,0.7)] hover:bg-cyan/85">
+          <Link href="/predictions" className="flex h-9 items-center gap-6 rounded-card bg-cyan px-4 text-[13px] font-semibold text-black hover:bg-cyan/85">
             Predict a match <ChevronsRight size={16} />
           </Link>
         </div>

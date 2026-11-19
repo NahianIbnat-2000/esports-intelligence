@@ -29,8 +29,8 @@ export default function DataQualityView() {
         description="Every figure comes from the last pipeline run (data/reports/data_quality_report.json and exclusions.csv) or from the database. Rows are only removed for a recorded reason." />
       <DataState query={q}>
         {(d, meta) => (
-          <div className="space-y-6">
-            <div className="grid gap-6 xl:grid-cols-3">
+          <div className="space-y-3">
+            <div className="grid gap-3 xl:grid-cols-3">
               <Card title="Pipeline counts">
                 <div className="overflow-x-auto"><table className="w-full"><tbody>
                   {([["Rows read", fmtInt(d.rows_retrieved)], ["Exact duplicate rows", fmtInt(d.duplicate_rows_exact)],
@@ -56,7 +56,7 @@ export default function DataQualityView() {
                 ) : <p className="text-sm text-ink-2">No run logged.</p>}
               </Card>
             </div>
-            <div className="grid gap-6 xl:grid-cols-2">
+            <div className="grid gap-3 xl:grid-cols-2">
               <Card title="Missing values in important columns" info="Share of rows where the value is null. Nulls are never replaced by zero.">
                 <Bars data={d.missing_values.map((m) => ({ col: `${m.table}: ${m.column}`, share: m.share_missing ?? 0 }))} x="col" series={[{ key: "share", label: "Share missing" }]} layout="vertical" height={320} yFormat={(v) => fmtPct(v)} />
               </Card>

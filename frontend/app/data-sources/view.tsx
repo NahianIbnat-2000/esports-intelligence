@@ -21,7 +21,7 @@ export default function DataSourcesView() {
       <PageHeader eyebrow="Documentation" title="Data provenance" description="Where every record comes from, when it was collected, how it was transformed, and what is known to be missing. Raw source files are kept unchanged and are not redistributed; the pipeline rebuilds everything from them." />
       <DataState query={{ ...q, data: q.data ? { ...q.data, meta: { ...q.data.meta, data_status: "available" } } : undefined }}>
         {(d) => (
-          <div className="space-y-6">
+          <div className="space-y-3">
             <Card title="Sources">
               <div className="space-y-4">{d.sources.map((s) => (
                 <div key={s.key} className="border-b border-line-soft pb-4 last:border-0">

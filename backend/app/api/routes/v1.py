@@ -16,7 +16,7 @@ from backend.app.models import DatasetVersion, DataSource, Game, Match
 from backend.app.providers.adapters import all_providers
 from backend.app.schemas.common import (Envelope, GameInfo, MatchSummary, Meta, PlayerSummary, PredictionRequest,
                                         PredictionResponse, TeamSummary, TournamentSummary)
-from backend.app.services import entities, explorer, match_detail, overview, predictions, research, series
+from backend.app.services import entities, explorer, match_detail, overview, predictions, research, series, ticker
 from backend.app.services.common import get_game, meta_for, paginate
 
 router = APIRouter(prefix="/api/v1")
@@ -202,6 +202,14 @@ def list_matches(db: DB, game: GameQ = "lol", page: Page = 1, page_size: PageSiz
         return p
     rows, total = entities.list_matches(db, g, page, page_size, team, tournament, league, date_from, date_to)
     return Envelope(data=rows, meta=meta_for(db, g, pagination=paginate(total, page, page_size)))
+
+
+@router.get("/ticker", tags=["overview"], summary="Headline indicators for the ticker strip")
+def get_ticker(db: DB, game: GameQ = "lol") -> Envelope[dict]:
+    g = get_game(db, game)
+    if (p := _pending(db, g)):
+        return p
+    return Envelope(data=ticker.ticker(db, g), meta=meta_for(db, g))
 
 
 @router.get("/series", tags=["matches"], summary="Games grouped into approximate series, newest first")

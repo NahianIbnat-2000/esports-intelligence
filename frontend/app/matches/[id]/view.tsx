@@ -50,7 +50,7 @@ function Hero({ d }: { d: Detail }) {
       <svg className="absolute inset-0 h-full w-full" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden>
         <defs>
           <radialGradient id="hero-glow" cx="50%" cy="55%" r="60%">
-            <stop offset="0" stopColor="#E5394F" stopOpacity="0.18" />
+            <stop offset="0" stopColor="#FF9F1C" stopOpacity="0.12" />
             <stop offset="1" stopColor="#0B0C10" stopOpacity="0" />
           </radialGradient>
         </defs>
@@ -111,7 +111,7 @@ function EloChange({ d }: { d: Detail }) {
           <div className="text-center"><p className="num text-xs">{fmtInt(s.elo.before)}</p><p className="text-[10px] uppercase text-ink-3">before</p></div>
           <div className="text-center"><p className="num text-xs">{fmtInt(s.elo.after)}</p><p className="text-[10px] uppercase text-ink-3">after</p></div>
           <span className={cx("num flex w-16 items-center justify-center gap-0.5 rounded-sm py-1 text-xs font-semibold",
-            s.elo.change >= 0 ? "bg-emerald/15 text-emerald" : "bg-cyan/15 text-cyan")}>
+            s.elo.change >= 0 ? "bg-emerald/15 text-emerald" : "bg-danger/15 text-danger")}>
             {s.elo.change >= 0 ? <ArrowUp size={11} /> : <ArrowDown size={11} />}{fmtNum(Math.abs(s.elo.change), 1)}
           </span>
         </>
@@ -161,7 +161,7 @@ function TopPerformer({ d }: { d: Detail }) {
               <div key={m.key} className="flex flex-1 flex-col items-center gap-1">
                 <span className="num text-[11px] text-ink">{v == null ? "n/a" : m.fmt(v)}</span>
                 <div className="relative flex h-24 w-full items-end rounded-sm bg-bg">
-                  <div className="w-full rounded-sm" style={{ height: `${h * 100}%`, background: ratio != null && ratio >= 1 ? TEAM_B : "#4B505C" }} />
+                  <div className="w-full rounded-sm" style={{ height: `${h * 100}%`, background: ratio != null && ratio >= 1 ? "#2BD67B" : "#4B505C" }} />
                   <div className="absolute inset-x-0 border-t border-dashed border-ink-3" style={{ bottom: "50%" }} />
                 </div>
                 <span className="text-[10px] font-semibold text-ink-2">{m.label}</span>
@@ -312,7 +312,7 @@ function Scoreboard({ s, color }: { s: Side; color: string }) {
                 <td className="td num py-1.5 text-right">{fmtInt(p.dpm)}</td>
                 <td className="td num py-1.5 text-right">{fmtPct(p.damage_share, 0)}</td>
                 <td className="td num py-1.5 text-right">{fmtNum(p.cspm, 1)}</td>
-                <td className={cx("td num py-1.5 text-right", p.golddiff_at_15 != null && (p.golddiff_at_15 > 0 ? "text-emerald" : p.golddiff_at_15 < 0 ? "text-cyan" : ""))}>
+                <td className={cx("td num py-1.5 text-right", p.golddiff_at_15 != null && (p.golddiff_at_15 > 0 ? "text-emerald" : p.golddiff_at_15 < 0 ? "text-danger" : ""))}>
                   {p.golddiff_at_15 == null ? "n/a" : `${p.golddiff_at_15 > 0 ? "+" : ""}${fmtInt(p.golddiff_at_15)}`}</td>
               </tr>
             ))}

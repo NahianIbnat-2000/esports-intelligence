@@ -60,7 +60,7 @@ export default function OverviewView() {
 
       <DataState query={q} gameName={gameName}>
         {(d, meta) => (
-          <div className="space-y-6">
+          <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-3 text-xs text-ink-2">
               <StatusBadge status="historical" />
               <span>Coverage {fmtPeriod({ start: d.kpis.coverage_start, end: d.kpis.coverage_end })}</span>
@@ -79,7 +79,7 @@ export default function OverviewView() {
             </div>
 
             {d.coverage && (
-              <div className="grid gap-6 xl:grid-cols-5">
+              <div className="grid gap-3 xl:grid-cols-5">
                 <Card className="xl:col-span-2" eyebrow="Data coverage" title="Games by calendar year" info={d.coverage.definition}>
                   <Bars data={d.coverage.by_calendar_year} x="year" series={[{ key: "games", label: "Games" }]} height={220} />
                   <p className="mt-2 text-2xs text-ink-3">Earliest game {fmtDate(d.kpis.coverage_start)}, latest {fmtDate(d.kpis.coverage_end)}. {fmtInt(d.kpis.leagues)} leagues represented.</p>
@@ -90,12 +90,12 @@ export default function OverviewView() {
                 </Card>
               </div>
             )}
-            <div className="grid gap-6 xl:grid-cols-5">
+            <div className="grid gap-3 xl:grid-cols-5">
               {d.data_quality && <QualityPanel q={d.data_quality} />}
               {d.elo_method && <EloPanel m={d.elo_method} />}
             </div>
 
-            <div className="grid gap-6 xl:grid-cols-5">
+            <div className="grid gap-3 xl:grid-cols-5">
               <Card className="xl:col-span-3" eyebrow="Competitive performance" title="Team rankings by Elo"
                 info={d.top_teams_definition}
                 actions={<Link href="/teams?sort=elo" className="link text-xs">All teams</Link>}>
@@ -111,7 +111,7 @@ export default function OverviewView() {
               </Card>
             </div>
 
-            <div className="grid gap-6 xl:grid-cols-5">
+            <div className="grid gap-3 xl:grid-cols-5">
               <Card className="xl:col-span-5" eyebrow="Historical trend" title={`Games per month${league ? ` (${league})` : ""}`}
                 info="Count of recorded games per calendar month. Gaps reflect the competitive calendar and source coverage.">
                 <TimeLine data={d.matches_per_month} x="month" series={[{ key: "matches", label: "Games" }]} height={240} />

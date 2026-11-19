@@ -22,7 +22,7 @@ export default function DocumentationView() {
   return (
     <>
       <PageHeader eyebrow="Documentation" title="Documentation" description="Technical documentation ships with the source code in the docs/ folder." />
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-3 lg:grid-cols-3">
         <Card className="lg:col-span-2" title="Project documents">
           <ul className="divide-y divide-line-soft">{DOCS.map(([f, d]) => <li key={f} className="flex flex-wrap justify-between gap-2 py-2.5 text-sm"><span className="font-mono text-xs text-cyan">{f}</span><span className="text-ink-2">{d}</span></li>)}</ul>
         </Card>

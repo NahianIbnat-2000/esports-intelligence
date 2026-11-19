@@ -282,3 +282,11 @@ def test_trajectory_defaults(client, loaded):
     linked = client.get("/api/v1/analytics/team-performance?game=lol&min_matches=1").json()["data"]
     assert linked["n_ranked"] <= d["n_ranked"]
     assert all(t["primary_league"] in linked["linked_leagues"] for t in linked["teams"]) or not linked["linked_leagues"]
+
+
+def test_ticker(client, loaded):
+    d = client.get("/api/v1/ticker?game=lol").json()["data"]
+    assert d["items"], "ticker should have items on loaded data"
+    for it in d["items"]:
+        assert it["label"] and it["display"] and it["definition"]
+        assert it["direction"] in (None, "up", "down")

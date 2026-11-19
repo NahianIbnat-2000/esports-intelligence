@@ -80,7 +80,7 @@ function TeamModule() {
       </div>
       <DataState query={q}>
         {(d, meta) => (
-          <div className="grid gap-6 xl:grid-cols-5">
+          <div className="grid gap-3 xl:grid-cols-5">
             <Card className="xl:col-span-2" eyebrow="Distribution" title="Current Elo of teams" info={d.definition}
               actions={<DownloadCsv rows={d.elo_histogram} filename="elo_distribution" />}>
               <Bars data={d.elo_histogram} x="bin" series={[{ key: "teams", label: "Teams" }]} height={300} />
@@ -129,7 +129,7 @@ function Consistency() {
   return (
     <Card eyebrow="Consistency" title="Average level vs variability of split win %" info={c.definition}
       actions={<DownloadCsv rows={c.teams as unknown as Record<string, unknown>[]} filename="team_consistency" />}>
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-3 lg:grid-cols-2">
         <ScatterPlot data={c.teams} x="mean_wp" y="sd_wp" xLabel="Mean split win %" yLabel="SD of split win %" format={(v) => v.toFixed(2)} height={280} yDomain={[0, "auto"]} />
         <div className="overflow-x-auto"><table className="w-full"><thead className="border-b border-line"><tr><th className="th">Team (8+ splits)</th><th className="th">League</th><th className="th text-right">Splits</th><th className="th text-right">Mean win %</th><th className="th text-right">SD</th></tr></thead>
           <tbody>{top.map((t) => <tr key={t.slug} className="border-b border-line-soft"><td className="td"><Link className="hover:text-cyan" href={`/teams/${t.slug}`}>{t.name}</Link></td><td className="td text-xs text-ink-2">{t.league}</td>
@@ -159,7 +159,7 @@ function PlayerModule() {
       </div>
       <DataState query={q} isEmpty={(d) => d.n_players === 0}>
         {(d, meta) => (
-          <div className="grid gap-6 xl:grid-cols-5">
+          <div className="grid gap-3 xl:grid-cols-5">
             <Card className="xl:col-span-3" eyebrow="Distribution" title={`Career average ${d.metric.replace(/_/g, " ")} per player`} info={d.definition}
               actions={<DownloadCsv rows={d.histogram} filename={`player_${d.metric}_distribution`} />}>
               <Bars data={d.histogram.map((h) => ({ ...h, bin: fmtNum(h.lower, d.metric.includes("share") ? 3 : 1) }))} x="bin" series={[{ key: "players", label: "Players" }]} height={280} />
@@ -213,7 +213,7 @@ function BalanceModule() {
         const leagues = Array.from(new Set((cb?.tournaments || []).map((t) => String(t.league)))).sort();
         const series = (cb?.tournaments || []).filter((t) => !league || t.league === league).map((t) => ({ name: `${t.league} ${t.year} ${t.split}`, noll_scully: t.noll_scully, gini: t.gini_wins }));
         return (
-          <div className="grid gap-6 xl:grid-cols-2">
+          <div className="grid gap-3 xl:grid-cols-2">
             {cb && <BalanceCompare cb={cb} />}
             {cb && <LorenzPanel cb={cb} />}
             {d.placements?.available && <Placements p={d.placements} />}
@@ -317,7 +317,7 @@ function TournamentModule() {
       {(d, meta) => {
         const tc = d.title_concentration;
         return (
-          <div className="grid gap-6 xl:grid-cols-5">
+          <div className="grid gap-3 xl:grid-cols-5">
             <Card className="xl:col-span-3" eyebrow="Concentration of success" title="Title concentration by league (HHI)" info={tc?.definition}
               actions={<DownloadCsv rows={(tc?.leagues || []).map(({ ...r }) => r)} filename="title_concentration" />}>
               {tc && tc.leagues.length ? <Bars data={tc.leagues} x="league" series={[{ key: "hhi_titles", label: "HHI of derived titles" }]} layout="vertical" height={Math.max(220, tc.leagues.length * 28)} />
@@ -351,7 +351,7 @@ function HistoricalModule() {
   return (
     <DataState query={q}>
       {(d, meta) => (
-        <div className="grid gap-6 xl:grid-cols-2">
+        <div className="grid gap-3 xl:grid-cols-2">
           <Card eyebrow="Side advantage" title="Blue-side win rate by year (95% Wilson interval)" info={d.side_advantage?.definition}
             actions={<DownloadCsv rows={d.side_advantage?.by_year || []} filename="blue_side_win_rate" />}>
             <IntervalBars data={d.side_advantage?.by_year || []} x="year" y="blue_win_rate" low="ci95_low" high="ci95_high" reference={0.5} yFormat={(v) => fmtPct(v)} height={260} />
@@ -398,7 +398,7 @@ export function RegionalModule() {
       {(d, meta) => {
         const r = d.regional;
         return (
-          <div className="grid gap-6 xl:grid-cols-2">
+          <div className="grid gap-3 xl:grid-cols-2">
             <Card eyebrow="International results" title="Win rate at tier-1 international events by home league" info={r?.definition}
               actions={<DownloadCsv rows={r?.international_by_home_league || []} filename="international_by_home_league" />}>
               {r?.international_by_home_league?.length ? (

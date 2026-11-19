@@ -55,7 +55,7 @@ function Inner() {
                   <Stat label={`${d.team_b.name} wins`} value={fmtInt(d.wins_b)} accent="violet" />
                   <Stat label="Current Elo gap" value={d.team_a.current_elo !== null && d.team_b.current_elo !== null ? fmtNum(d.team_a.current_elo - d.team_b.current_elo, 0) : "n/a"} accent="emerald" info="Team A minus Team B, after each team's last recorded game." />
                 </div>
-                <div className="grid gap-6 xl:grid-cols-3">
+                <div className="grid gap-3 xl:grid-cols-3">
                   <Card className="xl:col-span-2" eyebrow="Elo" title="Rating paths">
                     <TimeLine data={mergeElo(d.elo_history_a, d.elo_history_b)} x="date" height={280}
                       series={[{ key: "a", label: d.team_a.name, color: CHART.cyan }, { key: "b", label: d.team_b.name, color: CHART.violet }]} />
