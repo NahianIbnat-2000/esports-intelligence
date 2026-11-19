@@ -36,7 +36,7 @@ const SECTIONS: { title: string; items: string[] }[] = [
 export default function MethodologyView() {
   return (
     <>
-      <PageHeader eyebrow="Documentation" title="Methodology" description="How records are cleaned, how ratings and models are built, and what the indicators mean. The full text is in docs/methodology.md." />
+      <PageHeader eyebrow="Documentation" title="Methodology" description={<>How records are cleaned, how ratings and models are built, and what the indicators mean. The full text is in docs/methodology.md. New to esports or these terms? Start with the <Link className="link" href="/faq">FAQ and glossary</Link>.</>} />
       <div className="grid gap-4 lg:grid-cols-2">
         {SECTIONS.map((s) => (
           <Card key={s.title} title={s.title}>
