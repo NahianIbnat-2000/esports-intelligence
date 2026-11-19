@@ -108,13 +108,13 @@ function Inner() {
         {(d, meta) => (
           <Card>
             <div className="-mx-4 overflow-x-auto sm:mx-0">
-              <table className="w-full">
+              <div className="overflow-x-auto"><table className="w-full">
                 <thead className="border-b border-line"><tr>{d.columns.map((c) => (
                   <th key={c} className="th" aria-sort={sort === c ? (order === "asc" ? "ascending" : "descending") : undefined}>
                     <button className="inline-flex items-center gap-1 uppercase hover:text-ink" onClick={() => toggleSort(c)}>{c}{sort === c && (order === "asc" ? <ArrowUp size={11} /> : <ArrowDown size={11} />)}</button>
                   </th>))}</tr></thead>
                 <tbody>{d.rows.map((r, i) => <tr key={i} className="border-b border-line-soft hover:bg-bg-elev/40">{d.columns.map((c) => <td key={c} className="td">{cell(r[c], c)}</td>)}</tr>)}</tbody>
-              </table>
+              </table></div>
             </div>
             {meta.pagination && <Pagination page={meta.pagination.page} pages={meta.pagination.pages} total={meta.pagination.total} onPage={setPage} />}
             <SourceNote meta={meta} extra={meta.attribution || undefined} />

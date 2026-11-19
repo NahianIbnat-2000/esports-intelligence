@@ -166,6 +166,7 @@ function Header() {
   const grp = activeGroup(path);
   const item = activeItem(path, grp);
   return (
+    <>
     <header className="sticky top-0 z-30 border-b border-line bg-bg/95 backdrop-blur">
       <div className="mx-auto flex max-w-[1600px] items-center gap-4 px-4 pt-2 sm:px-6">
         <Logo />
@@ -193,8 +194,10 @@ function Header() {
             className={cx("text-xs font-medium", item === i ? "text-ink" : "text-ink-3 hover:text-ink-2")}>{i.label}</Link>
         ))}
       </div>
+    </header>
+    {/* outside <header>: its backdrop blur would trap a position:fixed drawer inside the header bar */}
       {open && (
-        <div className="fixed inset-0 z-40 lg:hidden" role="dialog" aria-modal="true" aria-label="Navigation" id="mobile-nav">
+        <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Navigation" id="mobile-nav">
           <button className="absolute inset-0 bg-black/70" aria-label="Close navigation" onClick={() => setOpen(false)} />
           <div className="absolute inset-y-0 right-0 w-80 max-w-[88vw] overflow-y-auto border-l border-line bg-bg-2 p-4">
             <div className="mb-4 flex items-center justify-between">
@@ -218,7 +221,7 @@ function Header() {
           </div>
         </div>
       )}
-    </header>
+    </>
   );
 }
 

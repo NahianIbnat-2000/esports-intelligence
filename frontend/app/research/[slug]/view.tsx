@@ -74,9 +74,9 @@ function SamplePeriod({ p }: { p: Record<string, unknown> }) {
     return sp.start ? <p className="mt-2">Sample period: {fmtDate(sp.start)} to {fmtDate(sp.end)}.</p> : null;
   }
   return (
-    <table className="mt-3 w-full max-w-lg"><thead className="border-b border-line"><tr><th className="th">Split</th><th className="th">Period</th><th className="th text-right">Games</th><th className="th text-right">Blue win %</th></tr></thead>
+    <div className="mt-3 overflow-x-auto"><table className="w-full max-w-lg"><thead className="border-b border-line"><tr><th className="th">Split</th><th className="th">Period</th><th className="th text-right">Games</th><th className="th text-right">Blue win %</th></tr></thead>
       <tbody>{parts.map((k) => { const s = p[k] as { n: number; start: string; end: string; blue_win_rate: number }; return (
-        <tr key={k} className="border-b border-line-soft"><td className="td capitalize">{k}</td><td className="td">{fmtDate(s.start)} to {fmtDate(s.end)}</td><td className="td num text-right">{fmtInt(s.n)}</td><td className="td num text-right">{fmtPct(s.blue_win_rate)}</td></tr>); })}</tbody></table>
+        <tr key={k} className="border-b border-line-soft"><td className="td capitalize">{k}</td><td className="td">{fmtDate(s.start)} to {fmtDate(s.end)}</td><td className="td num text-right">{fmtInt(s.n)}</td><td className="td num text-right">{fmtPct(s.blue_win_rate)}</td></tr>); })}</tbody></table></div>
   );
 }
 
@@ -93,8 +93,8 @@ function ResultCharts({ slug, results }: { slug: string; results: Record<string,
     return (
       <div className="grid gap-4 lg:grid-cols-2">
         <Card title="Test-period scores" className="lg:col-span-2">
-          <table className="w-full"><thead className="border-b border-line"><tr><th className="th">Model</th><th className="th text-right">Brier</th><th className="th text-right">Log loss</th><th className="th text-right">ROC-AUC</th><th className="th text-right">Accuracy</th></tr></thead>
-            <tbody>{table.map((m) => <tr key={m.model} className="border-b border-line-soft"><td className="td">{m.model}</td><td className="td num text-right">{fmtNum(m.brier, 4)}</td><td className="td num text-right">{fmtNum(m.log_loss, 4)}</td><td className="td num text-right">{fmtNum(m.roc_auc, 3)}</td><td className="td num text-right">{fmtPct(m.accuracy)}</td></tr>)}</tbody></table>
+          <div className="overflow-x-auto"><table className="w-full"><thead className="border-b border-line"><tr><th className="th">Model</th><th className="th text-right">Brier</th><th className="th text-right">Log loss</th><th className="th text-right">ROC-AUC</th><th className="th text-right">Accuracy</th></tr></thead>
+            <tbody>{table.map((m) => <tr key={m.model} className="border-b border-line-soft"><td className="td">{m.model}</td><td className="td num text-right">{fmtNum(m.brier, 4)}</td><td className="td num text-right">{fmtNum(m.log_loss, 4)}</td><td className="td num text-right">{fmtNum(m.roc_auc, 3)}</td><td className="td num text-right">{fmtPct(m.accuracy)}</td></tr>)}</tbody></table></div>
         </Card>
         <Card title="Reliability diagram"><Reliability models={Object.entries(cal).map(([k, bins]) => ({ label: k, bins }))} height={300} /></Card>
         <Card title="Elo sensitivity: validation log loss by K-factor" info="Lines are season carry-over shrinkage values. The selected configuration has the lowest validation log loss.">

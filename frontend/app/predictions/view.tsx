@@ -136,12 +136,12 @@ function Result({ r }: { r: PredRes }) {
       <div className="grid gap-4 md:grid-cols-2">
         <div className="rounded-md border border-line bg-bg-2 p-4">
           <p className="eyebrow mb-2">Inputs (before {fmtDate(r.as_of)})</p>
-          <table className="w-full text-sm"><tbody>
+          <div className="overflow-x-auto"><table className="w-full text-sm"><tbody>
             {([["Elo", fmtNum(r.team_a.elo, 0), fmtNum(r.team_b.elo, 0)], ["Earlier games", fmtInt(r.team_a.games_before), fmtInt(r.team_b.games_before)],
               ["Win rate", fmtPct(r.team_a.wins_before / r.team_a.games_before), fmtPct(r.team_b.wins_before / r.team_b.games_before)],
               ["Last game", fmtDate(r.team_a.last_game), fmtDate(r.team_b.last_game)]] as const).map(([l, x, y]) => (
               <tr key={l} className="border-b border-line-soft"><td className="py-1.5 text-ink-2">{l}</td><td className="num py-1.5 text-right text-cyan">{x}</td><td className="num py-1.5 text-right text-violet">{y}</td></tr>))}
-          </tbody></table>
+          </tbody></table></div>
           <p className="mt-3 text-2xs text-ink-3">{r.inputs.feature_note}</p>
           <div className="mt-2 grid grid-cols-2 gap-x-4 text-2xs text-ink-2">
             {Object.entries(r.inputs.features_team_a_on_blue).map(([k, v]) => <span key={k}>{k}: <span className="num text-ink">{fmtNum(v, 3)}</span></span>)}
@@ -254,10 +254,10 @@ function ModelEvaluation({ models, test }: { models: ModelInfo[]; test?: { n: nu
         <div className="grid gap-3 md:grid-cols-3">{real.map((m) => { const c = m.metrics?.confusion || {}; return (
           <div key={m.model_key} className="rounded-md border border-line bg-bg-2 p-3">
             <p className="mb-2 text-xs font-medium">{short(m)}</p>
-            <table className="w-full text-center text-xs"><thead><tr><th></th><th className="pb-1 text-2xs text-ink-3">Pred. red</th><th className="pb-1 text-2xs text-ink-3">Pred. blue</th></tr></thead><tbody>
+            <div className="overflow-x-auto"><table className="w-full text-center text-xs"><thead><tr><th></th><th className="pb-1 text-2xs text-ink-3">Pred. red</th><th className="pb-1 text-2xs text-ink-3">Pred. blue</th></tr></thead><tbody>
               <tr><td className="pr-2 text-left text-2xs text-ink-3">Red won</td><td className="num rounded bg-emerald/10 py-2">{fmtInt(c.true_negative)}</td><td className="num rounded bg-danger/10 py-2">{fmtInt(c.false_positive)}</td></tr>
               <tr><td className="pr-2 text-left text-2xs text-ink-3">Blue won</td><td className="num rounded bg-danger/10 py-2">{fmtInt(c.false_negative)}</td><td className="num rounded bg-emerald/10 py-2">{fmtInt(c.true_positive)}</td></tr>
-            </tbody></table>
+            </tbody></table></div>
           </div>); })}</div>
       )}
       {tab === "distribution" && (

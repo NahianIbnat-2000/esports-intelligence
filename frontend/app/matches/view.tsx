@@ -34,8 +34,21 @@ export default function Matches() {
                 const aWon = s.winner_slug === s.team_a_slug, bWon = s.winner_slug === s.team_b_slug;
                 const last = s.games[s.games.length - 1];
                 return (
-                  <li key={s.id} className="grid grid-cols-[1fr_auto] items-center gap-3 py-2.5 sm:grid-cols-[110px_1fr_auto_1fr_auto] sm:px-2">
-                    <span className="hidden text-2xs text-ink-3 sm:block">{fmtDate(s.end)}<br /><span className="text-ink-2">{s.league}</span>{s.playoffs && <span className="ml-1 text-cyan">PO</span>}</span>
+                  <li key={s.id}>
+                  {/* phones: compact two-line row */}
+                  <Link href={`/matches/${last.id}`} className="flex items-center gap-3 py-2.5 sm:hidden">
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-2xs text-ink-3">{fmtDate(s.end)} · {s.league}{s.playoffs ? " · PO" : ""}</span>
+                      <span className="mt-0.5 flex items-center gap-2 text-sm">
+                        <span className={cx("truncate", aWon ? "font-semibold text-ink" : "text-ink-2")}>{s.team_a}</span>
+                        <span className="num shrink-0 font-bold"><span className={aWon ? "text-ink" : "text-ink-3"}>{s.wins_a}</span><span className="mx-1 text-ink-3">:</span><span className={bWon ? "text-ink" : "text-ink-3"}>{s.wins_b}</span></span>
+                        <span className={cx("truncate", bWon ? "font-semibold text-ink" : "text-ink-2")}>{s.team_b}</span>
+                      </span>
+                    </span>
+                    <ChevronRight size={14} className="shrink-0 text-ink-3" />
+                  </Link>
+                  <div className="hidden items-center gap-3 py-2.5 sm:grid sm:grid-cols-[110px_1fr_auto_1fr_auto] sm:px-2">
+                    <span className="text-2xs text-ink-3">{fmtDate(s.end)}<br /><span className="text-ink-2">{s.league}</span>{s.playoffs && <span className="ml-1 text-cyan">PO</span>}</span>
                     <Link href={`/matches/${last.id}`} className="group contents">
                       <span className="flex items-center justify-end gap-2 text-sm">
                         <span className={cx("truncate", aWon ? "font-semibold text-ink" : "text-ink-2")}>{s.team_a}</span>
@@ -46,12 +59,12 @@ export default function Matches() {
                         <span className="mx-1.5 text-ink-3">:</span>
                         <span className={bWon ? "text-ink" : "text-ink-3"}>{s.wins_b}</span>
                       </span>
-                      <span className="hidden items-center gap-2 text-sm sm:flex">
+                      <span className="flex items-center gap-2 text-sm">
                         <Crest name={s.team_b} color={TEAM_B} size={24} />
                         <span className={cx("truncate", bWon ? "font-semibold text-ink" : "text-ink-2")}>{s.team_b}</span>
                       </span>
                     </Link>
-                    <span className="hidden items-center justify-end gap-1 sm:flex">
+                    <span className="flex items-center justify-end gap-1">
                       {s.games.map((g, i) => (
                         <Link key={g.id} href={`/matches/${g.id}`} title={`Game ${i + 1}`}
                           className="flex h-6 w-6 items-center justify-center rounded-sm border border-line text-[10px] font-semibold hover:border-cyan"
@@ -61,6 +74,7 @@ export default function Matches() {
                       ))}
                       <ChevronRight size={14} className="ml-1 text-ink-3" />
                     </span>
+                  </div>
                   </li>
                 );
               })}

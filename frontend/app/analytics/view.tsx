@@ -131,9 +131,9 @@ function Consistency() {
       actions={<DownloadCsv rows={c.teams as unknown as Record<string, unknown>[]} filename="team_consistency" />}>
       <div className="grid gap-6 lg:grid-cols-2">
         <ScatterPlot data={c.teams} x="mean_wp" y="sd_wp" xLabel="Mean split win %" yLabel="SD of split win %" format={(v) => v.toFixed(2)} height={280} yDomain={[0, "auto"]} />
-        <table className="w-full"><thead className="border-b border-line"><tr><th className="th">Team (8+ splits)</th><th className="th">League</th><th className="th text-right">Splits</th><th className="th text-right">Mean win %</th><th className="th text-right">SD</th></tr></thead>
+        <div className="overflow-x-auto"><table className="w-full"><thead className="border-b border-line"><tr><th className="th">Team (8+ splits)</th><th className="th">League</th><th className="th text-right">Splits</th><th className="th text-right">Mean win %</th><th className="th text-right">SD</th></tr></thead>
           <tbody>{top.map((t) => <tr key={t.slug} className="border-b border-line-soft"><td className="td"><Link className="hover:text-cyan" href={`/teams/${t.slug}`}>{t.name}</Link></td><td className="td text-xs text-ink-2">{t.league}</td>
-            <td className="td num text-right">{t.splits}</td><td className="td num text-right">{fmtPct(t.mean_wp)}</td><td className="td num text-right">{fmtNum(t.sd_wp, 3)}</td></tr>)}</tbody></table>
+            <td className="td num text-right">{t.splits}</td><td className="td num text-right">{fmtPct(t.mean_wp)}</td><td className="td num text-right">{fmtNum(t.sd_wp, 3)}</td></tr>)}</tbody></table></div>
       </div>
       <p className="mt-2 text-2xs text-ink-3">{c.n_teams} teams (scatter shows up to 400 with the most splits). Win % in weak leagues is not comparable with win % in strong ones.</p>
     </Card>
@@ -324,10 +324,10 @@ function TournamentModule() {
                 : <EmptyState title="Not enough splits with playoffs" />}
             </Card>
             <Card className="xl:col-span-2" eyebrow="Dominant teams" title="Most titles per league">
-              <table className="w-full"><thead className="border-b border-line"><tr><th className="th">League</th><th className="th">Team</th><th className="th text-right">Titles</th><th className="th text-right">Winners</th></tr></thead>
+              <div className="overflow-x-auto"><table className="w-full"><thead className="border-b border-line"><tr><th className="th">League</th><th className="th">Team</th><th className="th text-right">Titles</th><th className="th text-right">Winners</th></tr></thead>
                 <tbody>{(tc?.leagues || []).map((l) => (
                   <tr key={l.league} className="border-b border-line-soft"><td className="td">{l.league}</td><td className="td">{l.top_team}</td>
-                    <td className="td num text-right">{l.top_team_titles}/{l.n_tournaments_with_champion}</td><td className="td num text-right">{l.distinct_champions}</td></tr>))}</tbody></table>
+                    <td className="td num text-right">{l.top_team_titles}/{l.n_tournaments_with_champion}</td><td className="td num text-right">{l.distinct_champions}</td></tr>))}</tbody></table></div>
               <p className="mt-3 text-2xs text-ink-3">Titles are derived (winner of the last playoff game). Prize money is not in the source, so prize concentration is not shown.</p>
             </Card>
             <div className="xl:col-span-5"><SourceNote meta={meta} /></div>
@@ -407,8 +407,8 @@ export function RegionalModule() {
             </Card>
             {d.league_levels && <LeagueLevels l={d.league_levels} />}
             <Card eyebrow="Coverage" title="Games and teams per league" actions={<DownloadCsv rows={r?.leagues || []} filename="league_coverage" />}>
-              <div className="max-h-[320px] overflow-y-auto"><table className="w-full"><thead className="border-b border-line"><tr><th className="th">League</th><th className="th text-right">Games</th><th className="th text-right">Teams</th></tr></thead>
-                <tbody>{(r?.leagues || []).map((l) => <tr key={l.league} className="border-b border-line-soft"><td className="td">{l.league}</td><td className="td num text-right">{l.n_games}</td><td className="td num text-right">{l.n_teams}</td></tr>)}</tbody></table></div>
+              <div className="max-h-[320px] overflow-y-auto"><div className="overflow-x-auto"><table className="w-full"><thead className="border-b border-line"><tr><th className="th">League</th><th className="th text-right">Games</th><th className="th text-right">Teams</th></tr></thead>
+                <tbody>{(r?.leagues || []).map((l) => <tr key={l.league} className="border-b border-line-soft"><td className="td">{l.league}</td><td className="td num text-right">{l.n_games}</td><td className="td num text-right">{l.n_teams}</td></tr>)}</tbody></table></div></div>
             </Card>
             <div className="xl:col-span-2"><SourceNote meta={meta} extra={meta.notes.join(" ")} /></div>
           </div>

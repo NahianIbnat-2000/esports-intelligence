@@ -143,7 +143,7 @@ function ResearchHighlight({ r }: { r: NonNullable<Overview["research"]> }) {
           <div key={l} className="rounded-md border border-line bg-bg-2 p-2"><p className="eyebrow">{l}</p><p className="mt-1 text-xs font-medium text-ink">{name(k)}</p></div>
         ))}
       </div>
-      <table className="w-full">
+      <div className="overflow-x-auto"><table className="w-full">
         <thead><tr className="border-b border-line"><th className="th">Model</th><th className="th text-right">Brier</th><th className="th text-right">Acc.</th><th className="th text-right">F1</th></tr></thead>
         <tbody>
           {order.map((k) => (
@@ -155,7 +155,7 @@ function ResearchHighlight({ r }: { r: NonNullable<Overview["research"]> }) {
             </tr>
           ))}
         </tbody>
-      </table>
+      </table></div>
       {c && (
         <p className="text-xs leading-relaxed text-ink-2">
           Logistic minus Elo Brier: <span className="num text-ink">{c.difference >= 0 ? "+" : ""}{c.difference.toFixed(5)}</span>, 95% CI {c.ci95_low.toFixed(5)} to {c.ci95_high.toFixed(5)} (paired bootstrap over series).{" "}
@@ -183,11 +183,11 @@ function QualityPanel({ q }: { q: DQ }) {
   return (
     <Card className="xl:col-span-2" eyebrow="Data quality" title="Data quality indicators"
       actions={<Link href="/data-quality" className="link text-xs">Full report</Link>}>
-      <table className="w-full"><tbody>
+      <div className="overflow-x-auto"><table className="w-full"><tbody>
         {rows.map(([l, v, info]) => (
           <tr key={l} className="border-b border-line-soft"><td className="py-1.5 pr-2 text-xs text-ink-2">{l}{info && <span className="ml-1 align-middle"><InfoTip text={info} /></span>}</td><td className="num py-1.5 text-right text-sm">{v}</td></tr>
         ))}
-      </tbody></table>
+      </tbody></table></div>
       <p className="mt-3 flex items-center gap-2 text-2xs text-ink-3">Last ingestion run:
         {q.last_run ? <StatusBadge status={q.last_run.status === "ok" ? "completed" : "unavailable"} label={q.last_run.status === "ok" ? `ok, ${q.last_run.stages.length} stages` : "error"} /> : "n/a"}</p>
     </Card>
@@ -204,11 +204,11 @@ function EloPanel({ m }: { m: EloMethod }) {
             <p className="mt-1">R<sub>A,new</sub> = R<sub>A,old</sub> + K (S<sub>A</sub> − E<sub>A</sub>)</p>
           </div>
           <p>E<sub>A</sub> is team A&apos;s expected score (its win probability), S<sub>A</sub> is 1 for a win and 0 for a loss. Ratings update after every game, in time order, from the first game in the data ({fmtDate(m.data_start)}).</p>
-          <table className="w-full"><tbody>
+          <div className="overflow-x-auto"><table className="w-full"><tbody>
             {([["Initial rating", fmtNum(m.initial, 0)], ["K-factor", fmtNum(m.k, 0)], ["League step k_league", fmtNum(m.k_league, 0)],
               ["Season shrinkage", fmtNum(m.carryover_shrink, 2)], ["Model version", m.version]] as const).map(([l, v]) => (
               <tr key={l} className="border-b border-line-soft"><td className="py-1 text-ink-2">{l}</td><td className="num py-1 text-right text-ink">{v}</td></tr>))}
-          </tbody></table>
+          </tbody></table></div>
           <p className="text-2xs text-ink-3">{m.selection} Validation ended {fmtDate(m.validation_end)}.</p>
         </div>
         <div className="text-xs leading-relaxed text-ink-2">

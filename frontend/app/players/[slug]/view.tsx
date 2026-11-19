@@ -53,12 +53,12 @@ export default function PlayerDetail() {
                     options={TREND_METRICS.map((m) => ({ value: m, label: m.replace(/_/g, " ") }))} />}
                   info={d.metric_definitions[metric]}>
                   <TimeLine data={d.by_year.map((r) => ({ year: String(r.year), value: r[metric] }))} x="year" series={[{ key: "value", label: metric }]} height={240} />
-                  <div className="mt-3 overflow-x-auto"><table className="w-full"><thead className="border-b border-line"><tr>
+                  <div className="mt-3 overflow-x-auto"><div className="overflow-x-auto"><table className="w-full"><thead className="border-b border-line"><tr>
                     <th className="th">Year</th><th className="th text-right">Games</th><th className="th text-right">K/D/A</th><th className="th text-right">KDA</th><th className="th text-right">DPM</th><th className="th text-right">CSPM</th></tr></thead>
                     <tbody>{d.by_year.map((r) => (
                       <tr key={r.year} className="border-b border-line-soft"><td className="td num">{r.year}</td><td className="td num text-right">{fmtInt(r.games)}</td>
                         <td className="td num text-right">{fmtNum(r.kills, 1)}/{fmtNum(r.deaths, 1)}/{fmtNum(r.assists, 1)}</td><td className="td num text-right">{fmtNum(r.kda)}</td>
-                        <td className="td num text-right">{fmtNum(r.dpm, 0)}</td><td className="td num text-right">{fmtNum(r.cspm)}</td></tr>))}</tbody></table></div>
+                        <td className="td num text-right">{fmtNum(r.dpm, 0)}</td><td className="td num text-right">{fmtNum(r.cspm)}</td></tr>))}</tbody></table></div></div>
                 </Card>
                 <Card eyebrow="Teams" title="Team history" info="Observed appearances per tournament, not contract records.">
                   <ul className="max-h-[420px] divide-y divide-line-soft overflow-y-auto">

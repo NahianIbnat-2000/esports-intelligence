@@ -53,7 +53,7 @@ function Inner() {
             {(d, meta) => (
               <Card>
                 {d.notes.slice(1).map((n) => <p key={n} className="mb-4 rounded-md border border-amber/30 bg-amber/5 p-3 text-sm text-amber">{n}</p>)}
-                <table className="w-full">
+                <div className="overflow-x-auto"><table className="w-full">
                   <thead className="border-b border-line"><tr><th className="th">Metric</th>
                     <th className="th text-right">{String(d.player_a.name)} <span className="text-ink-3">({POSITIONS[String(d.player_a.position)] ?? "n/a"})</span></th>
                     <th className="th text-right">{String(d.player_b.name)} <span className="text-ink-3">({POSITIONS[String(d.player_b.position)] ?? "n/a"})</span></th></tr></thead>
@@ -68,7 +68,7 @@ function Inner() {
                         <td className={cx("td num text-right", better === 2 && "text-violet")}>{r.fmt(vb)}</td>
                       </tr>);
                   })}</tbody>
-                </table>
+                </table></div>
                 <p className="mt-3 text-2xs text-ink-3">{d.notes[0]} Highlighted values are the higher (or, for deaths, lower) of the two; this is not a statistical test.</p>
                 <SourceNote meta={meta} />
               </Card>

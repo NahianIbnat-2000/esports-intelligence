@@ -62,12 +62,12 @@ function Inner() {
                     <p className="mt-2 text-2xs text-ink-3">Breaks in a line are periods without games.</p>
                   </Card>
                   <Card eyebrow="Career" title="Overall records">
-                    <table className="w-full"><thead className="border-b border-line"><tr><th className="th"></th><th className="th text-right">A</th><th className="th text-right">B</th></tr></thead>
+                    <div className="overflow-x-auto"><table className="w-full"><thead className="border-b border-line"><tr><th className="th"></th><th className="th text-right">A</th><th className="th text-right">B</th></tr></thead>
                       <tbody>
                         {([["Games", fmtInt(d.team_a.n_matches), fmtInt(d.team_b.n_matches)], ["Win rate", fmtPct(d.team_a.win_rate), fmtPct(d.team_b.win_rate)],
                           ["Current Elo", fmtNum(d.team_a.current_elo, 0), fmtNum(d.team_b.current_elo, 0)], ["League", d.team_a.primary_league ?? "n/a", d.team_b.primary_league ?? "n/a"]] as const)
                           .map(([l, x, y]) => <tr key={l} className="border-b border-line-soft"><td className="td text-ink-2">{l}</td><td className="td num text-right">{x}</td><td className="td num text-right">{y}</td></tr>)}
-                      </tbody></table>
+                      </tbody></table></div>
                   </Card>
                 </div>
                 <Card className="mt-6" eyebrow="Head-to-head" title="Games between these teams">

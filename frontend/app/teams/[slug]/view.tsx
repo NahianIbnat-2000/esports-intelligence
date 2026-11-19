@@ -79,18 +79,18 @@ export default function TeamDetail() {
               <div className="mt-6 grid gap-6 xl:grid-cols-2">
                 <Card eyebrow="Tournament history" title="By tournament">
                   <div className="max-h-96 overflow-y-auto">
-                    <table className="w-full"><thead className="border-b border-line"><tr><th className="th">Tournament</th><th className="th text-right">W-L</th><th className="th text-right">Win %</th></tr></thead>
+                    <div className="overflow-x-auto"><table className="w-full"><thead className="border-b border-line"><tr><th className="th">Tournament</th><th className="th text-right">W-L</th><th className="th text-right">Win %</th></tr></thead>
                       <tbody>{d.tournaments.map((x) => (
                         <tr key={x.slug} className="border-b border-line-soft"><td className="td"><Link className="hover:text-cyan" href={`/tournaments/${x.slug}`}>{x.name}</Link></td>
-                          <td className="td num text-right">{x.wins}-{x.games - x.wins}</td><td className="td num text-right">{fmtPct(x.win_rate)}</td></tr>))}</tbody></table>
+                          <td className="td num text-right">{x.wins}-{x.games - x.wins}</td><td className="td num text-right">{fmtPct(x.win_rate)}</td></tr>))}</tbody></table></div>
                   </div>
                 </Card>
                 <Card eyebrow="Head-to-head" title="Most frequent opponents">
-                  <table className="w-full"><thead className="border-b border-line"><tr><th className="th">Opponent</th><th className="th text-right">Games</th><th className="th text-right">W-L</th><th className="th"></th></tr></thead>
+                  <div className="overflow-x-auto"><table className="w-full"><thead className="border-b border-line"><tr><th className="th">Opponent</th><th className="th text-right">Games</th><th className="th text-right">W-L</th><th className="th"></th></tr></thead>
                     <tbody>{d.head_to_head.map((h) => (
                       <tr key={h.opponent_slug} className="border-b border-line-soft"><td className="td"><Link className="hover:text-cyan" href={`/teams/${h.opponent_slug}`}>{h.opponent}</Link></td>
                         <td className="td num text-right">{h.games}</td><td className="td num text-right">{h.wins}-{h.losses}</td>
-                        <td className="td text-right"><Link className="link text-xs" href={`/teams/compare?a=${t.slug}&b=${h.opponent_slug}`}>details</Link></td></tr>))}</tbody></table>
+                        <td className="td text-right"><Link className="link text-xs" href={`/teams/compare?a=${t.slug}&b=${h.opponent_slug}`}>details</Link></td></tr>))}</tbody></table></div>
                 </Card>
               </div>
               <Card className="mt-6" eyebrow="Match history" title="Last 20 games"

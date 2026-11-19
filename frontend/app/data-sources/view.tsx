@@ -57,11 +57,11 @@ export default function DataSourcesView() {
               </Card>
             )}
             <Card title="External provider adapters">
-              <table className="w-full"><thead className="border-b border-line"><tr><th className="th">Provider</th><th className="th">Games</th><th className="th">Key set</th><th className="th">Verified endpoints</th><th className="th">State</th></tr></thead>
+              <div className="overflow-x-auto"><table className="w-full"><thead className="border-b border-line"><tr><th className="th">Provider</th><th className="th">Games</th><th className="th">Key set</th><th className="th">Verified endpoints</th><th className="th">State</th></tr></thead>
                 <tbody>{d.providers.map((p) => (
                   <tr key={p.provider} className="border-b border-line-soft"><td className="td"><a className="link" href={p.documentation} target="_blank" rel="noreferrer">{p.provider}</a></td>
                     <td className="td text-xs">{p.games.join(", ")}</td><td className="td text-xs">{p.configured ? "yes" : `no (${p.env_var})`}</td>
-                    <td className="td text-xs">{p.verified_endpoints.length || "none"}</td><td className="td"><StatusBadge status={p.state} /></td></tr>))}</tbody></table>
+                    <td className="td text-xs">{p.verified_endpoints.length || "none"}</td><td className="td"><StatusBadge status={p.state} /></td></tr>))}</tbody></table></div>
               <p className="mt-3 text-xs text-ink-3">Keys are read on the server only and never sent to the browser.</p>
             </Card>
           </div>

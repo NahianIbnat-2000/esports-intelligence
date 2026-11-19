@@ -32,18 +32,18 @@ export default function DataQualityView() {
           <div className="space-y-6">
             <div className="grid gap-6 xl:grid-cols-3">
               <Card title="Pipeline counts">
-                <table className="w-full"><tbody>
+                <div className="overflow-x-auto"><table className="w-full"><tbody>
                   {([["Rows read", fmtInt(d.rows_retrieved)], ["Exact duplicate rows", fmtInt(d.duplicate_rows_exact)],
                     ["Conflicting duplicate rows", fmtInt(d.duplicate_rows_conflicting)], ["Games excluded (invalid structure)", fmtInt(d.games_excluded)],
                     ["Rows excluded in total", fmtInt(d.rows_excluded_total)], ["Games loaded", fmtInt(d.games_loaded)],
                     ["Games without a split name", fmtInt(d.games_without_split)]] as const).map(([l, v]) => (
                     <tr key={l} className="border-b border-line-soft"><td className="py-1.5 text-xs text-ink-2">{l}</td><td className="num py-1.5 text-right">{v}</td></tr>))}
-                </tbody></table>
+                </tbody></table></div>
               </Card>
               <Card title="Exclusions by reason" actions={<DownloadCsv rows={d.exclusions_by_reason || []} filename="exclusions_by_reason" />}>
-                <table className="w-full"><tbody>
+                <div className="overflow-x-auto"><table className="w-full"><tbody>
                   {(d.exclusions_by_reason || []).map((r) => <tr key={r.reason} className="border-b border-line-soft"><td className="py-1.5 pr-2 text-xs text-ink-2">{r.reason}</td><td className="num py-1.5 text-right">{fmtInt(r.rows)}</td></tr>)}
-                </tbody></table>
+                </tbody></table></div>
                 <p className="mt-2 text-2xs text-ink-3">Rows, not games: one excluded game removes all its rows. Row-level list: data/reports/exclusions.csv.</p>
               </Card>
               <Card title="Last ingestion run">
@@ -62,9 +62,9 @@ export default function DataQualityView() {
               </Card>
               <Card title="Unmatched identifiers" info={d.definitions.teams_without_source_id}>
                 <p className="mb-2 text-sm">{fmtInt(d.teams_without_source_id)} teams and {fmtInt(d.players_without_source_id)} players have no source id and are matched by name.</p>
-                <table className="w-full"><thead className="border-b border-line"><tr><th className="th">Main league</th><th className="th text-right">Teams without id</th></tr></thead><tbody>
+                <div className="overflow-x-auto"><table className="w-full"><thead className="border-b border-line"><tr><th className="th">Main league</th><th className="th text-right">Teams without id</th></tr></thead><tbody>
                   {d.unmatched_by_league.map((r) => <tr key={String(r.league)} className="border-b border-line-soft"><td className="td">{r.league ?? "n/a"}</td><td className="td num text-right">{r.teams_without_source_id}</td></tr>)}
-                </tbody></table>
+                </tbody></table></div>
               </Card>
             </div>
             <Card title="Files inspected" info="Columns the pipeline expects but did not find are created as null for that file.">

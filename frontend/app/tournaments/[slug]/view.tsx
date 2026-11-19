@@ -47,7 +47,7 @@ export default function TournamentDetail() {
                   actions={<Segmented label="Stage" value={stage} onChange={setStage} options={[
                     { value: "regular", label: "Regular" }, ...(t.has_playoffs ? [{ value: "playoffs" as const, label: "Playoffs" }] : []), { value: "all", label: "All" }]} />}>
                   {table.length === 0 ? <p className="text-sm text-ink-2">No games for this stage.</p> : (
-                    <table className="w-full">
+                    <div className="overflow-x-auto"><table className="w-full">
                       <thead className="border-b border-line"><tr><th className="th w-8">#</th><th className="th">Team</th><th className="th text-right">W</th><th className="th text-right">L</th><th className="th text-right">Win %</th></tr></thead>
                       <tbody>{table.map((s, i) => (
                         <tr key={s.team_slug} className="border-b border-line-soft">
@@ -56,7 +56,7 @@ export default function TournamentDetail() {
                           <td className="td num text-right">{s.wins}</td><td className="td num text-right">{s.losses}</td>
                           <td className="td num text-right">{fmtPct(s.win_rate)}</td>
                         </tr>))}</tbody>
-                    </table>
+                    </table></div>
                   )}
                   <p className="mt-3 text-2xs text-ink-3">Blue side won {fmtPct(d.stats.blue_win_rate)} of games in this tournament.</p>
                 </Card>
