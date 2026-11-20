@@ -27,6 +27,8 @@ type Summary = {
   windows: { test_year: number; periods: Record<string, { n: number; start: string; end: string }>;
     chosen: Record<string, unknown>; metrics: Record<string, Metric>; comparisons: WinComp[] }[];
   pooled: { n: number; metrics: Record<string, Metric>; comparisons: PoolComp[] };
+  subgroups?: { group: string; n: number; brier: Record<string, number>;
+    comparisons: { model: string; reference: string; difference: number; ci95_low: number; ci95_high: number }[] }[];
   patch_analysis: { group: string; n: number; elo_cal_brier: number; all_brier: number; difference: number; ci95_low: number; ci95_high: number }[];
 };
 
@@ -157,6 +159,18 @@ export default function ExperimentsView() {
           })} />
         </Card>
       </div>
+
+      {s.subgroups && s.subgroups.length > 0 && (
+        <Card className="mt-3" title="Is it player quality or league tier?" eyebrow="Pre-match player data over the form model, by type of game">
+          <p className="mb-3 text-sm leading-relaxed text-ink-2">
+            Player experience could help only because it tells strong leagues from weak ones. In a domestic game between two teams of the same league, the league level cancels out, so league tier cannot explain a gain there.
+          </p>
+          <Forest rows={s.subgroups.map((g) => {
+            const x = g.comparisons.find((k) => k.model === "prematch" && k.reference === "form")!;
+            return { label: g.group, d: x.difference, lo: x.ci95_low, hi: x.ci95_high, note: `${g.n.toLocaleString()} games` };
+          })} />
+        </Card>
+      )}
 
       <div className="mt-3 grid gap-3 lg:grid-cols-2">
         <Card title="Early in a patch vs later" eyebrow={`First ${s.design.patch_early_days} days after a patch appears`}>

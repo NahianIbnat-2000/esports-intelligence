@@ -30,6 +30,10 @@ Models    All logistic models: C chosen on validation (fit on train), then refit
             all            form + roster + player_elo_diff
 Comparisons  Paired differences in Brier and log loss with a series-cluster
           bootstrap, per window and pooled over all test windows.
+Subgroups Pooled test games by type: both teams from the same home league in a
+          domestic game (league levels cancel, so league tier cannot explain a
+          gain), top leagues only, teams from different leagues, and games with a
+          team that has fewer than 20 earlier games.
 Patch     Pooled test games split into the first 7 days after a patch first
           appears in the data vs later; Brier of elo_cal and all in each group.
 
@@ -68,6 +72,10 @@ PLAYER_K_GRID = [24, 32, 40, 48, 56, 64]
 PLAYER_SHRINK_GRID = [0.0, 0.1, 0.25, 0.5]
 PLAYER_K_LEAGUE_GRID = [0.0, 8.0, 16.0, 32.0]
 PATCH_EARLY_DAYS = 7
+TOP_LEAGUES = ["LCK", "LPL", "LEC", "LCS", "LTA N"]   # LTA N = North America in 2025
+NEW_TEAM_GAMES = 20
+SUBGROUP_COMPARISONS = [("form_player_exp", "form"), ("form_player_exp_prev", "form"), ("prematch", "form"),
+                        ("player_cal_prev", "elo_cal"), ("all", "form")]
 N_BOOT_WINDOW, N_BOOT_POOLED, SEED = 1000, 2000, 0
 
 MODELS = ["baseline", "elo_flat", "elo_league", "elo_cal", "form", "form_continuity", "form_tenure",
@@ -275,6 +283,28 @@ def run(processed: Path, raw: Path, workers: int) -> dict:
         patch.append({"group": grp, "n": int(len(g)), "elo_cal": summarise(g["blue_won"], g["elo_cal"]),
                       "all": summarise(g["blue_won"], g["all"]), "all_vs_elo_cal_brier": d})
 
+    # Subgroups: does player information still help where league tier cannot explain it?
+    ctx = base.set_index("source_game_id")[["blue_home", "red_home", "international", "min_prior_games"]]
+    P = P.join(ctx, on="source_game_id")
+    same = (P["blue_home"] == P["red_home"]) & ~P["international"].astype(bool)
+    groups = {
+        "Same home league, domestic game (league level cancels out)": same,
+        "Top leagues only, domestic (LCK, LPL, LEC, LCS / LTA N)": same & P["blue_home"].isin(TOP_LEAGUES),
+        "Teams from different leagues": P["blue_home"] != P["red_home"],
+        f"Established teams (both >= {NEW_TEAM_GAMES} earlier games)": P["min_prior_games"] >= NEW_TEAM_GAMES,
+        f"A newer team (< {NEW_TEAM_GAMES} earlier games)": P["min_prior_games"] < NEW_TEAM_GAMES,
+    }
+    subgroups = []
+    for label, mask in groups.items():
+        g = P[mask.to_numpy()]
+        row = {"group": label, "n": int(len(g)),
+               "brier": {m: M.brier(g["blue_won"], g[m]) for m in ("elo_cal", "form", "prematch", "all")},
+               "comparisons": []}
+        for a, b in SUBGROUP_COMPARISONS:
+            d = M.paired_bootstrap_diff(g["blue_won"], g[a], g[b], "brier", N_BOOT_POOLED, SEED, g["series"].to_numpy())
+            row["comparisons"].append({"model": a, "reference": b, **d})
+        subgroups.append(row)
+
     return {
         "data": data,
         "design": {"test_years": TEST_YEARS, "split_rule": "train < Y-1, validation = Y-1, test = Y (UTC year)",
@@ -289,10 +319,13 @@ def run(processed: Path, raw: Path, workers: int) -> dict:
                    "features": {"form": FEATURES, "roster": ROSTER_DEFINITIONS + [PREMATCH_FEATURE], "player": ["player_elo_diff", "player_elo_prev_diff"]},
                    "lineup_note": "Roster and player-Elo features use the lineup that played, which is known when "
                                   "the game starts but not days before.",
-                   "patch_early_days": PATCH_EARLY_DAYS, "models": MODELS},
+                   "patch_early_days": PATCH_EARLY_DAYS, "models": MODELS,
+                   "subgroups": {"top_leagues": TOP_LEAGUES, "new_team_games": NEW_TEAM_GAMES,
+                                 "home_league": "league a team played most domestic games in, earlier games only"}},
         "windows": windows,
         "pooled": {"n": int(len(P)), "metrics": pooled_metrics, "comparisons": pooled_comps},
         "patch_analysis": patch,
+        "subgroups": subgroups,
     }
 
 

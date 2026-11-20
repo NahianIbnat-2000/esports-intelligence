@@ -144,5 +144,6 @@ terminal restyle is two days old and works), any new paid service.
 
 Main new result: the published finding replicates in all five test years, and player
 experience (usable before match day) improves Brier about ten times more than the form
-features. The deployed model is unchanged; retraining it with player features is the next
+features. A follow-up by type of game shows the gain is not a league-tier artefact: it is
+the same size in same-league domestic games and largest for new teams. The deployed model is unchanged; retraining it with player features is the next
 decision.

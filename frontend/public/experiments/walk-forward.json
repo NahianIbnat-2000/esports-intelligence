@@ -1,8 +1,8 @@
 {
- "experiment_id": "walk-forward-20261120-143704-c8b6f8e19c",
- "created_at": "2026-11-20T14:37:04.006704+00:00",
+ "experiment_id": "walk-forward-20261120-154137-c8b6f8e19c",
+ "created_at": "2026-11-20T15:41:37.317867+00:00",
  "data_fingerprint": "c8b6f8e19c",
- "code_sha256": "5b503f5ed064",
+ "code_sha256": "2a5b846804e9",
  "git_commit": null,
  "environment": {
   "python": "3.13.18",
@@ -1743,6 +1743,243 @@
    "difference": -0.006581,
    "ci95_low": -0.007356,
    "ci95_high": -0.005783
+  }
+ ],
+ "subgroups": [
+  {
+   "group": "Same home league, domestic game (league level cancels out)",
+   "n": 39185,
+   "brier": {
+    "elo_cal": 0.220197,
+    "form": 0.219721,
+    "prematch": 0.214389,
+    "all": 0.213106
+   },
+   "comparisons": [
+    {
+     "model": "form_player_exp",
+     "reference": "form",
+     "difference": -0.005725,
+     "ci95_low": -0.00641,
+     "ci95_high": -0.005068
+    },
+    {
+     "model": "form_player_exp_prev",
+     "reference": "form",
+     "difference": -0.004606,
+     "ci95_low": -0.005237,
+     "ci95_high": -0.004008
+    },
+    {
+     "model": "prematch",
+     "reference": "form",
+     "difference": -0.005332,
+     "ci95_low": -0.006015,
+     "ci95_high": -0.00466
+    },
+    {
+     "model": "player_cal_prev",
+     "reference": "elo_cal",
+     "difference": -0.00168,
+     "ci95_low": -0.002377,
+     "ci95_high": -0.001019
+    },
+    {
+     "model": "all",
+     "reference": "form",
+     "difference": -0.006614,
+     "ci95_low": -0.007399,
+     "ci95_high": -0.005861
+    }
+   ]
+  },
+  {
+   "group": "Top leagues only, domestic (LCK, LPL, LEC, LCS / LTA N)",
+   "n": 8600,
+   "brier": {
+    "elo_cal": 0.222269,
+    "form": 0.222076,
+    "prematch": 0.219414,
+    "all": 0.218747
+   },
+   "comparisons": [
+    {
+     "model": "form_player_exp",
+     "reference": "form",
+     "difference": -0.002352,
+     "ci95_low": -0.003338,
+     "ci95_high": -0.001378
+    },
+    {
+     "model": "form_player_exp_prev",
+     "reference": "form",
+     "difference": -0.001865,
+     "ci95_low": -0.002691,
+     "ci95_high": -0.001014
+    },
+    {
+     "model": "prematch",
+     "reference": "form",
+     "difference": -0.002662,
+     "ci95_low": -0.003723,
+     "ci95_high": -0.001581
+    },
+    {
+     "model": "player_cal_prev",
+     "reference": "elo_cal",
+     "difference": -0.000865,
+     "ci95_low": -0.00228,
+     "ci95_high": 0.000494
+    },
+    {
+     "model": "all",
+     "reference": "form",
+     "difference": -0.003329,
+     "ci95_low": -0.004612,
+     "ci95_high": -0.002125
+    }
+   ]
+  },
+  {
+   "group": "Teams from different leagues",
+   "n": 10229,
+   "brier": {
+    "elo_cal": 0.210935,
+    "form": 0.21097,
+    "prematch": 0.205774,
+    "all": 0.20456
+   },
+   "comparisons": [
+    {
+     "model": "form_player_exp",
+     "reference": "form",
+     "difference": -0.004797,
+     "ci95_low": -0.00601,
+     "ci95_high": -0.003548
+    },
+    {
+     "model": "form_player_exp_prev",
+     "reference": "form",
+     "difference": -0.003773,
+     "ci95_low": -0.004932,
+     "ci95_high": -0.002632
+    },
+    {
+     "model": "prematch",
+     "reference": "form",
+     "difference": -0.005196,
+     "ci95_low": -0.006428,
+     "ci95_high": -0.003916
+    },
+    {
+     "model": "player_cal_prev",
+     "reference": "elo_cal",
+     "difference": -0.002982,
+     "ci95_low": -0.004269,
+     "ci95_high": -0.001683
+    },
+    {
+     "model": "all",
+     "reference": "form",
+     "difference": -0.00641,
+     "ci95_low": -0.007782,
+     "ci95_high": -0.004957
+    }
+   ]
+  },
+  {
+   "group": "Established teams (both >= 20 earlier games)",
+   "n": 42314,
+   "brier": {
+    "elo_cal": 0.218169,
+    "form": 0.218101,
+    "prematch": 0.213789,
+    "all": 0.212664
+   },
+   "comparisons": [
+    {
+     "model": "form_player_exp",
+     "reference": "form",
+     "difference": -0.004491,
+     "ci95_low": -0.005141,
+     "ci95_high": -0.003861
+    },
+    {
+     "model": "form_player_exp_prev",
+     "reference": "form",
+     "difference": -0.003547,
+     "ci95_low": -0.004117,
+     "ci95_high": -0.002972
+    },
+    {
+     "model": "prematch",
+     "reference": "form",
+     "difference": -0.004312,
+     "ci95_low": -0.004939,
+     "ci95_high": -0.003696
+    },
+    {
+     "model": "player_cal_prev",
+     "reference": "elo_cal",
+     "difference": -0.001218,
+     "ci95_low": -0.001851,
+     "ci95_high": -0.000598
+    },
+    {
+     "model": "all",
+     "reference": "form",
+     "difference": -0.005437,
+     "ci95_low": -0.006141,
+     "ci95_high": -0.004739
+    }
+   ]
+  },
+  {
+   "group": "A newer team (< 20 earlier games)",
+   "n": 7434,
+   "brier": {
+    "elo_cal": 0.219847,
+    "form": 0.217775,
+    "prematch": 0.206969,
+    "all": 0.204879
+   },
+   "comparisons": [
+    {
+     "model": "form_player_exp",
+     "reference": "form",
+     "difference": -0.011321,
+     "ci95_low": -0.013473,
+     "ci95_high": -0.009221
+    },
+    {
+     "model": "form_player_exp_prev",
+     "reference": "form",
+     "difference": -0.009361,
+     "ci95_low": -0.011277,
+     "ci95_high": -0.007521
+    },
+    {
+     "model": "prematch",
+     "reference": "form",
+     "difference": -0.010806,
+     "ci95_low": -0.012877,
+     "ci95_high": -0.008861
+    },
+    {
+     "model": "player_cal_prev",
+     "reference": "elo_cal",
+     "difference": -0.005977,
+     "ci95_low": -0.007843,
+     "ci95_high": -0.004194
+    },
+    {
+     "model": "all",
+     "reference": "form",
+     "difference": -0.012896,
+     "ci95_low": -0.01523,
+     "ci95_high": -0.010772
+    }
+   ]
   }
  ]
 }

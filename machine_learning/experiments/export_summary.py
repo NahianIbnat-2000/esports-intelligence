@@ -50,6 +50,11 @@ def summary(rec: dict) -> dict:
                             "difference": r(p["all_vs_elo_cal_brier"]["difference"], 6),
                             "ci95_low": r(p["all_vs_elo_cal_brier"]["ci95_low"], 6),
                             "ci95_high": r(p["all_vs_elo_cal_brier"]["ci95_high"], 6)} for p in rec["patch_analysis"]],
+        "subgroups": [{"group": g["group"], "n": g["n"], "brier": {k: r(v) for k, v in g["brier"].items()},
+                       "comparisons": [{"model": c["model"], "reference": c["reference"],
+                                        "difference": r(c["difference"]), "ci95_low": r(c["ci95_low"]),
+                                        "ci95_high": r(c["ci95_high"])} for c in g["comparisons"]]}
+                      for g in rec.get("subgroups", [])],
     }
 
 

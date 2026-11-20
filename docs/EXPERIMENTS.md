@@ -1,7 +1,7 @@
 # Experiments: walk-forward evaluation and player-information ablation
 
-Record: `machine_learning/experiments/registry/walk-forward-20261120-143704-c8b6f8e19c.json`
-(data fingerprint `c8b6f8e19c`, code checksum `5b503f5ed064`, Python 3.13, numpy 2.5.3,
+Record: `machine_learning/experiments/registry/walk-forward-20261120-154137-c8b6f8e19c.json`
+(data fingerprint `c8b6f8e19c`, code checksum `2a5b846804e9`, Python 3.13, numpy 2.5.3,
 pandas 3.0.5, scikit-learn 1.9.1, seed 0). Re-run with
 `python -m machine_learning.experiments.walk_forward`, then
 `python -m machine_learning.experiments.export_summary` to refresh the website copy.
@@ -104,6 +104,19 @@ Year by year (Brier):
 The intervals overlap, so there is no clear evidence that player information helps more
 early in a patch.
 
+### By type of game (pre-match model vs form model)
+
+| Games | n | Form | Pre-match | Difference [95% CI] |
+|---|---|---|---|---|
+| Same home league, domestic game | 39,185 | 0.2197 | 0.2144 | -0.0053 [-0.0060, -0.0047] |
+| Top leagues only, domestic (LCK, LPL, LEC, LCS / LTA N) | 8,600 | 0.2221 | 0.2194 | -0.0027 [-0.0037, -0.0016] |
+| Teams from different leagues | 10,229 | 0.2110 | 0.2058 | -0.0052 [-0.0064, -0.0039] |
+| Both teams with at least 20 earlier games | 42,314 | 0.2181 | 0.2138 | -0.0043 [-0.0049, -0.0037] |
+| A team with fewer than 20 earlier games | 7,434 | 0.2178 | 0.2070 | -0.0108 [-0.0129, -0.0089] |
+
+In a domestic game between two teams of the same league, the league level cancels out of
+the prediction, so league tier cannot be what player experience is picking up there.
+
 ## 4. Findings
 
 1. **The published finding replicates.** In every year, league levels are the biggest gain
@@ -113,19 +126,27 @@ early in a patch.
    player experience lowers Brier by about 0.005, more than ten times the form features,
    in all five years with intervals below zero each year. Most of it (about 80%) survives
    when only the previous game's lineup is used, so it is usable before match day.
-3. **One simple feature does most of the work.** Player experience alone matches all
+3. **It is not a league-tier effect.** The gain is the same inside same-league domestic
+   games, largest for new teams, and still clear in the top leagues and for established
+   teams.
+4. **One simple feature does most of the work.** Player experience alone matches all
    roster features together; continuity and tenure add little. Player-level Elo adds a
    further, smaller gain on top.
-4. **Accuracy moves less than Brier.** The pre-match model is right 65.6% of the time vs
+5. **Accuracy moves less than Brier.** The pre-match model is right 65.6% of the time vs
    64.6% for the published model; most of the gain is in better-calibrated probabilities.
 
 ## 5. Interpretation and open questions
 
-- *Why does experience help?* Two readings, not yet separated: (a) experienced players are
+- *Why does experience help?* Two readings were possible: (a) experienced players are
   better and Elo is slow to see that when a team is new or rebuilt; (b) experience is a proxy
   for league tier that the league levels measure poorly (see the LFL vs LPL issue in
-  `PROJECT_AUDIT.md`). Next test: the same comparison inside the best-linked leagues only
-  (LCK, LPL, LEC, LCS) and for teams with fewer than 20 earlier games.
+  `PROJECT_AUDIT.md`). The subgroup table rules out (b) as the main story: the gain is the
+  same size in same-league domestic games, where league tier cancels out. It is largest for
+  teams with fewer than 20 earlier games (-0.0108), which fits (a): a new or renamed team
+  starts Elo from scratch, but its players' history does not. It also holds, at half the
+  size, for established teams and inside the top leagues.
+- This is association, not cause: experience may stand for skill, for being picked by a
+  strong organisation, or both.
 - Player ratings share outcomes (five players, one result), so player Elo is a way for a
   rating to follow players, not a measure of individual skill.
 - Tuning picks K = 40 and carry-over 0.1 for player Elo in every window; both are inside the
@@ -139,6 +160,8 @@ early in a patch.
   are a separate, documented study.
 - New code: `machine_learning/experiments/` (`lineups.py`, `player_elo.py`, `registry.py`,
   `walk_forward.py`, `export_summary.py`). New tests: `tests/unit/test_experiments.py`.
+- Reproducibility: re-running the study gave identical metrics to the earlier run (same
+  data, same seed).
 - New page: `/experiments` reads `frontend/public/experiments/walk-forward.json`, exported
   from the registry record above.
 - Proposed next step (needs a decision): retrain the deployed model with the pre-match player
