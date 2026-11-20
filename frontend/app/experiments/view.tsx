@@ -44,10 +44,12 @@ const LABEL: Record<string, string> = {
   form_player_exp_prev: "Form + player experience (previous lineup)",
   player_cal_prev: "Calibrated player Elo (previous lineup)",
   prematch: "Pre-match: form + previous-lineup player data",
-  form_roster: "Form + all roster features",
-  player_cal: "Calibrated player Elo",
-  all: "Form + roster + player Elo",
+  form_roster: "Form + all roster features (today's lineup)",
+  player_cal: "Calibrated player Elo (today's lineup)",
+  all: "Form + roster + player Elo (today's lineup)",
 };
+// models whose player features use the lineup that played (known only when the game starts)
+const TODAY = new Set(["form_continuity", "form_tenure", "form_player_exp", "form_roster", "player_cal", "all"]);
 const MAIN = ["baseline", "elo_flat", "elo_league", "elo_cal", "form", "prematch", "form_roster", "player_cal", "all"];
 
 const f4 = (x: number | null | undefined) => (x == null ? "–" : x.toFixed(4));
@@ -107,13 +109,14 @@ export default function ExperimentsView() {
 
       <Card className="mb-3 border-l-2 border-l-cyan" title="Read this first">
         <p className="text-sm leading-relaxed text-ink-2">
-          Most roster and player-Elo features use the five players who actually played. That lineup is visible when the game starts (in the draft), but usually not days before. Models marked <b className="text-ink">previous lineup</b> or <b className="text-ink">pre-match</b> use only the players from each team&apos;s last game, so they can be used before match day. The published model on the <Link className="link" href="/predictions">prediction lab</Link> does not use player data yet.
+          Most roster and player-Elo features use the five players who actually played. That lineup is visible when the game starts (in the draft), but usually not days before. Models marked <b className="text-ink">previous lineup</b> or <b className="text-ink">pre-match</b> use only the players from each team&apos;s last game, so they can be used before match day. The <Link className="link" href="/predictions">prediction lab</Link> includes a pre-match player model (logistic + player experience of the previous lineup); rows marked <b className="text-ink">today&apos;s lineup</b> below are research only.
         </p>
       </Card>
 
       <Card title="What each step adds" eyebrow={`Pooled over ${years[0]}–${years[years.length - 1]} · ${s.pooled.n.toLocaleString()} test games`} className="mb-3">
         <Forest rows={s.pooled.comparisons.map((p) => ({
-          label: p.question, d: p.brier_difference, lo: p.brier_ci95_low, hi: p.brier_ci95_high,
+          label: TODAY.has(p.model) ? `${p.question} (today's lineup)` : p.question,
+          d: p.brier_difference, lo: p.brier_ci95_low, hi: p.brier_ci95_high,
           note: `better in ${p.windows_better}/${years.length} years`,
         }))} />
       </Card>
