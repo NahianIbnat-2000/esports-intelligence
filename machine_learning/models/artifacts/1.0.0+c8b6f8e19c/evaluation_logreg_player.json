@@ -1,0 +1,166 @@
+{
+  "best_C": 10.0,
+  "C_grid": [
+    {
+      "C": 0.0003,
+      "validation_log_loss": 0.6201768331528618
+    },
+    {
+      "C": 0.001,
+      "validation_log_loss": 0.6178647655351196
+    },
+    {
+      "C": 0.003,
+      "validation_log_loss": 0.6172462428818943
+    },
+    {
+      "C": 0.01,
+      "validation_log_loss": 0.6171116348121144
+    },
+    {
+      "C": 0.1,
+      "validation_log_loss": 0.6170902352756225
+    },
+    {
+      "C": 1.0,
+      "validation_log_loss": 0.6170896601415486
+    },
+    {
+      "C": 10.0,
+      "validation_log_loss": 0.6170896207758065
+    }
+  ],
+  "test": {
+    "n": 10087,
+    "accuracy": 0.6574799246554972,
+    "precision": 0.6609748010610079,
+    "recall": 0.7387437465258477,
+    "f1": 0.6976988362936389,
+    "ece": 0.010367398738444222,
+    "roc_auc": 0.7209806601077041,
+    "brier": 0.21163266697237285,
+    "log_loss": 0.6103677597140083,
+    "base_rate_blue_win": 0.5350451075641915
+  },
+  "validation": {
+    "n": 10086,
+    "accuracy": 0.6569502280388657,
+    "precision": 0.6760460442170656,
+    "recall": 0.6868386857248933,
+    "f1": 0.6813996316758748,
+    "ece": 0.016025042086157622,
+    "roc_auc": 0.7127764131355454,
+    "brier": 0.21459818634536204,
+    "log_loss": 0.6170896207758065,
+    "base_rate_blue_win": 0.53410668253024
+  },
+  "coefficients": [
+    {
+      "feature": "elo_diff",
+      "coef_per_sd": 0.562764496318248,
+      "odds_ratio_per_sd": 1.7555189238511235
+    },
+    {
+      "feature": "recent_wr_diff",
+      "coef_per_sd": 0.06390858361304617,
+      "odds_ratio_per_sd": 1.0659949449007593
+    },
+    {
+      "feature": "hist_wr_diff",
+      "coef_per_sd": 0.048665400563883854,
+      "odds_ratio_per_sd": 1.0498690063859621
+    },
+    {
+      "feature": "opp_strength_diff",
+      "coef_per_sd": 0.02581620395336397,
+      "odds_ratio_per_sd": 1.026152328398955
+    },
+    {
+      "feature": "experience_diff",
+      "coef_per_sd": -0.009441343675629064,
+      "odds_ratio_per_sd": 0.9906030858747449
+    },
+    {
+      "feature": "elo_diff_x_intl",
+      "coef_per_sd": -0.0013916360982319008,
+      "odds_ratio_per_sd": 0.9986093317782537
+    },
+    {
+      "feature": "player_exp_prev_diff",
+      "coef_per_sd": 0.33605280058396675,
+      "odds_ratio_per_sd": 1.399412912679252
+    }
+  ],
+  "intercept": 0.1313304311129407,
+  "comparisons": {
+    "logreg_player_vs_logreg_brier": {
+      "metric": "brier",
+      "difference": -0.0047712072350312214,
+      "ci95_low": -0.005988656615688125,
+      "ci95_high": -0.003491193197161649,
+      "share_bootstrap_model_better": 1.0,
+      "n_boot": 2000,
+      "resampling_unit": "series (cluster bootstrap)",
+      "n_units": 4584
+    },
+    "logreg_player_vs_logreg_log_loss": {
+      "metric": "log_loss",
+      "difference": -0.011167819400236211,
+      "ci95_low": -0.014017769320487344,
+      "ci95_high": -0.008136440814153932,
+      "share_bootstrap_model_better": 1.0,
+      "n_boot": 2000,
+      "resampling_unit": "series (cluster bootstrap)",
+      "n_units": 4584
+    },
+    "logreg_player_vs_elo_logit_brier": {
+      "metric": "brier",
+      "difference": -0.005391049223414806,
+      "ci95_low": -0.006641235649999232,
+      "ci95_high": -0.0040801433663209,
+      "share_bootstrap_model_better": 1.0,
+      "n_boot": 2000,
+      "resampling_unit": "series (cluster bootstrap)",
+      "n_units": 4584
+    },
+    "logreg_player_vs_elo_logit_log_loss": {
+      "metric": "log_loss",
+      "difference": -0.012801809085686035,
+      "ci95_low": -0.0157089920449817,
+      "ci95_high": -0.009657157569133837,
+      "share_bootstrap_model_better": 1.0,
+      "n_boot": 2000,
+      "resampling_unit": "series (cluster bootstrap)",
+      "n_units": 4584
+    },
+    "logreg_player_vs_elo_brier": {
+      "metric": "brier",
+      "difference": -0.005946286058474593,
+      "ci95_low": -0.007295268576822159,
+      "ci95_high": -0.0045051988609565085,
+      "share_bootstrap_model_better": 1.0,
+      "n_boot": 2000,
+      "resampling_unit": "series (cluster bootstrap)",
+      "n_units": 4584
+    },
+    "logreg_player_vs_elo_log_loss": {
+      "metric": "log_loss",
+      "difference": -0.014518594429204978,
+      "ci95_low": -0.017700567660283526,
+      "ci95_high": -0.011069715670342439,
+      "share_bootstrap_model_better": 1.0,
+      "n_boot": 2000,
+      "resampling_unit": "series (cluster bootstrap)",
+      "n_units": 4584
+    }
+  },
+  "feature_means": {
+    "elo_diff": -0.12082672284750515,
+    "recent_wr_diff": -0.0023064745613559385,
+    "hist_wr_diff": 0.0017957963750746594,
+    "opp_strength_diff": 0.5998195564098339,
+    "experience_diff": 0.009076278642296156,
+    "elo_diff_x_intl": -0.05428836623415687,
+    "player_exp_prev_diff": 0.01644286100252005
+  }
+}

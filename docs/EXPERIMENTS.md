@@ -164,6 +164,9 @@ the prediction, so league tier cannot be what player experience is picking up th
   data, same seed).
 - New page: `/experiments` reads `frontend/public/experiments/walk-forward.json`, exported
   from the registry record above.
-- Proposed next step (needs a decision): retrain the deployed model with the pre-match player
-  features, so the prediction lab uses them. That changes the public model and its numbers,
-  so it should be a new model version with its own record.
+- Deployed (20 Nov 2026): a fourth model, `logreg_player` = the published logistic model plus
+  `player_exp_prev_diff` only. On the published test period (23 Sep 2025 to 14 Nov 2026,
+  10,087 games) its Brier score is 0.2116 vs 0.2164 for the logistic model: -0.0048
+  [95% CI -0.0060, -0.0035], accuracy 65.7% vs 64.9%. Player-level Elo is not deployed: it
+  added less (about -0.0009 more in the walk-forward study) and needs a stored player-rating
+  history.

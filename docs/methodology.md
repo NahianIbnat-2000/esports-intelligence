@@ -55,7 +55,14 @@ The feature list was fixed before evaluation and is not tuned on test results.
   and checking past features do not change), no post-game statistics, scaler fitted
   on training rows, one row per `gameid`, chronological split (tested for overlap).
 
-### Walk-forward study (separate from the deployed model)
+- Player model (`logreg_player`, added Nov 2026): the logistic regression plus
+  `player_exp_prev_diff`, the difference in mean log(1 + earlier pro games) of the players in
+  each team's previous game. Same Elo configuration, split, C grid and test games as the
+  other models; it needs no knowledge of today's lineup. Code:
+  `machine_learning/training/player_model.py`; the API computes the same value from the
+  database (`_previous_lineup_experience`), checked by a train/serve parity test.
+
+### Walk-forward study
 
 Rolling test years 2022 to 2026 (train before Y-1, validate on Y-1, test on Y), with Elo,
 player Elo and C re-tuned per year on validation log loss, and roster / player-level features

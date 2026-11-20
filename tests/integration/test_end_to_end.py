@@ -290,3 +290,42 @@ def test_ticker(client, loaded):
     for it in d["items"]:
         assert it["label"] and it["display"] and it["definition"]
         assert it["direction"] in (None, "up", "down")
+
+
+def test_player_model_train_serve_parity(client, loaded):
+    """The add-on player model trains on the published split, is served by the API, and the
+    API's previous-lineup experience equals the training feature for the same game."""
+    import pandas as pd
+
+    from backend.app.database.session import get_sessionmaker
+    from backend.app.models import Match, Team
+    from backend.app.services.predictions import _previous_lineup_experience
+    from machine_learning.training import player_model
+    from pipelines.oracle_elixir.config import PROCESSED_DIR
+    assert player_model.main([]) == 0
+    clear_all_caches()
+    models = {m["model_key"]: m for m in client.get("/api/v1/predictions/models").json()["data"]}
+    assert models["logreg_player"]["status"] == "trained"
+    assert "player_exp_prev_diff" in [f["name"] for f in models["logreg_player"]["feature_definitions"]]
+
+    r = loaded[2]
+    teams = client.get("/api/v1/teams?sort=elo&page_size=2").json()["data"]
+    body = client.post("/api/v1/predictions", json={"team_a": teams[0]["slug"], "team_b": teams[1]["slug"],
+                                                     "as_of": r["split"]["data_end"][:10]}).json()
+    p = {x["model_key"]: x for x in body["predictions"]}["logreg_player"]
+    assert p["status"] == "trained" and 0 < p["prob_team_a"] < 1
+    assert "player_experience" in body["explanation"]
+
+    # parity on a test-period game
+    df, _ = player_model.rebuild_published(PROCESSED_DIR, sorted(
+        __import__("pathlib").Path(os.environ["MODELS_DIR"]).glob("*/evaluation.json"))[-1])
+    players = pd.read_parquet(PROCESSED_DIR / "player_rows.parquet",
+                              columns=["source_game_id", "team_key", "player_key", "match_date"])
+    df = player_model.add_player_feature(df, players)
+    row = df[df["split"] == "test"].iloc[-1]
+    with get_sessionmaker()() as db:
+        m = db.query(Match).filter(Match.source_match_id == row["source_game_id"]).one()
+        tid = {t.source_team_id: t.id for t in db.query(Team).filter(Team.id.in_([m.blue_team_id, m.red_team_id]))}
+        blue = _previous_lineup_experience(db, tid[row["blue_team_key"]], m.match_date)["value"]
+        red = _previous_lineup_experience(db, tid[row["red_team_key"]], m.match_date)["value"]
+    assert blue - red == pytest.approx(row["player_exp_prev_diff"], abs=1e-9)

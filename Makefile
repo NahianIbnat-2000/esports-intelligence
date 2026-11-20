@@ -2,7 +2,8 @@
 #   make install        Python + frontend dependencies
 #   make db             apply database migrations
 #   make data FILES="~/Downloads/2024_LoL_esports_match_data_from_OraclesElixir.csv ..."
-#   make models         train and evaluate Elo / logistic regression
+#   make models         train and evaluate Elo / logistic regression (+ player model)
+#   make player-model   add only the pre-game player model to the current version
 #   make analytics      compute research indicators
 #   make all FILES=...  data + models + analytics
 #   make reload FILES=... same, after dropping all tables (for hosted databases)
@@ -24,6 +25,10 @@ data: db
 
 models:
 	$(PY) -m machine_learning.training.train
+
+# add the pre-game player model to an existing trained version (no Elo retraining)
+player-model:
+	$(PY) -m machine_learning.training.player_model
 
 analytics:
 	$(PY) -m analytics.run_all
@@ -55,4 +60,4 @@ test:
 build-web:
 	cd frontend && npm run build
 
-.PHONY: install db data models analytics snapshot all reset-db reload api web test build-web
+.PHONY: install db data models player-model analytics snapshot all reset-db reload api web test build-web

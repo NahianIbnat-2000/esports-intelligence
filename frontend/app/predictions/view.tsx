@@ -29,8 +29,10 @@ interface PredRes {
     logreg_contributions: { orientation: string; intercept: number; logit: number; probability_team_a_on_blue: number; note: string;
       features: { feature: string; value: number; standardised: number; contribution_log_odds: number }[] } | null;
     summary: string[];
+    player_experience?: { team_a: PlayerExp; team_b: PlayerExp; note: string };
   };
 }
+type PlayerExp = { value: number; players: number; mean_games: number | null; last_game: string | null };
 
 function nextDay(iso: string) {
   const d = new Date(iso);
@@ -44,7 +46,7 @@ export default function PredictionsView() {
   return (
     <>
       <PageHeader index="05" eyebrow="Predictions" title="Match prediction laboratory"
-        description="Out-of-sample win probabilities for a single game from three models: an Elo baseline, a calibrated Elo, and a logistic regression on pre-game features. Probabilities express uncertainty; they do not guarantee results.">
+        description="Out-of-sample win probabilities for a single game from four models: an Elo baseline, a calibrated Elo, a logistic regression on pre-game team features, and the same regression plus the experience of each team's players. Probabilities express uncertainty; they do not guarantee results.">
         <GameSwitch />
       </PageHeader>
       <DataState query={models} gameName={GAMES.find((g) => g.slug === game)?.name}>
@@ -163,7 +165,7 @@ function verdict(c?: Comparison, base = "Elo") {
   return "no clear difference (CI includes 0)";
 }
 
-const ORDER = ["baseline_50", "baseline_prevalence", "elo", "elo_logit", "logreg"];
+const ORDER = ["baseline_50", "baseline_prevalence", "elo", "elo_logit", "logreg", "logreg_player"];
 const short = (m: ModelInfo) => m.display_name.split(" (")[0];
 
 function Explanation({ r }: { r: PredRes }) {
@@ -179,9 +181,12 @@ function Explanation({ r }: { r: PredRes }) {
           <tr className="border-b border-line-soft"><td className="py-1 text-ink-2">Elo difference (A − B)</td><td className="num py-1 text-right">{fmtSigned(e.elo_difference_a_minus_b, 0)}</td></tr>
           <tr className="border-b border-line-soft"><td className="py-1 text-ink-2">Last 10 games (A / B)</td><td className="num py-1 text-right">{e.recent_form.team_a.wins}-{e.recent_form.team_a.games - e.recent_form.team_a.wins} / {e.recent_form.team_b.wins}-{e.recent_form.team_b.games - e.recent_form.team_b.wins}</td></tr>
           <tr className="border-b border-line-soft"><td className="py-1 text-ink-2">Head-to-head before date (A-B)</td><td className="num py-1 text-right">{e.head_to_head_before_date.games ? `${e.head_to_head_before_date.wins_a}-${e.head_to_head_before_date.wins_b}` : "no meetings"}</td></tr>
+          {e.player_experience && (
+            <tr className="border-b border-line-soft"><td className="py-1 text-ink-2">Avg. earlier pro games of last lineup (A / B)</td><td className="num py-1 text-right">{fmtNum(e.player_experience.team_a.mean_games ?? NaN, 0)} / {fmtNum(e.player_experience.team_b.mean_games ?? NaN, 0)}</td></tr>
+          )}
           <tr className="border-b border-line-soft"><td className="py-1 text-ink-2">Blue win % with equal teams</td><td className="num py-1 text-right">{e.side_advantage ? fmtPct(e.side_advantage.blue_win_prob_equal_teams) : "unavailable"}</td></tr>
         </tbody></table>
-        <p className="mt-2 text-2xs text-ink-3">{e.head_to_head_before_date.note} {e.side_advantage?.note}</p>
+        <p className="mt-2 text-2xs text-ink-3">{e.head_to_head_before_date.note} {e.side_advantage?.note} {e.player_experience?.note}</p>
       </div>
       <div className="rounded-md border border-line bg-bg-2 p-4 lg:col-span-3">
         <p className="eyebrow mb-2">Logistic regression: feature contributions ({c?.orientation ?? "unavailable"})</p>
@@ -302,6 +307,8 @@ function Uncertainty({ models }: { models: ModelInfo[] }) {
     ["Logistic vs Elo", all["logreg_vs_elo_brier"]],
     ["Logistic vs calibrated Elo", all["logreg_vs_elo_logit_brier"]],
     ["Logistic vs calibrated Elo (tournament clusters)", all["logreg_vs_elo_logit_brier_tournament_clusters"]],
+    ["Player model vs logistic", all["logreg_player_vs_logreg_brier"]],
+    ["Player model vs calibrated Elo", all["logreg_player_vs_elo_logit_brier"]],
     ["Logistic vs Elo (single-game resampling)", all["logreg_vs_elo_brier_single_game_bootstrap"]],
   ];
   return (
@@ -317,7 +324,7 @@ function Uncertainty({ models }: { models: ModelInfo[] }) {
             <td className="td num text-right text-xs">{rel === null ? "n/a" : `${(rel * 100).toFixed(2)}% of Elo Brier`}</td></tr>); })}</tbody>
       </table></div>
       <p className="mt-3 text-xs leading-relaxed text-ink-2"><b className="text-ink">Statistical vs practical significance.</b> An interval that excludes zero says the difference is unlikely to be resampling noise. It does not say the difference matters. With 10,000 test games, differences of a few thousandths of a Brier point can be "significant" while changing almost no predictions. The last column puts each difference against the Elo Brier score.</p>
-      <p className="mt-2 text-2xs text-ink-3">Limitations: series are approximated (no series id in the source); one test period only (a single realisation of the future); models are fixed at the start of the test period rather than refitted as new games arrive.</p>
+      <p className="mt-2 text-2xs text-ink-3">Limitations: series are approximated (no series id in the source); one test period here (the <a className="link" href="/experiments">Experiments</a> page repeats the comparison for five years); models are fixed at the start of the test period rather than refitted as new games arrive.</p>
     </Card>
   );
 }

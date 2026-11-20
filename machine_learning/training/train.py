@@ -288,6 +288,10 @@ def main(argv=None) -> int:
         from machine_learning.training.persist import persist
         persist(out)
         log.info("model versions, Elo ratings and test predictions written to the database")
+    # Pre-game player model (adds one model version; needs player rows from the pipeline)
+    if r["status"] == "trained" and (PROCESSED_DIR / "player_rows.parquet").exists():
+        from machine_learning.training import player_model
+        player_model.main(["--no-db"] if a.no_db else [])
     return 0
 
 

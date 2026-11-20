@@ -49,7 +49,9 @@ re-tuned and refit for each year (`docs/EXPERIMENTS.md`, page `/experiments`):
   (known before match day), the Brier score falls a further 0.0053 [95% CI -0.0059 to
   -0.0047] over the form model, better in all five years. One feature, the average number
   of earlier pro games of the players, does most of the work.
-- The deployed model does not use player features yet.
+- The prediction lab now includes this as a fourth model (logistic + player experience of
+  each team's previous lineup). On the original test period: Brier 0.2116 vs 0.2164, a
+  difference of -0.0048 [95% CI -0.0060 to -0.0035]; accuracy 65.7% vs 64.9%.
 
 ## Related work
 

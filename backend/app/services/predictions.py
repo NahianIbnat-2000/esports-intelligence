@@ -7,19 +7,21 @@ from pathlib import Path
 
 import joblib
 from fastapi import HTTPException
-from sqlalchemy import and_, desc, select
+import numpy as np
+from sqlalchemy import and_, desc, func, select
 from sqlalchemy.orm import Session, aliased
 
 from backend.app.core.config import get_settings
-from backend.app.models import EloRating, Game, Match, ModelPrediction, ModelVersion, Team, TeamMatchStatistic, Tournament
+from backend.app.models import EloRating, Game, Match, ModelPrediction, ModelVersion, PlayerMatchStatistic, Team, \
+    TeamMatchStatistic, Tournament
 from backend.app.schemas.common import ModelProbability, PredictionRequest, PredictionResponse
 from machine_learning.inference.predict import predict_pair, team_state
 
 MIN_PRIOR_GAMES = 5
 CAVEATS = [
     "Probabilities describe uncertainty; they do not guarantee any outcome.",
-    "Inputs use only games recorded before the prediction date. Roster changes, patches, and draft are not "
-    "modelled.",
+    "Inputs use only games recorded before the prediction date. Patches and draft are not modelled; the player "
+    "model uses the players of each team's previous game, so a lineup change made since then is not seen.",
     "Models predict a single game, not a best-of series.",
     "Ratings stop changing after the last game in the data; predictions for later dates use frozen ratings.",
 ]
@@ -75,6 +77,25 @@ def _history(db: Session, elo_mv: ModelVersion, team_id: int, before: datetime) 
             for d, r, ra, ob, lr in rows]
 
 
+def _previous_lineup_experience(db: Session, team_id: int, before: datetime) -> dict:
+    """Players of the team's last game before `before`, with their earlier professional games
+    (any team, strictly before `before`). Mirrors player_exp_prev in training."""
+    last = db.execute(select(Match.id, Match.match_date).join(PlayerMatchStatistic, PlayerMatchStatistic.match_id == Match.id)
+                      .where(PlayerMatchStatistic.team_id == team_id, Match.match_date < before)
+                      .order_by(desc(Match.match_date), desc(Match.id)).limit(1)).first()
+    if last is None:
+        return {"value": 0.0, "players": 0, "mean_games": None, "last_game": None}
+    pids = list(db.scalars(select(PlayerMatchStatistic.player_id).where(PlayerMatchStatistic.match_id == last[0],
+                                                                       PlayerMatchStatistic.team_id == team_id)))
+    counts = dict(db.execute(select(PlayerMatchStatistic.player_id, func.count())
+                             .join(Match, Match.id == PlayerMatchStatistic.match_id)
+                             .where(PlayerMatchStatistic.player_id.in_(pids), Match.match_date < before)
+                             .group_by(PlayerMatchStatistic.player_id)).all())
+    games = [counts.get(p, 0) for p in pids]
+    return {"value": float(np.mean(np.log1p(games))) if games else 0.0, "players": len(games),
+            "mean_games": float(np.mean(games)) if games else None, "last_game": last[1]}
+
+
 def predict(db: Session, game: Game, req: PredictionRequest) -> PredictionResponse:
     if game.status == "integration_pending":
         raise HTTPException(409, f"Predictions are unavailable for {game.name}: provider integration pending.")
@@ -104,10 +125,18 @@ def predict(db: Session, game: Game, req: PredictionRequest) -> PredictionRespon
         if s.n_prior < MIN_PRIOR_GAMES:
             raise HTTPException(422, f"{t.name} has {s.n_prior} recorded games before {req.as_of}; at least "
                                      f"{MIN_PRIOR_GAMES} are needed (the same rule used in evaluation).")
-    models = {"elo_logit": _artifact(mvs["elo_logit"].artifact_path) if "elo_logit" in mvs else None,
-              "logreg": _artifact(mvs["logreg"].artifact_path) if "logreg" in mvs else None}
+    models = {k: _artifact(mvs[k].artifact_path) if k in mvs else None
+              for k in ("elo_logit", "logreg", "logreg_player")}
+    player_exp = {}
+    if "logreg_player" in mvs:
+        player_exp = {"team_a": _previous_lineup_experience(db, ta.id, as_of),
+                      "team_b": _previous_lineup_experience(db, tb.id, as_of)}
+        sa.player_exp_prev = player_exp["team_a"]["value"]
+        sb.player_exp_prev = player_exp["team_b"]["value"]
     preds, feats = [], None
-    for key in ("elo", "elo_logit", "logreg"):
+    for key in ("elo", "elo_logit", "logreg", "logreg_player"):
+        if key == "logreg_player" and key not in mvs:
+            continue
         mv = mvs.get(key)
         if mv is None or mv.status != "trained" or (key != "elo" and models.get(key) is None):
             preds.append(ModelProbability(model_key=key, display_name=mv.display_name if mv else key,
@@ -121,6 +150,11 @@ def predict(db: Session, game: Game, req: PredictionRequest) -> PredictionRespon
         preds.append(ModelProbability(model_key=key, display_name=mv.display_name, version=mv.version,
                                       status="trained", prob_team_a=p, prob_team_b=1 - p))
     explanation = _explain(db, game, mvs, models.get("logreg"), feats, ta, tb, as_of, sa, sb, req, preds)
+    if player_exp:
+        explanation["player_experience"] = {
+            **player_exp,
+            "note": "Players of each team's previous game and their earlier professional games (any team). "
+                    "Input of the player model as the difference in mean log(1 + games)."}
     caveats = list(CAVEATS)
     data_end = datetime.fromisoformat(elo_mv.periods["data_end"])
     if as_of > data_end:

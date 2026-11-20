@@ -24,6 +24,8 @@ class TeamState:
     opp_ratings_recent: list[float]
     elo: float
     last_game: datetime | None
+    # mean log(1 + earlier pro games) of the players in the team's previous game (pre-match)
+    player_exp_prev: float = 0.0
 
 
 def team_state(history: list[dict], as_of: datetime, elo_cfg: dict) -> TeamState:
@@ -56,12 +58,16 @@ def feature_row(blue: TeamState, red: TeamState, international: bool, initial: f
     return {"elo_diff": elo_diff, "recent_wr_diff": rw(blue) - rw(red), "hist_wr_diff": hw(blue) - hw(red),
             "opp_strength_diff": opp(blue) - opp(red),
             "experience_diff": float(np.log1p(blue.n_prior) - np.log1p(red.n_prior)),
-            "elo_diff_x_intl": elo_diff * float(international)}
+            "elo_diff_x_intl": elo_diff * float(international),
+            "player_exp_prev_diff": blue.player_exp_prev - red.player_exp_prev}
 
 
 def p_blue(model_key: str, feats: dict, models: dict) -> float:
     if model_key == "elo":
         return float(expected_score(feats["_blue_elo"], feats["_red_elo"]))
+    if model_key == "logreg_player":
+        cols = FEATURES + ["player_exp_prev_diff"]
+        return float(models["logreg_player"].predict_proba(pd.DataFrame([{k: feats[k] for k in cols}]))[:, 1][0])
     X = pd.DataFrame([{k: feats[k] for k in FEATURES}])
     if model_key == "elo_logit":
         return float(models["elo_logit"].predict_proba(X[["elo_diff"]])[:, 1][0])

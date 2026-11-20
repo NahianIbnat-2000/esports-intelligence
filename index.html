@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Does machine learning beat Elo in League of Legends? | Nahian Ibnat</title>
-<meta name="description" content="A test on 75,830 professional League of Legends games: machine learning beats Elo, but by about 0.3%. Most of the gain came from fixing the rating itself.">
+<title>Does machine learning beat Elo in League of Legends? And what actually does? | Nahian Ibnat</title>
+<meta name="description" content="A study of 75,830 professional League of Legends games: machine learning beats Elo by about 0.3%. League structure and player experience matter far more. Research questions, design, five-year results and links.">
 <meta property="og:title" content="Does machine learning beat Elo in League of Legends?">
-<meta property="og:description" content="75,830 professional games, a time-ordered test period, and a result that is significant but small.">
+<meta property="og:description" content="75,830 professional games, a five-year time-ordered test, and what actually beats Elo: league structure and player experience.">
 <meta property="og:image" content="https://nahianibnat-2000.github.io/esports-intelligence/esports-intelligence-linkedin.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="627">
@@ -48,7 +48,7 @@
   table { width: 100%; border-collapse: collapse; font-size: 18px; margin: 8px 0 0; }
   th { font-family: "Barlow Semi Condensed", sans-serif; font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink3); text-align: left; border-bottom: 1px solid var(--ink); padding: 6px 0; }
   td { padding: 7px 0; border-bottom: 1px solid var(--rule); }
-  .r { text-align: right; }
+  .r { text-align: right; white-space: nowrap; padding-left: 10px; }
   tr.dim td { color: var(--ink3); }
 
   .aside { border-left: 3px solid var(--red); padding: 2px 0 2px 18px; color: var(--ink2); font-style: italic; margin: 28px 0; }
@@ -57,6 +57,23 @@
   .notes { border-top: 1px solid var(--rule); margin-top: 48px; padding-top: 14px; font-size: 16px; color: var(--ink2); }
   .notes ol { padding-left: 20px; }
   .notes li { margin-bottom: 8px; }
+  h3 { font-weight: 600; font-size: 21px; margin: 34px 0 6px; }
+  .box { background: #EDE8DC; border: 1px solid var(--rule); padding: 16px 20px 6px; margin: 30px 0 10px; }
+  .box ul { margin: 8px 0 12px; padding-left: 20px; }
+  .box li { margin-bottom: 8px; }
+  .box .links { font-family: "Barlow Semi Condensed", sans-serif; font-size: 16px; }
+  .toc { margin: 26px 0 8px; font-size: 18px; }
+  .toc ol { margin: 6px 0 0; padding-left: 22px; columns: 2; column-gap: 28px; }
+  .cap { font-family: "Barlow Semi Condensed", sans-serif; font-size: 15px; color: var(--ink3); margin-top: 8px; }
+  .see { font-size: 17px; background: #EDE8DC; padding: 10px 14px; border-left: 3px solid var(--gold); }
+  table.rq td, table.find td { vertical-align: top; padding-right: 14px; font-size: 17px; }
+  table.rq td:first-child { width: 45%; }
+  table.find td:first-child { width: 58%; }
+  details { border-bottom: 1px solid var(--rule); padding: 10px 0; }
+  details summary { cursor: pointer; font-weight: 600; }
+  details p { margin: 8px 0 4px; color: var(--ink2); }
+  .refs li { margin-bottom: 8px; }
+  @media (max-width: 600px) { .toc ol { columns: 1; } table.rq td:first-child { width: auto; } table { font-size: 16px; } }
   footer { max-width: 680px; margin: 0 auto; padding: 0 24px 60px; font-family: "Barlow Semi Condensed", sans-serif; font-size: 15px; color: var(--ink3); }
   @media (max-width: 600px) { body { font-size: 18px; } .dek { font-size: 20px; } }
 </style>
@@ -68,24 +85,92 @@
     <a href="https://nahianibnat-2000.github.io/">Nahian Ibnat</a>
     <span>
       <a href="https://esports-intelligence.vercel.app">Live site</a> &nbsp;·&nbsp;
+      <a href="https://esports-intelligence.vercel.app/experiments">Results</a> &nbsp;·&nbsp;
+      <a href="https://esports-intelligence.vercel.app/faq">FAQ</a> &nbsp;·&nbsp;
       <a href="https://github.com/NahianIbnat-2000/esports-intelligence">Code</a>
     </span>
   </div>
 </header>
 
 <article>
-  <div class="label">Project · Sports analytics</div>
-  <h1>Does machine learning beat Elo in League of Legends?</h1>
-  <p class="dek">I tested it on 75,830 professional games. Machine learning won, but by about 0.3%. Most of the gain came from fixing the rating system itself.</p>
-  <div class="byline"><span>By <b>Nahian Ibnat</b></span><span>November 2026</span><span>Data: Oracle's Elixir, January 2020 to November 2026</span></div>
+  <div class="label">Research article · Sports analytics and forecasting</div>
+  <h1>Does machine learning beat Elo in League of Legends? And what actually does?</h1>
+  <p class="dek">A study of 75,830 professional games from 2020 to 2026. Machine learning beats Elo, but only by about 0.3%. What helps far more is what the rating knows: which league a team plays in, and how experienced its players are.</p>
+  <div class="byline"><span>By <b>Nahian Ibnat</b></span><span>November 2026, updated 20 November 2026</span><span>Data: Oracle's Elixir, January 2020 to November 2026</span></div>
 
-  <p class="dropcap" style="margin-top:28px">Elo ratings are the default way to predict who wins a game. They are simple: every result moves the winner up and the loser down, by more when the result is a surprise. Machine learning models can use far more information, such as recent form, the strength of past opponents and experience. I wanted to know whether that extra information actually buys better predictions, and how much. (New to Elo or esports terms? The site has a short <a href="https://esports-intelligence.vercel.app/faq">FAQ and glossary</a>.)</p>
+  <div class="box">
+    <div class="label">In short</div>
+    <ul>
+      <li>A logistic regression on pre-game team features beats a calibrated Elo rating, but the gain is tiny: Brier score 0.2164 vs 0.2170 on 10,087 unseen games.</li>
+      <li>Giving each league its own rating level inside Elo helps about nine times more than the machine learning step.</li>
+      <li>Adding one number about the players, their earlier professional games, helps about eight times more than the machine learning step. It uses only each team's previous lineup, so it is known before match day.</li>
+      <li>Both results hold in each of five separate test years (2022 to 2026, 49,748 games), and the player result is not a league-strength effect.</li>
+    </ul>
+    <p class="links"><a href="https://esports-intelligence.vercel.app">Live site</a> · <a href="https://esports-intelligence.vercel.app/predictions">Prediction lab</a> · <a href="https://esports-intelligence.vercel.app/experiments">Five-year results</a> · <a href="https://esports-intelligence.vercel.app/faq">FAQ and glossary</a> · <a href="https://github.com/NahianIbnat-2000/esports-intelligence">Code and data pipeline</a></p>
+  </div>
 
-  <p>To find out, I built <a href="https://esports-intelligence.vercel.app">Esports Intelligence</a>, a research site on every professional League of Legends game recorded by Oracle's Elixir from 2020 to November 2026: 75,830 games, 1,914 teams and 10,239 players across 109 leagues.</p>
+  <nav class="toc" aria-label="Contents">
+    <div class="label">Contents</div>
+    <ol>
+      <li><a href="#why">Why this question matters</a></li>
+      <li><a href="#questions">Research questions and short answers</a></li>
+      <li><a href="#data">Data</a></li>
+      <li><a href="#design">Research design</a></li>
+      <li><a href="#results">Results</a></li>
+      <li><a href="#literature">How this adds to earlier work</a></li>
+      <li><a href="#limits">Limits</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#find">Where to find the charts, data and code</a></li>
+    </ol>
+  </nav>
 
-  <h2>The test</h2>
-  <p>Every model was trained on games up to mid-August 2024, tuned on the following thirteen months, and then scored once on 10,087 games from 23 September 2025 to 14 November 2026 that it had never seen. Each prediction uses only games played before it.<sup><a href="#n1">1</a></sup> I score models with the Brier score, the average squared gap between the predicted probability and what happened. Lower is better, and a coin flip scores 0.25.</p>
+  <h2 id="why">1. Why this question matters</h2>
+  <p class="dropcap">Elo ratings are the default way to predict who wins a game. They are simple: every result moves the winner up and the loser down, by more when the result is a surprise. They are used in chess, football rankings and esports. Machine learning models can use far more information. The obvious question is whether that extra information buys better predictions, and how much.</p>
+  <p>The question matters for three reasons.</p>
+  <p><b>It is a general forecasting question.</b> Many fields face the same choice between a simple, transparent rating and a more complex model. Esports is a good place to study it: the data is detailed, games are frequent, and every result is public. A clear answer here says something about when complexity is worth it.</p>
+  <p><b>It is an economics question.</b> Sports economics has long studied how uncertain results are, because fans care about close contests and leagues are designed around that. Professional League of Legends adds a feature most sports do not have in such a clean form: around a hundred leagues that mostly play inside their own region and meet only at a few international events. That makes it a natural test of how to compare teams that rarely play each other.</p>
+  <p><b>It is a question about how results are reported.</b> Many prediction projects report one accuracy number on one test set. I wanted to show the full chain instead: a split by date, simple baselines, uncertainty intervals that respect how games are grouped, and a clear line between a result that is statistically real and one that matters in practice.</p>
 
+  <h2 id="questions">2. Research questions and short answers</h2>
+  <table class="rq">
+    <thead><tr><th>Question</th><th>Short answer</th></tr></thead>
+    <tbody>
+      <tr><td><b>RQ1.</b> Does machine learning predict professional games better than Elo?</td><td>Yes, but by very little: Brier 0.2164 vs 0.2170. Real, but about 0.3% of the score. <a href="#rq1">Details</a></td></tr>
+      <tr><td><b>RQ2.</b> How much does the design of the rating itself matter?</td><td>A lot more. League levels inside Elo improve the Brier score by 0.0054, about nine times the machine learning gain. <a href="#rq2">Details</a></td></tr>
+      <tr><td><b>RQ3.</b> Do these results hold beyond one test period?</td><td>Yes. In five separate test years, league levels help every year and the machine learning step stays close to zero. <a href="#rq3">Details</a></td></tr>
+      <tr><td><b>RQ4.</b> Does information about the players add what team ratings miss?</td><td>Yes. Players' earlier professional games, taken from each team's previous lineup, improve the Brier score by 0.0048, in every test year. <a href="#rq4">Details</a></td></tr>
+      <tr><td><b>RQ5.</b> Is the player effect just a sign of league strength?</td><td>No. The gain is the same size in games between teams from the same league, and largest for new teams. <a href="#rq5">Details</a></td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="data">3. Data</h2>
+  <p>All data comes from <a href="https://oracleselixir.com">Oracle's Elixir</a>, a public collection of professional League of Legends game data by Tim Sevenhuysen. I used every file from 2020 to November 2026: 75,830 games, 1,914 teams and 10,239 players across 109 leagues, from 3 January 2020 to 17 November 2026.</p>
+  <p>Each game has one row per team and one row per player. A game is kept only if it has exactly two teams, one blue and one red, and exactly one winner. Rows are removed only for a written reason, and every removal is listed in the public <a href="https://esports-intelligence.vercel.app/data-quality">data quality report</a>. Missing statistics stay missing; they are never filled with zeros. The source has no series identifier, so best-of-three and best-of-five series are rebuilt from game times for display. File-level provenance is on the <a href="https://esports-intelligence.vercel.app/data-sources">data sources</a> page.</p>
+
+  <h2 id="design">4. Research design</h2>
+  <p><b>Prediction task.</b> One game, before it starts: what is the chance that the blue side wins? Every input uses only games played before that game.<sup><a href="#n1">1</a></sup></p>
+  <p><b>Models.</b></p>
+  <table class="num">
+    <thead><tr><th>Model</th><th>What it uses</th></tr></thead>
+    <tbody>
+      <tr class="dim"><td>Constant baselines</td><td>A flat 50%, and the blue-side win rate of earlier games</td></tr>
+      <tr><td>Elo with league levels</td><td>Team rating = league level + team part; league levels move only in games between leagues</td></tr>
+      <tr><td>Calibrated Elo</td><td>Logistic regression on the Elo difference (also estimates the blue-side advantage)</td></tr>
+      <tr><td>Logistic regression</td><td>Six pre-game features: Elo difference, recent form, overall win rate, strength of recent opponents, experience, and an international-event term</td></tr>
+      <tr><td>Logistic + player experience</td><td>The same six, plus the average earlier professional games of each team's players in its previous game</td></tr>
+    </tbody>
+  </table>
+  <p style="margin-top:14px">I also tested gradient boosting and random forests; they did no better than the logistic regression on validation games, so they are not used.</p>
+  <p><b>Main test.</b> Games are split by date, never at random. Models are trained on games up to 11 August 2024, tuned on games up to 22 September 2025, and scored once on 10,087 games from 23 September 2025 to 14 November 2026. Elo settings and the regression's penalty are chosen on the validation games only. The test games are never used for fitting or tuning.</p>
+  <p><b>Scoring.</b> The main score is the Brier score: the average squared gap between the predicted probability and what happened.<sup><a href="#r1">[1]</a></sup> Lower is better; always saying 50% scores 0.25. I also report log loss, accuracy, ROC-AUC and calibration charts.</p>
+  <p><b>Uncertainty.</b> Model differences come with 95% intervals from a paired bootstrap with 2,000 resamples. Games from the same series are resampled together because they are not independent; I repeat the check with whole tournaments as the unit.<sup><a href="#n2">2</a></sup></p>
+  <p><b>Five-year check.</b> For each test year Y from 2022 to 2026, models are trained on years before Y−1, tuned on Y−1 and scored on Y. Every model is re-tuned for every year. This tests whether a result is stable or a feature of one period.</p>
+  <p><b>Player features.</b> The source lists the five players in every game. For the main model I use only each team's previous lineup, which is known before match day. In the five-year check I also tested today's lineup (known when the game starts), lineup continuity, player tenure with the team, and a player-level Elo rating, to see which part of player information matters.<sup><a href="#n4">4</a></sup></p>
+  <p><b>Subgroups.</b> To test whether the player effect only reflects league strength, I split the five-year test games by type: games between two teams of the same league (where league levels cancel out), games in the top leagues, games between leagues, and games involving a team with fewer than 20 earlier games.</p>
+
+  <h2 id="results">5. Results</h2>
+
+  <h3 id="rq1">RQ1. Machine learning wins, but only just</h3>
   <table class="num">
     <thead><tr><th>Model</th><th class="r">Brier score</th><th class="r">Correct winner</th></tr></thead>
     <tbody>
@@ -93,14 +178,15 @@
       <tr><td>Elo with league levels</td><td class="r">0.2176</td><td class="r">64.7%</td></tr>
       <tr><td>Calibrated Elo</td><td class="r">0.2170</td><td class="r">64.8%</td></tr>
       <tr><td>Logistic regression</td><td class="r">0.2164</td><td class="r">64.9%</td></tr>
+      <tr><td><b>Logistic + player experience</b></td><td class="r"><b>0.2116</b></td><td class="r"><b>65.7%</b></td></tr>
     </tbody>
   </table>
-  <p class="label" style="margin-top:8px;text-transform:none;letter-spacing:0;font-weight:500">Test period, 10,087 games. All models scored on the same games.</p>
+  <p class="cap">Main test period, 10,087 games. All models scored on the same games.</p>
+  <p>The logistic regression beats calibrated Elo by 0.00062 in Brier score, with a 95% interval of 0.00023 to 0.00104. The interval stays above zero when whole tournaments are resampled. So the gain is real. But it is about 0.3% of the score, and both models pick the right winner about 65% of the time. Statistically real and worth it are different questions.</p>
+  <p class="see">See it on the site: <a href="https://esports-intelligence.vercel.app/predictions">Prediction lab</a> (tabs for metrics, calibration, ROC curves, confusion matrices, results by quarter and by region) and the full <a href="https://esports-intelligence.vercel.app/research/can-machine-learning-beat-elo">research report</a>.</p>
 
-  <h2>Significant, but small</h2>
-  <p>The logistic regression has the best score, and the difference is real. Against calibrated Elo it lowers the Brier score by 0.00062, with a 95% interval of 0.00023 to 0.00104. The interval stays above zero when I resample whole series, and also when I resample whole tournaments.<sup><a href="#n2">2</a></sup></p>
-  <p>But 0.00062 is about 0.3% of the score, and both models pick the right winner about 65% of the time. Gradient boosting and random forests did no better than the logistic regression, so I left them out.</p>
-
+  <h3 id="rq2">RQ2. The rating design matters more than the model</h3>
+  <p>My first Elo version put every team on one scale. It ranked teams from small regional leagues above the best teams in Korea and China, because they beat their neighbours and rarely played anyone else. Elo points only move between leagues when their teams meet, so a single scale was not telling the truth. Giving each league its own level, learned from games between leagues, lowered the Brier score by 0.0054 (95% interval 0.0041 to 0.0068).</p>
   <figure>
     <svg viewBox="0 0 680 230" role="img" aria-labelledby="f1t" width="100%">
       <title id="f1t">Bar chart: improvement in Brier score from adding league levels to Elo (0.0054) compared with the improvement from logistic regression over calibrated Elo (0.00062).</title>
@@ -125,46 +211,190 @@
     </svg>
     <figcaption><b>Figure 1.</b> Where the improvement came from. Letting each league have its own rating level inside Elo helped about nine times more than the machine learning step that followed. Both measured on the same test games.</figcaption>
   </figure>
-
-  <h2>The bigger lesson was about the rating</h2>
-  <p>My first Elo version put every team on one scale. It ranked teams from small regional leagues above the best teams in Korea and China, because those teams beat their own neighbours and rarely played anyone else. Elo points only move between leagues when their teams meet, so a single scale was not telling the truth.</p>
-  <p>The fix was to give each league its own level, learned from the games between leagues, with each team rated relative to its league. That one change lowered the Brier score by 0.0054, much more than anything the machine learning added afterwards.</p>
-  <p class="aside">Statistically significant and worth it are different questions. A model can be clearly better and still not matter much in practice.</p>
+  <p class="see">See it on the site: league and team ratings over time on <a href="https://esports-intelligence.vercel.app/analytics">Statistics</a>, every rating change per game in the <a href="https://esports-intelligence.vercel.app/matches">match centre</a>, and the exact rules on <a href="https://esports-intelligence.vercel.app/methodology">Methodology</a>.</p>
 
   <figure class="wide">
     <img src="https://raw.githubusercontent.com/NahianIbnat-2000/esports-intelligence/master/docs/screenshots/match-centre.png" alt="The match centre page of Esports Intelligence, showing a game's Elo change, top performer, pre-game win probabilities and Elo history for both teams" loading="lazy">
     <figcaption><b>Figure 2.</b> The match centre on the site. Every game shows the Elo change, the pre-game probabilities and the player lines.</figcaption>
   </figure>
 
-  <h2>What else is on the site</h2>
+  <h3 id="rq3">RQ3. The pattern holds in every year</h3>
+  <p>One test period can be lucky. In the five-year check, league levels improved Elo in all five years, and the machine learning step over calibrated Elo stayed close to zero: pooled over 49,748 games it was 0.0004, and its interval excluded zero in only two of the five years.</p>
+  <figure>
+    <svg viewBox="0 0 680 300" role="img" aria-labelledby="f3t" width="100%">
+      <title id="f3t">Grouped bar chart by test year 2022 to 2026: reduction in Brier score from league levels in Elo, from the machine learning step, and from player experience of the previous lineup. Player experience is the largest or equal largest gain in every year; the machine learning step is near zero in every year.</title>
+      <line x1="60" y1="230.0" x2="660" y2="230.0" stroke="#D9D4C7"/>
+      <text x="52" y="234.0" font-size="12" fill="#8B877D" text-anchor="end">0.000</text>
+      <line x1="60" y1="194.0" x2="660" y2="194.0" stroke="#D9D4C7"/>
+      <text x="52" y="198.0" font-size="12" fill="#8B877D" text-anchor="end">0.001</text>
+      <line x1="60" y1="158.0" x2="660" y2="158.0" stroke="#D9D4C7"/>
+      <text x="52" y="162.0" font-size="12" fill="#8B877D" text-anchor="end">0.002</text>
+      <line x1="60" y1="122.0" x2="660" y2="122.0" stroke="#D9D4C7"/>
+      <text x="52" y="126.0" font-size="12" fill="#8B877D" text-anchor="end">0.003</text>
+      <line x1="60" y1="86.0" x2="660" y2="86.0" stroke="#D9D4C7"/>
+      <text x="52" y="90.0" font-size="12" fill="#8B877D" text-anchor="end">0.004</text>
+      <line x1="60" y1="50.0" x2="660" y2="50.0" stroke="#D9D4C7"/>
+      <text x="52" y="54.0" font-size="12" fill="#8B877D" text-anchor="end">0.005</text>
+      <rect x="85" y="132.8" width="26" height="97.2" fill="#B42A2A"/>
+      <rect x="115" y="208.4" width="26" height="21.6" fill="#B8860B"/>
+      <rect x="145" y="57.2" width="26" height="172.8" fill="#2F5D8A"/>
+      <text x="128" y="250" font-size="14" fill="#55524B" text-anchor="middle">2022</text>
+      <rect x="202" y="154.4" width="26" height="75.6" fill="#B42A2A"/>
+      <rect x="232" y="230.0" width="26" height="1.5" fill="#B8860B"/>
+      <rect x="262" y="82.4" width="26" height="147.6" fill="#2F5D8A"/>
+      <text x="245" y="250" font-size="14" fill="#55524B" text-anchor="middle">2023</text>
+      <rect x="319" y="89.6" width="26" height="140.4" fill="#B42A2A"/>
+      <rect x="349" y="230.0" width="26" height="1.5" fill="#B8860B"/>
+      <rect x="379" y="86.0" width="26" height="144.0" fill="#2F5D8A"/>
+      <text x="362" y="250" font-size="14" fill="#55524B" text-anchor="middle">2024</text>
+      <rect x="436" y="93.2" width="26" height="136.8" fill="#B42A2A"/>
+      <rect x="466" y="208.4" width="26" height="21.6" fill="#B8860B"/>
+      <rect x="496" y="75.2" width="26" height="154.8" fill="#2F5D8A"/>
+      <text x="479" y="250" font-size="14" fill="#55524B" text-anchor="middle">2025</text>
+      <rect x="553" y="75.2" width="26" height="154.8" fill="#B42A2A"/>
+      <rect x="583" y="201.2" width="26" height="28.8" fill="#B8860B"/>
+      <rect x="613" y="57.2" width="26" height="172.8" fill="#2F5D8A"/>
+      <text x="596" y="250" font-size="14" fill="#55524B" text-anchor="middle">2026</text>
+      <line x1="60" y1="230" x2="660" y2="230" stroke="#1D1C1A"/>
+      <rect x="70" y="270" width="12" height="12" fill="#B42A2A"/><text x="88" y="281" font-size="13" fill="#55524B">League levels in Elo</text>
+      <rect x="258.0" y="270" width="12" height="12" fill="#B8860B"/><text x="276.0" y="281" font-size="13" fill="#55524B">Machine learning step</text>
+      <rect x="453.20000000000005" y="270" width="12" height="12" fill="#2F5D8A"/><text x="471.20000000000005" y="281" font-size="13" fill="#55524B">Player experience (previous lineup)</text>
+      <text x="16" y="130" font-size="12" fill="#8B877D" transform="rotate(-90 16 130)" text-anchor="middle">Reduction in Brier score</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> The same three steps, repeated for each test year. Each year the models were tuned and fitted only on earlier years. League levels and player experience help every year; the machine learning step stays close to zero. Exact values and 95% intervals are on the <a href="https://esports-intelligence.vercel.app/experiments">Experiments</a> page.</figcaption>
+  </figure>
+
+  <h3 id="rq4">RQ4. Information about the players helps most</h3>
+  <p>Adding one number, the average earlier professional games of the players in each team's previous game, lowered the Brier score by 0.0048 on the main test (95% interval 0.0035 to 0.0060), about eight times the machine learning gain. Accuracy rose from 64.9% to 65.7%; most of the gain is in better probabilities, not more correct picks.</p>
+  <figure>
+    <svg viewBox="0 0 680 300" role="img" aria-labelledby="f4t2" width="100%">
+      <title id="f4t2">Bar chart on the same test games: improvement in Brier score from league levels in Elo (0.0054), from logistic regression over calibrated Elo (0.0006), and from adding player experience to the logistic regression (0.0048).</title>
+      <line x1="230" y1="20" x2="230" y2="240" stroke="#1D1C1A"/>
+      <g fill="#55524B" font-size="15">
+        <text x="220" y="62" text-anchor="end">League levels in Elo</text>
+        <text x="220" y="80" text-anchor="end" fill="#8B877D" font-size="13">vs. one flat Elo</text>
+        <text x="220" y="132" text-anchor="end">Machine learning</text>
+        <text x="220" y="150" text-anchor="end" fill="#8B877D" font-size="13">logistic vs. calibrated Elo</text>
+        <text x="220" y="202" text-anchor="end">Player experience</text>
+        <text x="220" y="220" text-anchor="end" fill="#8B877D" font-size="13">added to the logistic model</text>
+      </g>
+      <rect x="231" y="48" width="380" height="34" fill="#B42A2A"/>
+      <text x="619" y="71" font-size="16" fill="#1D1C1A" class="num">0.0054</text>
+      <rect x="231" y="118" width="44" height="34" fill="#B8860B"/>
+      <text x="283" y="141" font-size="16" fill="#1D1C1A" class="num">0.0006</text>
+      <rect x="231" y="188" width="338" height="34" fill="#2F5D8A"/>
+      <text x="577" y="211" font-size="16" fill="#1D1C1A" class="num">0.0048</text>
+      <g stroke="#D9D4C7"><line x1="231" y1="250" x2="611" y2="250"/></g>
+      <g fill="#8B877D" font-size="13">
+        <text x="231" y="268" text-anchor="middle">0</text>
+        <text x="421" y="268" text-anchor="middle">0.0027</text>
+        <text x="611" y="268" text-anchor="middle">0.0054</text>
+        <text x="421" y="292" text-anchor="middle">Reduction in Brier score (higher bar = bigger improvement)</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 4.</b> Figure 1 with the player step added. All three are measured on the same 10,087 test games.</figcaption>
+  </figure>
+  <p>The five-year check shows which part of player information matters:</p>
+  <table class="num">
+    <thead><tr><th>Added to the logistic model</th><th class="r">Brier change</th><th class="r">Better in</th></tr></thead>
+    <tbody>
+      <tr><td>Lineup continuity (same players as last game)</td><td class="r">−0.0001</td><td class="r">4 of 5 years</td></tr>
+      <tr><td>Player tenure with the team</td><td class="r">−0.0007</td><td class="r">5 of 5</td></tr>
+      <tr><td>Player experience, previous lineup (pre-match)</td><td class="r">−0.0044</td><td class="r">5 of 5</td></tr>
+      <tr><td>Player experience, today's lineup</td><td class="r">−0.0055</td><td class="r">5 of 5</td></tr>
+      <tr><td>Pre-match experience + player-level Elo</td><td class="r">−0.0053</td><td class="r">5 of 5</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">Pooled over 49,748 test games, 2022 to 2026. Negative = better. Intervals for every row are on the Experiments page.</p>
+  <p>One simple number does most of the work. Knowing today's lineup helps a little more, but most of the gain is already there before match day. The prediction lab now includes the pre-match player model next to the other models.</p>
+
+  <h3 id="rq5">RQ5. It is not just league strength</h3>
+  <p>Experienced players are more common in strong leagues, so the player number could simply be telling strong leagues from weak ones. In a game between two teams of the same league, the league level cancels out, so league strength cannot explain a gain there.</p>
+  <table class="num">
+    <thead><tr><th>Games</th><th class="r">Games</th><th class="r">Brier change [95%]</th></tr></thead>
+    <tbody>
+      <tr><td>Same league, domestic game</td><td class="r">39,185</td><td class="r">−0.0053 [−0.0060, −0.0047]</td></tr>
+      <tr><td>Top leagues only (LCK, LPL, LEC, LCS / LTA North)</td><td class="r">8,600</td><td class="r">−0.0027 [−0.0037, −0.0016]</td></tr>
+      <tr><td>Teams from different leagues</td><td class="r">10,229</td><td class="r">−0.0052 [−0.0064, −0.0039]</td></tr>
+      <tr><td>Both teams with 20+ earlier games</td><td class="r">42,314</td><td class="r">−0.0043 [−0.0049, −0.0037]</td></tr>
+      <tr><td>A team with fewer than 20 earlier games</td><td class="r">7,434</td><td class="r">−0.0108 [−0.0129, −0.0089]</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">Pre-match player model vs the logistic model, five-year test games. Negative = better.</p>
+  <p>The gain is the same size inside a single league. It is largest for new or renamed teams: they start at their league's average rating, even when their players have hundreds of games behind them. It is smaller, but still clear, in the top leagues, where rosters are more stable.</p>
+  <p class="aside">The lesson is not "which model?" but "what does the rating know?" The type of model mattered little. League structure and the players mattered a lot.</p>
+
+  <h2 id="literature">6. How this adds to earlier work</h2>
+  <p><b>Elo in sports forecasting.</b> Elo ratings have a long record as predictors. In football, Hvattum and Arntzen used Elo-based covariates in regression models and compared them with six benchmark methods on both statistical and economic measures.<sup><a href="#r2">[2]</a></sup> My setup follows the same idea, Elo as an input to a regression, and asks how much the regression adds beyond the rating.</p>
+  <p><b>Ratings in professional League of Legends.</b> Riot Games and AWS launched the <a href="https://lolesports.com/en-GB/news/dev-diary-unveiling-the-global-power-rankings">LoL Esports Global Power Rankings</a> at Worlds 2024. They blend a team Elo with a league Elo, weighted 80/20, and results at MSI and Worlds move the league Elo. That is close to the league-level Elo here. Riot reports about 65% accuracy; my Elo reaches 64.7% on my test games. The two figures come from different games, so they are not directly comparable, but they point the same way.</p>
+  <p><b>Machine learning on professional games.</b> <a href="https://e-space.mmu.ac.uk/629272">Jadowski and Cunningham (2022)</a> predicted 67% of 306 international games from 2020. A <a href="https://www.sbgames.org/proceedings2021/ComputacaoShort/217082.pdf">2021 SBGames paper</a> trained several classifiers on the same Oracle's Elixir data. Accuracy figures from different games and periods cannot be ranked against each other.</p>
+  <p><b>Player-based ratings.</b> <a href="https://arxiv.org/abs/2501.10049">PandaSkill (De Bois et al., 2025)</a> rates League players from in-game statistics, adds regional ratings, and reports better predictions than Elo and TrueSkill. In football, Holmes and McHale built a forecasting model on player ratings.<sup><a href="#r3">[3]</a></sup> My player result points the same way with a much simpler input: a count of earlier games, available before match day.</p>
+  <p><b>What this study adds.</b></p>
   <ul class="site">
-    <li><a href="https://esports-intelligence.vercel.app/predictions">Prediction lab</a>: calibration, uncertainty intervals, and a prediction for any two teams with the reasons behind it.</li>
-    <li><a href="https://esports-intelligence.vercel.app/matches">Match centre</a>: every series and game since 2020.</li>
-    <li><a href="https://esports-intelligence.vercel.app/analytics">Statistics</a>: competitive balance by league and season (Gini, HHI, Lorenz curves). The best regular-season team went on to win the title in 52% of 408 splits.</li>
-    <li><a href="https://esports-intelligence.vercel.app/data-quality">Data quality report</a>: what was excluded and why.</li>
-    <li><a href="https://esports-intelligence.vercel.app/faq">FAQ and glossary</a>: plain-language definitions of Elo, the Brier score, series and other terms, with a small Elo calculator to try.</li>
+    <li><b>A paired, time-ordered comparison of rating design, model type and player information on the same games.</b> This separates three sources of improvement that earlier work reports one at a time, and ranks them: league structure and player experience matter far more than model complexity.</li>
+    <li><b>A five-year rolling test.</b> Each result is checked in five separate test years with re-tuning, not on one split.</li>
+    <li><b>A test of the obvious alternative explanation.</b> The player effect is checked inside single leagues, where league strength cannot explain it.</li>
+    <li><b>Evaluation that keeps statistical and practical size apart</b>, with intervals that resample whole series.</li>
+    <li><b>Openness.</b> Data processing, exclusions, code, every experiment record and an interactive site are public, so the results can be checked and rerun.</li>
   </ul>
 
-  <h2>How this fits with earlier work</h2>
-  <p>I am not the first to ask this question. Riot Games and AWS launched the <a href="https://lolesports.com/en-GB/news/dev-diary-unveiling-the-global-power-rankings">LoL Esports Global Power Rankings</a> at Worlds 2024. Their rating mixes a team Elo with a league Elo, weighted 80/20, and results at MSI and Worlds move the league Elo. That is close to the league-level Elo described above. Riot reports about 65% accuracy, and my Elo reaches 64.7% on my test games. The two numbers come from different games, so they are not a direct comparison, but they point the same way.</p>
-  <p>Machine learning on professional League games has been tried too. <a href="https://e-space.mmu.ac.uk/629272">Jadowski and Cunningham (2022)</a> correctly predicted 67% of 306 international games from 2020. A <a href="https://www.sbgames.org/proceedings2021/ComputacaoShort/217082.pdf">2021 SBGames paper</a> trained several classifiers on the same Oracle's Elixir data I use. <a href="https://arxiv.org/abs/2501.10049">PandaSkill (De Bois et al., 2025)</a> rates players from their in-game statistics, adds a rating for each region, and reports better predictions than Elo and TrueSkill over five years of pro matches. Accuracy figures across these studies come from different games and periods, so they cannot be ranked against each other.</p>
-  <p>What this project adds is mostly in how the models are checked, not in the models themselves: a split by date with a test period never used for tuning, constant baselines, uncertainty intervals that resample whole series, and a clear line between a gain that is statistically real and one that matters. Under those checks, the extra gain from machine learning on pre-game features is small, and league structure does most of the work. PandaSkill's gains come from player-level game data, which my ratings do not use, so the two results do not conflict. The data, code and data quality report are all public, so anyone can rerun the test.</p>
+  <h2 id="limits">7. Limits</h2>
+  <ul class="site">
+    <li>Player experience is linked to winning, but that does not show it causes wins. It may reflect skill, or which players strong organisations choose to sign.</li>
+    <li>The pre-match player model uses each team's previous lineup, so it does not see a lineup change made since the last game.</li>
+    <li>League levels are only well measured for leagues that often play other leagues. Raw levels of small, mostly isolated leagues should not be read as a world ranking.</li>
+    <li>Series are rebuilt from game times, because the source has no series identifier.</li>
+    <li>Models are fixed at the start of each test period, and no draft, patch or in-game information is used. Results are a look at the future, not a guarantee.</li>
+    <li>VALORANT and Counter-Strike 2 are planned but not included; no verified data source is connected yet.</li>
+  </ul>
 
-  <h2>Limits</h2>
-  <p>The source has no series identifier, so series are rebuilt from game times. Ratings are only comparable between leagues that play each other often. The models are fixed at the start of the test period, and there is only one test period, so the result is one look at the future, not a guarantee.</p>
+  <h2 id="faq">8. FAQ</h2>
+  <details><summary>What is Elo, in plain words?</summary><p>A rating system first made for chess. Every team has a number; a higher number means a stronger team. The gap between two numbers gives each side a win chance, and after the game the winner takes points from the loser. The site has an <a href="https://esports-intelligence.vercel.app/faq">interactive Elo calculator</a>.</p></details>
+  <details><summary>What is the Brier score, and why use it?</summary><p>The average squared gap between the predicted chance and the result (1 for a win, 0 for a loss). Lower is better; always saying 50% scores 0.25. The models give probabilities, so the score should judge the probabilities. Accuracy only checks who was favoured, so a 51% pick and a 90% pick count the same.</p></details>
+  <details><summary>Why are the improvements so small in absolute terms?</summary><p>Professional games are close to a coin flip more often than people expect, so every model's Brier score stays near 0.21 to 0.22. Differences are best read against each other: the player gain is about eight times the machine learning gain on the same games.</p></details>
+  <details><summary>Does the model use head-to-head records?</summary><p>No. Most pairs of teams have met only a few times and rosters change every year, so the record is mostly noise, and those games are already part of each team's Elo. The prediction lab shows head-to-head as context only.</p></details>
+  <details><summary>Can I use the predictions for betting?</summary><p>No. This is a research project. It shows no odds, and the models do not react to news or roster changes.</p></details>
+  <details><summary>Why does a team with a 70% chance sometimes lose?</summary><p>A 70% chance means it should lose about 3 games in 10 like it. A model is judged over many games; the calibration chart in the <a href="https://esports-intelligence.vercel.app/predictions">prediction lab</a> checks whether 70% calls win about 70% of the time.</p></details>
+  <p>More questions and a glossary of every term on the site: <a href="https://esports-intelligence.vercel.app/faq">FAQ and glossary</a>.</p>
 
-  <p>The full report, with every number and the code behind it, is on the <a href="https://esports-intelligence.vercel.app/research/can-machine-learning-beat-elo">site</a> and on <a href="https://github.com/NahianIbnat-2000/esports-intelligence">GitHub</a>.</p>
+  <h2 id="find">9. Where to find the charts, data and code</h2>
+  <table class="find">
+    <thead><tr><th>What</th><th>Where</th></tr></thead>
+    <tbody>
+      <tr><td>Model comparison, calibration, ROC curves, confusion matrices, results by quarter and region; predict any two teams</td><td><a href="https://esports-intelligence.vercel.app/predictions">Prediction lab</a></td></tr>
+      <tr><td>Five-year results, what each step adds, subgroup and patch checks, all with intervals</td><td><a href="https://esports-intelligence.vercel.app/experiments">Experiments</a></td></tr>
+      <tr><td>Full research reports (machine learning vs Elo; competitive balance)</td><td><a href="https://esports-intelligence.vercel.app/research">Research</a></td></tr>
+      <tr><td>Competitive balance by league and season (Gini, HHI, Lorenz curves), team and player statistics</td><td><a href="https://esports-intelligence.vercel.app/analytics">Statistics</a></td></tr>
+      <tr><td>Every series and game, Elo changes, player lines</td><td><a href="https://esports-intelligence.vercel.app/matches">Match centre</a></td></tr>
+      <tr><td>Exact rules for cleaning, ratings, features and evaluation</td><td><a href="https://esports-intelligence.vercel.app/methodology">Methodology</a></td></tr>
+      <tr><td>What was excluded and why; file provenance</td><td><a href="https://esports-intelligence.vercel.app/data-quality">Data quality</a> · <a href="https://esports-intelligence.vercel.app/data-sources">Data sources</a></td></tr>
+      <tr><td>Definitions and the Elo calculator</td><td><a href="https://esports-intelligence.vercel.app/faq">FAQ and glossary</a></td></tr>
+      <tr><td>Detailed write-ups</td><td><a href="https://github.com/NahianIbnat-2000/esports-intelligence/blob/master/docs/EXPERIMENTS.md">EXPERIMENTS.md</a> · <a href="https://github.com/NahianIbnat-2000/esports-intelligence/blob/master/docs/methodology.md">methodology.md</a> · <a href="https://github.com/NahianIbnat-2000/esports-intelligence/blob/master/docs/RESULTS_2020_2026.md">RESULTS_2020_2026.md</a> · <a href="https://github.com/NahianIbnat-2000/esports-intelligence/blob/master/docs/PROJECT_AUDIT.md">PROJECT_AUDIT.md</a></td></tr>
+      <tr><td>Code, tests, experiment records</td><td><a href="https://github.com/NahianIbnat-2000/esports-intelligence">GitHub repository</a> · <a href="https://github.com/NahianIbnat-2000/esports-intelligence/tree/master/machine_learning/experiments/registry">experiment registry</a></td></tr>
+    </tbody>
+  </table>
 
   <div class="notes">
     <div class="label">Notes</div>
     <ol>
-      <li id="n1">The data is split by date, never at random: training until 11 August 2024, validation until 22 September 2025, test after that. Every feature (Elo gap, recent form, overall win rate, strength of past opponents, experience) uses only games played earlier.</li>
-      <li id="n2">Paired bootstrap with 2,000 resamples. Games from the same series are resampled together, because they are not independent.</li>
+      <li id="n1">The data is split by date, never at random: training until 11 August 2024, validation until 22 September 2025, test after that. Games in the first 90 days of the data, or with a team that has fewer than five earlier games, are not scored. Every feature uses only games played earlier; automated tests change future results and lineups and check that earlier values do not move.</li>
+      <li id="n2">Paired bootstrap with 2,000 resamples. Games from the same series (same tournament, same two teams, same day) are resampled together.</li>
       <li id="n3">Built with Python (pandas, scikit-learn), FastAPI, PostgreSQL and Next.js. Data from Oracle's Elixir by Tim Sevenhuysen. Game statistics are the property of Riot Games; this project is not affiliated with Riot Games.</li>
+      <li id="n4">Player experience is the average of log(1 + earlier professional games, any team) over the five players of each team's previous game. Player-level Elo rates a team as its league level plus the mean rating of its five players. Every five-year run is saved as a JSON record with data and code checksums.</li>
+    </ol>
+    <div class="label" style="margin-top:18px">References</div>
+    <ol class="refs">
+      <li id="r1">Brier, G. W. (1950). Verification of forecasts expressed in terms of probability. <i>Monthly Weather Review</i>, 78, 1–3.</li>
+      <li id="r2">Hvattum, L. M. and Arntzen, H. (2010). Using ELO ratings for match result prediction in association football. <i>International Journal of Forecasting</i>, 26(3), 460–470. <a href="https://doi.org/10.1016/j.ijforecast.2009.10.002">doi:10.1016/j.ijforecast.2009.10.002</a></li>
+      <li id="r3">Holmes, B. and McHale, I. G. (2024). Forecasting football match results using a player rating based model. <i>International Journal of Forecasting</i>, 40(1), 302–312.</li>
+      <li>De Bois, M., Parmentier, F., Puget, R., Tanti, M. and Peltier, J. (2025). PandaSkill: player performance and skill rating in esports, application to League of Legends. <a href="https://arxiv.org/abs/2501.10049">arXiv:2501.10049</a>.</li>
+      <li>Jadowski, R. and Cunningham, S. (2022). Statistical models for predicting results in professional League of Legends. <i>ArtsIT, Interactivity and Game Creation</i>. <a href="https://e-space.mmu.ac.uk/629272">MMU repository</a>.</li>
+      <li>Riot Games (2024). <a href="https://lolesports.com/en-GB/news/dev-diary-unveiling-the-global-power-rankings">Dev diary: unveiling the Global Power Rankings</a>.</li>
     </ol>
   </div>
 </article>
 
-<footer>Nahian Ibnat · Economics and Data Science</footer>
+
+<footer>Nahian Ibnat · Economics and Data Science · <a href="https://nahianibnat-2000.github.io/">Portfolio</a> · <a href="https://www.linkedin.com/in/nahian-ibnat/">LinkedIn</a></footer>
 </body>
 </html>
