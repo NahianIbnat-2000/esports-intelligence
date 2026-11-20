@@ -38,6 +38,19 @@ Test period 23 Sep 2025 to 14 Nov 2026 (10,087 games), never used for fitting or
 
 Full results: `docs/RESULTS_2020_2026.md` and `docs/AUDIT_AND_IMPROVEMENTS_v1.2.md`.
 
+### Walk-forward check and player information (Nov 2026)
+
+The same comparison repeated for five test years (2022 to 2026, 49,748 games), with models
+re-tuned and refit for each year (`docs/EXPERIMENTS.md`, page `/experiments`):
+
+- The finding above holds every year: league levels are the largest gain over flat Elo, and
+  the six form features add little over calibrated Elo (-0.0004 Brier pooled).
+- Player information adds far more. Using only the players from each team's previous game
+  (known before match day), the Brier score falls a further 0.0053 [95% CI -0.0059 to
+  -0.0047] over the form model, better in all five years. One feature, the average number
+  of earlier pro games of the players, does most of the work.
+- The deployed model does not use player features yet.
+
 ## Related work
 
 This project is not the first to compare ratings and machine learning for professional

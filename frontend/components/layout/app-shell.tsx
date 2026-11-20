@@ -27,8 +27,8 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [{ href: "/analytics", label: "Analytics" }, { href: "/data-explorer", label: "Data explorer" }] },
   { label: "Predictions", href: "/predictions", match: ["/predictions"],
     items: [{ href: "/predictions", label: "Model lab" }] },
-  { label: "Research", href: "/research", match: ["/research", "/methodology", "/documentation", "/faq"],
-    items: [{ href: "/research", label: "Reports" }, { href: "/methodology", label: "Methodology" }, { href: "/documentation", label: "Documentation" }, { href: "/faq", label: "FAQ & glossary" }] },
+  { label: "Research", href: "/research", match: ["/research", "/experiments", "/methodology", "/documentation", "/faq"],
+    items: [{ href: "/research", label: "Reports" }, { href: "/experiments", label: "Experiments" }, { href: "/methodology", label: "Methodology" }, { href: "/documentation", label: "Documentation" }, { href: "/faq", label: "FAQ & glossary" }] },
 ];
 
 const isIn = (path: string, h: string) => (h === "/" ? path === "/" : path === h || path.startsWith(h + "/"));

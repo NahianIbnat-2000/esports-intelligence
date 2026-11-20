@@ -1,0 +1,2628 @@
+{
+ "experiment_id": "walk-forward-20261120-143704-c8b6f8e19c",
+ "kind": "walk-forward",
+ "created_at": "2026-11-20T14:37:04.006704+00:00",
+ "code_sha256": "5b503f5ed064bf3dcbfae822b85b575965c64584295efe926570fd25345b9e95",
+ "git_commit": null,
+ "environment": {
+  "python": "3.13.18",
+  "packages": {
+   "numpy": "2.5.3",
+   "pandas": "3.0.5",
+   "scikit-learn": "1.9.1",
+   "scipy": "1.18.1"
+  }
+ },
+ "data": {
+  "sha256": "c8b6f8e19c33c247ef27b534e344e6425bc2f69588699a03227c7cd074fbd61b",
+  "fingerprint": "c8b6f8e19c",
+  "n_files": 7,
+  "files": [
+   {
+    "filename": "2020_LoL_esports_match_data_from_OraclesElixir.csv",
+    "sha256": "4c271d944d3747fc26177aeac733069e5568026e16ace799f8895e3bddacd358"
+   },
+   {
+    "filename": "2021_LoL_esports_match_data_from_OraclesElixir.csv",
+    "sha256": "bf1b54172f7d3af8177fbbf880bdbe07acb791159164331f6e7015e18a542054"
+   },
+   {
+    "filename": "2022_LoL_esports_match_data_from_OraclesElixir.csv",
+    "sha256": "76b7cb8afc1c65c7e220053b1c5296c593e00c3a6dfaee4ef47373aa64b42a0a"
+   },
+   {
+    "filename": "2023_LoL_esports_match_data_from_OraclesElixir.csv",
+    "sha256": "efe4d2abe53ec3a19c77196a1a132ee88864f317b1791e544ca9e0077fd47050"
+   },
+   {
+    "filename": "2024_LoL_esports_match_data_from_OraclesElixir.csv",
+    "sha256": "a2c67680a53c73622cc974db4f534e49e44cc11dab2e5fd5ecfae421f772d865"
+   },
+   {
+    "filename": "2025_LoL_esports_match_data_from_OraclesElixir.csv",
+    "sha256": "882245414e94e13a9c70f14ed1047a36bffe2279f29526bffe884130d4aaf592"
+   },
+   {
+    "filename": "2026_LoL_esports_match_data_from_OraclesElixir.csv",
+    "sha256": "5bbfb43fd934ae1568be7d3fd58c0b2257a47476850bb936435dd11fb7e08f21"
+   }
+  ]
+ },
+ "design": {
+  "test_years": [
+   2022,
+   2023,
+   2024,
+   2025,
+   2026
+  ],
+  "split_rule": "train < Y-1, validation = Y-1, test = Y (UTC year)",
+  "eligibility": {
+   "burn_in_days": 90,
+   "min_prior_games": 5
+  },
+  "team_elo_grid": {
+   "k": [
+    8,
+    12,
+    16,
+    20,
+    24,
+    32,
+    40,
+    48,
+    56,
+    64,
+    80
+   ],
+   "carryover_shrink": [
+    0.0,
+    0.25,
+    0.5,
+    0.75
+   ],
+   "k_league": [
+    0.0,
+    2.0,
+    4.0,
+    8.0,
+    16.0,
+    32.0
+   ]
+  },
+  "player_elo_grid": {
+   "k": [
+    24,
+    32,
+    40,
+    48,
+    56,
+    64
+   ],
+   "carryover_shrink": [
+    0.0,
+    0.1,
+    0.25,
+    0.5
+   ],
+   "k_league": [
+    0.0,
+    8.0,
+    16.0,
+    32.0
+   ]
+  },
+  "C_grid": [
+   0.0003,
+   0.001,
+   0.003,
+   0.01,
+   0.1,
+   1.0,
+   10.0
+  ],
+  "selection_metric": "validation log loss",
+  "bootstrap": {
+   "unit": "series (tournament, team pair, UTC day)",
+   "n_window": 1000,
+   "n_pooled": 2000,
+   "seed": 0
+  },
+  "features": {
+   "form": [
+    "elo_diff",
+    "recent_wr_diff",
+    "hist_wr_diff",
+    "opp_strength_diff",
+    "experience_diff",
+    "elo_diff_x_intl"
+   ],
+   "roster": [
+    {
+     "name": "continuity_diff",
+     "definition": "Blue minus red share of today's players who also played the team's previous game",
+     "unit": "share"
+    },
+    {
+     "name": "tenure_diff",
+     "definition": "Blue minus red mean log(1 + earlier games for this team) over today's players",
+     "unit": "log games"
+    },
+    {
+     "name": "player_exp_diff",
+     "definition": "Blue minus red mean log(1 + earlier professional games, any team) over today's players",
+     "unit": "log games"
+    },
+    {
+     "name": "player_exp_prev_diff",
+     "definition": "Same as player_exp_diff but for the players of each team's previous game, so it needs no knowledge of today's lineup",
+     "unit": "log games"
+    }
+   ],
+   "player": [
+    "player_elo_diff",
+    "player_elo_prev_diff"
+   ]
+  },
+  "lineup_note": "Roster and player-Elo features use the lineup that played, which is known when the game starts but not days before.",
+  "patch_early_days": 7,
+  "models": [
+   "baseline",
+   "elo_flat",
+   "elo_league",
+   "elo_cal",
+   "form",
+   "form_continuity",
+   "form_tenure",
+   "form_player_exp",
+   "form_player_exp_prev",
+   "form_roster",
+   "player_cal",
+   "player_cal_prev",
+   "prematch",
+   "all"
+  ]
+ },
+ "windows": [
+  {
+   "test_year": 2022,
+   "periods": {
+    "train": {
+     "n": 6299,
+     "start": "2020-04-02 07:47:17+00:00",
+     "end": "2020-12-27 11:06:48+00:00"
+    },
+    "validation": {
+     "n": 11196,
+     "start": "2021-01-02 07:40:39+00:00",
+     "end": "2021-12-26 13:22:45+00:00"
+    },
+    "test": {
+     "n": 11406,
+     "start": "2022-01-10 07:44:08+00:00",
+     "end": "2022-12-27 12:43:43+00:00"
+    }
+   },
+   "chosen": {
+    "elo_flat": {
+     "k": 40,
+     "carryover_shrink": 0.5,
+     "k_league": 0.0
+    },
+    "elo_league": {
+     "k": 32,
+     "carryover_shrink": 0.5,
+     "k_league": 16.0
+    },
+    "player_elo": {
+     "k": 40,
+     "carryover_shrink": 0.1,
+     "k_league": 16.0
+    },
+    "C": {
+     "elo_cal": 0.01,
+     "form": 0.1,
+     "form_continuity": 0.1,
+     "form_tenure": 0.01,
+     "form_player_exp": 0.01,
+     "form_player_exp_prev": 0.01,
+     "form_roster": 0.01,
+     "player_cal": 0.01,
+     "player_cal_prev": 0.01,
+     "prematch": 0.003,
+     "all": 0.01
+    }
+   },
+   "coefficients": {
+    "form_roster": {
+     "intercept": 0.1159603136871137,
+     "standardised": {
+      "elo_diff": 0.36492796800362415,
+      "recent_wr_diff": 0.1568624101993445,
+      "hist_wr_diff": 0.09848814740440286,
+      "opp_strength_diff": 0.029637271155191332,
+      "experience_diff": 0.016870378998319713,
+      "elo_diff_x_intl": 0.00010365648472547377,
+      "continuity_diff": 0.011746977990832696,
+      "tenure_diff": -0.028437081715153384,
+      "player_exp_diff": 0.3147697462272166
+     }
+    },
+    "prematch": {
+     "intercept": 0.11508380178482969,
+     "standardised": {
+      "elo_diff": 0.16432059814829342,
+      "recent_wr_diff": 0.10123547573181302,
+      "hist_wr_diff": 0.10987989060905694,
+      "opp_strength_diff": 0.018977798166975028,
+      "experience_diff": 0.02261833779502136,
+      "elo_diff_x_intl": -0.004901615908391381,
+      "player_exp_prev_diff": 0.22151582848981952,
+      "player_elo_prev_diff": 0.27598876493874275
+     }
+    },
+    "all": {
+     "intercept": 0.11651130283759029,
+     "standardised": {
+      "elo_diff": 0.1264784840758948,
+      "recent_wr_diff": 0.0823998520891703,
+      "hist_wr_diff": 0.10185941935086593,
+      "opp_strength_diff": 0.017622998527469663,
+      "experience_diff": 0.024768937305113224,
+      "elo_diff_x_intl": -0.009840261774273024,
+      "continuity_diff": 0.011848947909153265,
+      "tenure_diff": -0.028549176647754443,
+      "player_exp_diff": 0.28524676088494416,
+      "player_elo_diff": 0.34741438353844606
+     }
+    }
+   },
+   "metrics": {
+    "baseline": {
+     "n": 11406,
+     "brier": 0.24956487534652688,
+     "log_loss": 0.6922767445731128,
+     "accuracy": 0.5213045765386639,
+     "roc_auc": null,
+     "ece": 0.004331319431613245
+    },
+    "elo_flat": {
+     "n": 11406,
+     "brier": 0.22225302138947153,
+     "log_loss": 0.6349990744184498,
+     "accuracy": 0.6394003156233561,
+     "roc_auc": 0.6910433523198407,
+     "ece": 0.01974891533225141
+    },
+    "elo_league": {
+     "n": 11406,
+     "brier": 0.21953277073884656,
+     "log_loss": 0.6285837349869352,
+     "accuracy": 0.6433456075749605,
+     "roc_auc": 0.6997852467075474,
+     "ece": 0.018615868412164307
+    },
+    "elo_cal": {
+     "n": 11406,
+     "brier": 0.21933683786533165,
+     "log_loss": 0.6281372978236381,
+     "accuracy": 0.6443976854287218,
+     "roc_auc": 0.6997852467075474,
+     "ece": 0.013396577515827979
+    },
+    "form": {
+     "n": 11406,
+     "brier": 0.21878088740297114,
+     "log_loss": 0.6267054137332325,
+     "accuracy": 0.6452744169735227,
+     "roc_auc": 0.7007904165573188,
+     "ece": 0.010321006901130778
+    },
+    "form_continuity": {
+     "n": 11406,
+     "brier": 0.21859576623825813,
+     "log_loss": 0.6263186799447714,
+     "accuracy": 0.6458881290548834,
+     "roc_auc": 0.7013946335086598,
+     "ece": 0.011391027200935858
+    },
+    "form_tenure": {
+     "n": 11406,
+     "brier": 0.2178208428236855,
+     "log_loss": 0.6245309615599789,
+     "accuracy": 0.6477292652989655,
+     "roc_auc": 0.7043413308297264,
+     "ece": 0.015267888450398576
+    },
+    "form_player_exp": {
+     "n": 11406,
+     "brier": 0.21250160370999432,
+     "log_loss": 0.6124733603630916,
+     "accuracy": 0.6575486586007364,
+     "roc_auc": 0.7212172987904573,
+     "ece": 0.012789059898687958
+    },
+    "form_player_exp_prev": {
+     "n": 11406,
+     "brier": 0.21401294625202505,
+     "log_loss": 0.6160357228709007,
+     "accuracy": 0.6552691565842539,
+     "roc_auc": 0.7167443499431392,
+     "ece": 0.014116691663661073
+    },
+    "form_roster": {
+     "n": 11406,
+     "brier": 0.21250154491333237,
+     "log_loss": 0.6124858787468186,
+     "accuracy": 0.6567596002104156,
+     "roc_auc": 0.7211701097422591,
+     "ece": 0.01541775710267098
+    },
+    "player_cal": {
+     "n": 11406,
+     "brier": 0.21817462913000368,
+     "log_loss": 0.6254593652584209,
+     "accuracy": 0.6436963001928809,
+     "roc_auc": 0.7030526262615062,
+     "ece": 0.009748775867502507
+    },
+    "player_cal_prev": {
+     "n": 11406,
+     "brier": 0.21853067353278768,
+     "log_loss": 0.6263282777780973,
+     "accuracy": 0.6452744169735227,
+     "roc_auc": 0.702074161963163,
+     "ece": 0.007809553449605036
+    },
+    "prematch": {
+     "n": 11406,
+     "brier": 0.21367357065616507,
+     "log_loss": 0.6152410621964567,
+     "accuracy": 0.6558828686656146,
+     "roc_auc": 0.7177200420389118,
+     "ece": 0.013025208946693413
+    },
+    "all": {
+     "n": 11406,
+     "brier": 0.21192384421510913,
+     "log_loss": 0.6110833147721307,
+     "accuracy": 0.6570226196738559,
+     "roc_auc": 0.7225024302975868,
+     "ece": 0.012168060858173258
+    }
+   },
+   "comparisons_brier": [
+    {
+     "model": "elo_league",
+     "reference": "elo_flat",
+     "question": "League levels vs flat Elo",
+     "metric": "brier",
+     "difference": -0.002720250650624949,
+     "ci95_low": -0.0037173220826771654,
+     "ci95_high": -0.001841864135463945,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 7857
+    },
+    {
+     "model": "elo_cal",
+     "reference": "elo_league",
+     "question": "Calibration of league Elo",
+     "metric": "brier",
+     "difference": -0.00019593287351496311,
+     "ci95_low": -0.0005998458464280123,
+     "ci95_high": 0.00022056414325554867,
+     "share_bootstrap_model_better": 0.806,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 7857
+    },
+    {
+     "model": "form",
+     "reference": "elo_cal",
+     "question": "Form features over calibrated Elo",
+     "metric": "brier",
+     "difference": -0.0005559504623604967,
+     "ci95_low": -0.0011115007287915103,
+     "ci95_high": 6.691082202312087e-06,
+     "share_bootstrap_model_better": 0.973,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 7857
+    },
+    {
+     "model": "form_continuity",
+     "reference": "form",
+     "question": "Continuity alone over form",
+     "metric": "brier",
+     "difference": -0.00018512116471297788,
+     "ci95_low": -0.00038072264743456153,
+     "ci95_high": 2.4428902130391335e-05,
+     "share_bootstrap_model_better": 0.962,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 7857
+    },
+    {
+     "model": "form_tenure",
+     "reference": "form",
+     "question": "Tenure alone over form",
+     "metric": "brier",
+     "difference": -0.0009600445792856234,
+     "ci95_low": -0.0014784941918822019,
+     "ci95_high": -0.00038380590121624603,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 7857
+    },
+    {
+     "model": "form_player_exp",
+     "reference": "form",
+     "question": "Player experience alone over form",
+     "metric": "brier",
+     "difference": -0.006279283692976774,
+     "ci95_low": -0.00751541007529092,
+     "ci95_high": -0.005124859793583216,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 7857
+    },
+    {
+     "model": "form_player_exp_prev",
+     "reference": "form",
+     "question": "Player experience, previous lineup (pre-match)",
+     "metric": "brier",
+     "difference": -0.004767941150946092,
+     "ci95_low": -0.005858221511063241,
+     "ci95_high": -0.003766025583712797,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 7857
+    },
+    {
+     "model": "form_roster",
+     "reference": "form",
+     "question": "Roster features over form",
+     "metric": "brier",
+     "difference": -0.006279342489638725,
+     "ci95_low": -0.007549396488559847,
+     "ci95_high": -0.005119443294662737,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 7857
+    },
+    {
+     "model": "player_cal",
+     "reference": "elo_cal",
+     "question": "Player Elo vs team Elo (both calibrated)",
+     "metric": "brier",
+     "difference": -0.0011622087353279258,
+     "ci95_low": -0.0023720702327291693,
+     "ci95_high": 7.465510849915071e-05,
+     "share_bootstrap_model_better": 0.97,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 7857
+    },
+    {
+     "model": "player_cal_prev",
+     "reference": "elo_cal",
+     "question": "Player Elo, previous lineup (pre-match) vs team Elo",
+     "metric": "brier",
+     "difference": -0.0008061643325439262,
+     "ci95_low": -0.0019903451012802014,
+     "ci95_high": 0.0004175386139433875,
+     "share_bootstrap_model_better": 0.903,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 7857
+    },
+    {
+     "model": "prematch",
+     "reference": "form",
+     "question": "Pre-match additions over form (previous lineup only)",
+     "metric": "brier",
+     "difference": -0.005107316746806032,
+     "ci95_low": -0.006282397920291024,
+     "ci95_high": -0.004016653674450202,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 7857
+    },
+    {
+     "model": "all",
+     "reference": "form",
+     "question": "Roster + player Elo over form",
+     "metric": "brier",
+     "difference": -0.0068570431878619805,
+     "ci95_low": -0.008264190331372604,
+     "ci95_high": -0.0055733188084380065,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 7857
+    },
+    {
+     "model": "all",
+     "reference": "elo_cal",
+     "question": "Everything over calibrated Elo",
+     "metric": "brier",
+     "difference": -0.007412993650222476,
+     "ci95_low": -0.008950433662406589,
+     "ci95_high": -0.005991321199014901,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 7857
+    }
+   ]
+  },
+  {
+   "test_year": 2023,
+   "periods": {
+    "train": {
+     "n": 17495,
+     "start": "2020-04-02 07:47:17+00:00",
+     "end": "2021-12-26 13:22:45+00:00"
+    },
+    "validation": {
+     "n": 11406,
+     "start": "2022-01-10 07:44:08+00:00",
+     "end": "2022-12-27 12:43:43+00:00"
+    },
+    "test": {
+     "n": 10310,
+     "start": "2023-01-10 18:15:01+00:00",
+     "end": "2023-12-31 11:48:06+00:00"
+    }
+   },
+   "chosen": {
+    "elo_flat": {
+     "k": 40,
+     "carryover_shrink": 0.5,
+     "k_league": 0.0
+    },
+    "elo_league": {
+     "k": 40,
+     "carryover_shrink": 0.5,
+     "k_league": 16.0
+    },
+    "player_elo": {
+     "k": 40,
+     "carryover_shrink": 0.1,
+     "k_league": 16.0
+    },
+    "C": {
+     "elo_cal": 10.0,
+     "form": 10.0,
+     "form_continuity": 10.0,
+     "form_tenure": 10.0,
+     "form_player_exp": 10.0,
+     "form_player_exp_prev": 10.0,
+     "form_roster": 10.0,
+     "player_cal": 10.0,
+     "player_cal_prev": 10.0,
+     "prematch": 0.1,
+     "all": 0.01
+    }
+   },
+   "coefficients": {
+    "form_roster": {
+     "intercept": 0.1113819145438385,
+     "standardised": {
+      "elo_diff": 0.467583948206651,
+      "recent_wr_diff": 0.09981134208800656,
+      "hist_wr_diff": 0.06914652004213123,
+      "opp_strength_diff": 0.01718708488929436,
+      "experience_diff": 0.006158849137465915,
+      "elo_diff_x_intl": 0.016116387043649587,
+      "continuity_diff": 0.011603282448657692,
+      "tenure_diff": -0.027156840396738983,
+      "player_exp_diff": 0.3810167369687037
+     }
+    },
+    "prematch": {
+     "intercept": 0.1106798056653592,
+     "standardised": {
+      "elo_diff": 0.20283521841715632,
+      "recent_wr_diff": 0.06913744186740302,
+      "hist_wr_diff": 0.08910778305868274,
+      "opp_strength_diff": 0.015144857309991284,
+      "experience_diff": 0.007961656269872972,
+      "elo_diff_x_intl": 0.0074803797195549535,
+      "player_exp_prev_diff": 0.2875393251059482,
+      "player_elo_prev_diff": 0.3223514189466018
+     }
+    },
+    "all": {
+     "intercept": 0.11133075143712523,
+     "standardised": {
+      "elo_diff": 0.1752055672081074,
+      "recent_wr_diff": 0.07192037442834148,
+      "hist_wr_diff": 0.0891071793698036,
+      "opp_strength_diff": 0.021904998059120186,
+      "experience_diff": 0.010113892731633949,
+      "elo_diff_x_intl": 0.0068282947580826136,
+      "continuity_diff": 0.012081461610110521,
+      "tenure_diff": -0.019870306747065993,
+      "player_exp_diff": 0.3390890247380214,
+      "player_elo_diff": 0.33842609968929527
+     }
+    }
+   },
+   "metrics": {
+    "baseline": {
+     "n": 10310,
+     "brier": 0.24899439578796215,
+     "log_loss": 0.6911348726367388,
+     "accuracy": 0.5329776915615907,
+     "roc_auc": null,
+     "ece": 0.009051183828294174
+    },
+    "elo_flat": {
+     "n": 10310,
+     "brier": 0.22490062409428438,
+     "log_loss": 0.6408130693867425,
+     "accuracy": 0.6285160038797284,
+     "roc_auc": 0.6815821047549127,
+     "ece": 0.03335297957129654
+    },
+    "elo_league": {
+     "n": 10310,
+     "brier": 0.22280614024013085,
+     "log_loss": 0.6361573192302113,
+     "accuracy": 0.6339476236663434,
+     "roc_auc": 0.6890512190351467,
+     "ece": 0.033214052609121206
+    },
+    "elo_cal": {
+     "n": 10310,
+     "brier": 0.22172035647821817,
+     "log_loss": 0.6335638854613759,
+     "accuracy": 0.6354025218234723,
+     "roc_auc": 0.6890512190351467,
+     "ece": 0.012221091465654265
+    },
+    "form": {
+     "n": 10310,
+     "brier": 0.2218123997883068,
+     "log_loss": 0.633583283412377,
+     "accuracy": 0.6357904946653734,
+     "roc_auc": 0.688532594060304,
+     "ece": 0.012020330305948037
+    },
+    "form_continuity": {
+     "n": 10310,
+     "brier": 0.22168432595950505,
+     "log_loss": 0.6333005490943006,
+     "accuracy": 0.6344325897187197,
+     "roc_auc": 0.6889783499962677,
+     "ece": 0.01133020507008883
+    },
+    "form_tenure": {
+     "n": 10310,
+     "brier": 0.22081595153540443,
+     "log_loss": 0.6314359124368908,
+     "accuracy": 0.6381183317167798,
+     "roc_auc": 0.69211398637674,
+     "ece": 0.013167935413679584
+    },
+    "form_player_exp": {
+     "n": 10310,
+     "brier": 0.21645587342224215,
+     "log_loss": 0.6214441942360369,
+     "accuracy": 0.6500484966052377,
+     "roc_auc": 0.7064296155194423,
+     "ece": 0.01262811796215725
+    },
+    "form_player_exp_prev": {
+     "n": 10310,
+     "brier": 0.21774071441761883,
+     "log_loss": 0.6243991768979205,
+     "accuracy": 0.6473326867119301,
+     "roc_auc": 0.7022452016701676,
+     "ece": 0.01122440165224939
+    },
+    "form_roster": {
+     "n": 10310,
+     "brier": 0.21652249894325806,
+     "log_loss": 0.6215681649110941,
+     "accuracy": 0.6506304558680892,
+     "roc_auc": 0.7061658810000973,
+     "ece": 0.012103767685631978
+    },
+    "player_cal": {
+     "n": 10310,
+     "brier": 0.21905933780941575,
+     "log_loss": 0.6278908412136384,
+     "accuracy": 0.6437439379243453,
+     "roc_auc": 0.6986003513058695,
+     "ece": 0.01169343819022906
+    },
+    "player_cal_prev": {
+     "n": 10310,
+     "brier": 0.21955077226699443,
+     "log_loss": 0.6289383034215457,
+     "accuracy": 0.6426770126091174,
+     "roc_auc": 0.6971010557128778,
+     "ece": 0.012218129739609805
+    },
+    "prematch": {
+     "n": 10310,
+     "brier": 0.21689714841932842,
+     "log_loss": 0.6225537903747059,
+     "accuracy": 0.6446168768186227,
+     "roc_auc": 0.7051520640400931,
+     "ece": 0.011032889573099391
+    },
+    "all": {
+     "n": 10310,
+     "brier": 0.21556299724043354,
+     "log_loss": 0.6194085574258661,
+     "accuracy": 0.6510184287099903,
+     "roc_auc": 0.7092908213546347,
+     "ece": 0.011699236045255603
+    }
+   },
+   "comparisons_brier": [
+    {
+     "model": "elo_league",
+     "reference": "elo_flat",
+     "question": "League levels vs flat Elo",
+     "metric": "brier",
+     "difference": -0.002094483854153529,
+     "ci95_low": -0.0028082440405652292,
+     "ci95_high": -0.0013745833848376502,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 6145
+    },
+    {
+     "model": "elo_cal",
+     "reference": "elo_league",
+     "question": "Calibration of league Elo",
+     "metric": "brier",
+     "difference": -0.0010857837619126442,
+     "ci95_low": -0.0015483636670684299,
+     "ci95_high": -0.0006123522885555843,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 6145
+    },
+    {
+     "model": "form",
+     "reference": "elo_cal",
+     "question": "Form features over calibrated Elo",
+     "metric": "brier",
+     "difference": 9.204331008863417e-05,
+     "ci95_low": -0.0004027575754602195,
+     "ci95_high": 0.0005792865717661817,
+     "share_bootstrap_model_better": 0.356,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 6145
+    },
+    {
+     "model": "form_continuity",
+     "reference": "form",
+     "question": "Continuity alone over form",
+     "metric": "brier",
+     "difference": -0.00012807382880174133,
+     "ci95_low": -0.0003103416715868393,
+     "ci95_high": 3.512967211612015e-05,
+     "share_bootstrap_model_better": 0.934,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 6145
+    },
+    {
+     "model": "form_tenure",
+     "reference": "form",
+     "question": "Tenure alone over form",
+     "metric": "brier",
+     "difference": -0.0009964482529023929,
+     "ci95_low": -0.0015715022197824126,
+     "ci95_high": -0.00043423844861832514,
+     "share_bootstrap_model_better": 0.999,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 6145
+    },
+    {
+     "model": "form_player_exp",
+     "reference": "form",
+     "question": "Player experience alone over form",
+     "metric": "brier",
+     "difference": -0.005356526366064712,
+     "ci95_low": -0.006757855786951024,
+     "ci95_high": -0.004074838792238162,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 6145
+    },
+    {
+     "model": "form_player_exp_prev",
+     "reference": "form",
+     "question": "Player experience, previous lineup (pre-match)",
+     "metric": "brier",
+     "difference": -0.0040716853706880135,
+     "ci95_low": -0.005312451301596464,
+     "ci95_high": -0.002899696313818355,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 6145
+    },
+    {
+     "model": "form_roster",
+     "reference": "form",
+     "question": "Roster features over form",
+     "metric": "brier",
+     "difference": -0.005289900845048761,
+     "ci95_low": -0.006698883358784202,
+     "ci95_high": -0.003960269797341697,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 6145
+    },
+    {
+     "model": "player_cal",
+     "reference": "elo_cal",
+     "question": "Player Elo vs team Elo (both calibrated)",
+     "metric": "brier",
+     "difference": -0.002661018668802387,
+     "ci95_low": -0.003879300626005771,
+     "ci95_high": -0.0013090359679845509,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 6145
+    },
+    {
+     "model": "player_cal_prev",
+     "reference": "elo_cal",
+     "question": "Player Elo, previous lineup (pre-match) vs team Elo",
+     "metric": "brier",
+     "difference": -0.002169584211223783,
+     "ci95_low": -0.0033580209864568842,
+     "ci95_high": -0.0009435549399808951,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 6145
+    },
+    {
+     "model": "prematch",
+     "reference": "form",
+     "question": "Pre-match additions over form (previous lineup only)",
+     "metric": "brier",
+     "difference": -0.0049152513689784336,
+     "ci95_low": -0.00624584144971819,
+     "ci95_high": -0.0036277113949211475,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 6145
+    },
+    {
+     "model": "all",
+     "reference": "form",
+     "question": "Roster + player Elo over form",
+     "metric": "brier",
+     "difference": -0.0062494025478732765,
+     "ci95_low": -0.007756068925821516,
+     "ci95_high": -0.004848569693016281,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 6145
+    },
+    {
+     "model": "all",
+     "reference": "elo_cal",
+     "question": "Everything over calibrated Elo",
+     "metric": "brier",
+     "difference": -0.006157359237784642,
+     "ci95_low": -0.0076951597057865325,
+     "ci95_high": -0.004628618922747702,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 6145
+    }
+   ]
+  },
+  {
+   "test_year": 2024,
+   "periods": {
+    "train": {
+     "n": 28901,
+     "start": "2020-04-02 07:47:17+00:00",
+     "end": "2022-12-27 12:43:43+00:00"
+    },
+    "validation": {
+     "n": 10310,
+     "start": "2023-01-10 18:15:01+00:00",
+     "end": "2023-12-31 11:48:06+00:00"
+    },
+    "test": {
+     "n": 9445,
+     "start": "2024-01-01 05:13:15+00:00",
+     "end": "2024-12-08 09:03:13+00:00"
+    }
+   },
+   "chosen": {
+    "elo_flat": {
+     "k": 32,
+     "carryover_shrink": 0.5,
+     "k_league": 0.0
+    },
+    "elo_league": {
+     "k": 32,
+     "carryover_shrink": 0.5,
+     "k_league": 16.0
+    },
+    "player_elo": {
+     "k": 40,
+     "carryover_shrink": 0.1,
+     "k_league": 16.0
+    },
+    "C": {
+     "elo_cal": 0.1,
+     "form": 10.0,
+     "form_continuity": 10.0,
+     "form_tenure": 10.0,
+     "form_player_exp": 10.0,
+     "form_player_exp_prev": 10.0,
+     "form_roster": 10.0,
+     "player_cal": 0.003,
+     "player_cal_prev": 0.003,
+     "prematch": 10.0,
+     "all": 0.01
+    }
+   },
+   "coefficients": {
+    "form_roster": {
+     "intercept": 0.12183912224696138,
+     "standardised": {
+      "elo_diff": 0.46908081762534093,
+      "recent_wr_diff": 0.11982773410410011,
+      "hist_wr_diff": 0.04221325648317768,
+      "opp_strength_diff": 0.03515243156306161,
+      "experience_diff": -0.005244086149912206,
+      "elo_diff_x_intl": 0.018154306253269345,
+      "continuity_diff": 0.00934041673775178,
+      "tenure_diff": -0.014043232429856204,
+      "player_exp_diff": 0.3841404946262852
+     }
+    },
+    "prematch": {
+     "intercept": 0.12132098850442954,
+     "standardised": {
+      "elo_diff": 0.21026908863576935,
+      "recent_wr_diff": 0.06547252409297737,
+      "hist_wr_diff": 0.06768737242858656,
+      "opp_strength_diff": 0.026222740592370772,
+      "experience_diff": 0.0010278036451452097,
+      "elo_diff_x_intl": 0.012444262363160185,
+      "player_exp_prev_diff": 0.28869094555812735,
+      "player_elo_prev_diff": 0.34025491951330766
+     }
+    },
+    "all": {
+     "intercept": 0.12197457903563576,
+     "standardised": {
+      "elo_diff": 0.18822973706206783,
+      "recent_wr_diff": 0.06704500697340277,
+      "hist_wr_diff": 0.06712462692453382,
+      "opp_strength_diff": 0.030614869471077857,
+      "experience_diff": 0.0007329513079952886,
+      "elo_diff_x_intl": 0.011844443721317578,
+      "continuity_diff": 0.010262186826511204,
+      "tenure_diff": -0.01238417680951029,
+      "player_exp_diff": 0.33850370079211145,
+      "player_elo_diff": 0.351826741710548
+     }
+    }
+   },
+   "metrics": {
+    "baseline": {
+     "n": 9445,
+     "brier": 0.24901253927782319,
+     "log_loss": 0.6911710737706314,
+     "accuracy": 0.531921651667549,
+     "roc_auc": null,
+     "ece": 0.005615258053512151
+    },
+    "elo_flat": {
+     "n": 9445,
+     "brier": 0.21932022414308186,
+     "log_loss": 0.6280555369597745,
+     "accuracy": 0.6462678665960826,
+     "roc_auc": 0.7023304199557123,
+     "ece": 0.033638261731218234
+    },
+    "elo_league": {
+     "n": 9445,
+     "brier": 0.21544605694259653,
+     "log_loss": 0.6187941700548261,
+     "accuracy": 0.6580201164637375,
+     "roc_auc": 0.7141649059857628,
+     "ece": 0.033215397592080746
+    },
+    "elo_cal": {
+     "n": 9445,
+     "brier": 0.2144604963989472,
+     "log_loss": 0.6165194440455669,
+     "accuracy": 0.6545262043409211,
+     "roc_auc": 0.7141649059857628,
+     "ece": 0.016084146536388122
+    },
+    "form": {
+     "n": 9445,
+     "brier": 0.2144105702378206,
+     "log_loss": 0.6163776623965216,
+     "accuracy": 0.65643197458973,
+     "roc_auc": 0.7139842305902488,
+     "ece": 0.017615571387138606
+    },
+    "form_continuity": {
+     "n": 9445,
+     "brier": 0.21429815922186854,
+     "log_loss": 0.6161216902164789,
+     "accuracy": 0.6559025939650609,
+     "roc_auc": 0.7143939355738463,
+     "ece": 0.016370703516337674
+    },
+    "form_tenure": {
+     "n": 9445,
+     "brier": 0.21403390333961794,
+     "log_loss": 0.6156586073000309,
+     "accuracy": 0.6591847538380096,
+     "roc_auc": 0.7149933654806173,
+     "ece": 0.019515210531697733
+    },
+    "form_player_exp": {
+     "n": 9445,
+     "brier": 0.20963470803888737,
+     "log_loss": 0.6048553164830341,
+     "accuracy": 0.6620434092112228,
+     "roc_auc": 0.726670362715874,
+     "ece": 0.013209928725591003
+    },
+    "form_player_exp_prev": {
+     "n": 9445,
+     "brier": 0.2103720896026068,
+     "log_loss": 0.6066205829377336,
+     "accuracy": 0.6610905240868185,
+     "roc_auc": 0.7246894166089178,
+     "ece": 0.010913419380844622
+    },
+    "form_roster": {
+     "n": 9445,
+     "brier": 0.20963576120342922,
+     "log_loss": 0.6048532456469696,
+     "accuracy": 0.6622551614610905,
+     "roc_auc": 0.7266634742694464,
+     "ece": 0.012840907951514406
+    },
+    "player_cal": {
+     "n": 9445,
+     "brier": 0.2115268281639633,
+     "log_loss": 0.6096932490635683,
+     "accuracy": 0.6579142403388036,
+     "roc_auc": 0.7225171697903896,
+     "ece": 0.015349559153279948
+    },
+    "player_cal_prev": {
+     "n": 9445,
+     "brier": 0.21167261815404623,
+     "log_loss": 0.6100126998464965,
+     "accuracy": 0.6563260984647962,
+     "roc_auc": 0.7221066093788043,
+     "ece": 0.01340511754616701
+    },
+    "prematch": {
+     "n": 9445,
+     "brier": 0.20888377894547364,
+     "log_loss": 0.6030934014768239,
+     "accuracy": 0.6637374272101642,
+     "roc_auc": 0.7291094580440485,
+     "ece": 0.012617590407726698
+    },
+    "all": {
+     "n": 9445,
+     "brier": 0.20816989303282463,
+     "log_loss": 0.6013330023123337,
+     "accuracy": 0.6608787718369508,
+     "roc_auc": 0.7309681679938107,
+     "ece": 0.018966750201465467
+    }
+   },
+   "comparisons_brier": [
+    {
+     "model": "elo_league",
+     "reference": "elo_flat",
+     "question": "League levels vs flat Elo",
+     "metric": "brier",
+     "difference": -0.0038741672004853843,
+     "ci95_low": -0.00496212769267529,
+     "ci95_high": -0.0028654641084223677,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 5337
+    },
+    {
+     "model": "elo_cal",
+     "reference": "elo_league",
+     "question": "Calibration of league Elo",
+     "metric": "brier",
+     "difference": -0.0009855605436492857,
+     "ci95_low": -0.0014357651024138403,
+     "ci95_high": -0.0005297404668987227,
+     "share_bootstrap_model_better": 0.999,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 5337
+    },
+    {
+     "model": "form",
+     "reference": "elo_cal",
+     "question": "Form features over calibrated Elo",
+     "metric": "brier",
+     "difference": -4.9926161126597656e-05,
+     "ci95_low": -0.0005783085144997928,
+     "ci95_high": 0.0005064313939117447,
+     "share_bootstrap_model_better": 0.573,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 5337
+    },
+    {
+     "model": "form_continuity",
+     "reference": "form",
+     "question": "Continuity alone over form",
+     "metric": "brier",
+     "difference": -0.00011241101595208307,
+     "ci95_low": -0.00029110587656643673,
+     "ci95_high": 7.286735061513216e-05,
+     "share_bootstrap_model_better": 0.875,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 5337
+    },
+    {
+     "model": "form_tenure",
+     "reference": "form",
+     "question": "Tenure alone over form",
+     "metric": "brier",
+     "difference": -0.0003766668982026932,
+     "ci95_low": -0.000982369739706928,
+     "ci95_high": 0.0002089730109036438,
+     "share_bootstrap_model_better": 0.892,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 5337
+    },
+    {
+     "model": "form_player_exp",
+     "reference": "form",
+     "question": "Player experience alone over form",
+     "metric": "brier",
+     "difference": -0.004775862198933252,
+     "ci95_low": -0.0062353639272083134,
+     "ci95_high": -0.003298695316476904,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 5337
+    },
+    {
+     "model": "form_player_exp_prev",
+     "reference": "form",
+     "question": "Player experience, previous lineup (pre-match)",
+     "metric": "brier",
+     "difference": -0.004038480635213794,
+     "ci95_low": -0.00529727903741176,
+     "ci95_high": -0.0026973835645642047,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 5337
+    },
+    {
+     "model": "form_roster",
+     "reference": "form",
+     "question": "Roster features over form",
+     "metric": "brier",
+     "difference": -0.004774809034391395,
+     "ci95_low": -0.006222685031343972,
+     "ci95_high": -0.00330030254613569,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 5337
+    },
+    {
+     "model": "player_cal",
+     "reference": "elo_cal",
+     "question": "Player Elo vs team Elo (both calibrated)",
+     "metric": "brier",
+     "difference": -0.0029336682349838947,
+     "ci95_low": -0.004419709872578688,
+     "ci95_high": -0.0014689988327644613,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 5337
+    },
+    {
+     "model": "player_cal_prev",
+     "reference": "elo_cal",
+     "question": "Player Elo, previous lineup (pre-match) vs team Elo",
+     "metric": "brier",
+     "difference": -0.002787878244901002,
+     "ci95_low": -0.004169255262411182,
+     "ci95_high": -0.0014668105252621823,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 5337
+    },
+    {
+     "model": "prematch",
+     "reference": "form",
+     "question": "Pre-match additions over form (previous lineup only)",
+     "metric": "brier",
+     "difference": -0.00552679129234697,
+     "ci95_low": -0.006947413863501028,
+     "ci95_high": -0.004069736175412656,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 5337
+    },
+    {
+     "model": "all",
+     "reference": "form",
+     "question": "Roster + player Elo over form",
+     "metric": "brier",
+     "difference": -0.006240677204995973,
+     "ci95_low": -0.007799725831057181,
+     "ci95_high": -0.004590595086809229,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 5337
+    },
+    {
+     "model": "all",
+     "reference": "elo_cal",
+     "question": "Everything over calibrated Elo",
+     "metric": "brier",
+     "difference": -0.006290603366122569,
+     "ci95_low": -0.00786379025525794,
+     "ci95_high": -0.00463394310108534,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 5337
+    }
+   ]
+  },
+  {
+   "test_year": 2025,
+   "periods": {
+    "train": {
+     "n": 39211,
+     "start": "2020-04-02 07:47:17+00:00",
+     "end": "2023-12-31 11:48:06+00:00"
+    },
+    "validation": {
+     "n": 9445,
+     "start": "2024-01-01 05:13:15+00:00",
+     "end": "2024-12-08 09:03:13+00:00"
+    },
+    "test": {
+     "n": 9379,
+     "start": "2025-01-11 14:03:27+00:00",
+     "end": "2025-12-29 10:52:27+00:00"
+    }
+   },
+   "chosen": {
+    "elo_flat": {
+     "k": 40,
+     "carryover_shrink": 0.25,
+     "k_league": 0.0
+    },
+    "elo_league": {
+     "k": 40,
+     "carryover_shrink": 0.5,
+     "k_league": 16.0
+    },
+    "player_elo": {
+     "k": 40,
+     "carryover_shrink": 0.1,
+     "k_league": 16.0
+    },
+    "C": {
+     "elo_cal": 10.0,
+     "form": 10.0,
+     "form_continuity": 10.0,
+     "form_tenure": 10.0,
+     "form_player_exp": 10.0,
+     "form_player_exp_prev": 10.0,
+     "form_roster": 10.0,
+     "player_cal": 10.0,
+     "player_cal_prev": 10.0,
+     "prematch": 10.0,
+     "all": 10.0
+    }
+   },
+   "coefficients": {
+    "form_roster": {
+     "intercept": 0.1278776021882269,
+     "standardised": {
+      "elo_diff": 0.559159906075682,
+      "recent_wr_diff": 0.05467078239780452,
+      "hist_wr_diff": 0.03873241068162378,
+      "opp_strength_diff": 0.01992490679478464,
+      "experience_diff": -0.0026764152059390216,
+      "elo_diff_x_intl": 0.00439605427387914,
+      "continuity_diff": 0.010202603726572881,
+      "tenure_diff": -0.010733092526339558,
+      "player_exp_diff": 0.3844564846113766
+     }
+    },
+    "prematch": {
+     "intercept": 0.12782299688197768,
+     "standardised": {
+      "elo_diff": 0.24331770681579232,
+      "recent_wr_diff": 0.021766325968426044,
+      "hist_wr_diff": 0.06160251192200499,
+      "opp_strength_diff": 0.018718253193451627,
+      "experience_diff": 0.0034310367290908894,
+      "elo_diff_x_intl": -0.003779834095387233,
+      "player_exp_prev_diff": 0.2891582126613438,
+      "player_elo_prev_diff": 0.38767960946639674
+     }
+    },
+    "all": {
+     "intercept": 0.12875196085604318,
+     "standardised": {
+      "elo_diff": 0.22620142152333383,
+      "recent_wr_diff": 0.022932929676247896,
+      "hist_wr_diff": 0.05850614008505415,
+      "opp_strength_diff": 0.025091163456440337,
+      "experience_diff": 0.0021165406831382453,
+      "elo_diff_x_intl": -0.005128643340964679,
+      "continuity_diff": 0.0122628393750063,
+      "tenure_diff": -0.013503026238310388,
+      "player_exp_diff": 0.3384954208461602,
+      "player_elo_diff": 0.4004133862051295
+     }
+    }
+   },
+   "metrics": {
+    "baseline": {
+     "n": 9379,
+     "brier": 0.24897749350839005,
+     "log_loss": 0.6911008702685555,
+     "accuracy": 0.5323595266019832,
+     "roc_auc": null,
+     "ece": 0.004963110949237515
+    },
+    "elo_flat": {
+     "n": 9379,
+     "brier": 0.22536325663765744,
+     "log_loss": 0.6416823526731789,
+     "accuracy": 0.627892099370935,
+     "roc_auc": 0.6829482844609904,
+     "ece": 0.043603772497129094
+    },
+    "elo_league": {
+     "n": 9379,
+     "brier": 0.221528529726542,
+     "log_loss": 0.6334326927939201,
+     "accuracy": 0.6354622027934748,
+     "roc_auc": 0.696869278640804,
+     "ece": 0.04347315629337685
+    },
+    "elo_cal": {
+     "n": 9379,
+     "brier": 0.21972509847697855,
+     "log_loss": 0.6292154233032827,
+     "accuracy": 0.6426058215161531,
+     "roc_auc": 0.696869278640804,
+     "ece": 0.016875511155006826
+    },
+    "form": {
+     "n": 9379,
+     "brier": 0.2191612485149491,
+     "log_loss": 0.6277513651050244,
+     "accuracy": 0.6427124426911185,
+     "roc_auc": 0.6982808307371313,
+     "ece": 0.016434029060906335
+    },
+    "form_continuity": {
+     "n": 9379,
+     "brier": 0.21924870589134704,
+     "log_loss": 0.6279177252264807,
+     "accuracy": 0.6421793368162917,
+     "roc_auc": 0.6978452003347322,
+     "ece": 0.017782973338759177
+    },
+    "form_tenure": {
+     "n": 9379,
+     "brier": 0.21898102615595502,
+     "log_loss": 0.627226945214046,
+     "accuracy": 0.641966094466361,
+     "roc_auc": 0.6983169049528437,
+     "ece": 0.01628778718685878
+    },
+    "form_player_exp": {
+     "n": 9379,
+     "brier": 0.2140506289179919,
+     "log_loss": 0.6160055704870054,
+     "accuracy": 0.6552937413370296,
+     "roc_auc": 0.7148800386204162,
+     "ece": 0.016136757238842336
+    },
+    "form_player_exp_prev": {
+     "n": 9379,
+     "brier": 0.21483291156550785,
+     "log_loss": 0.6178551486873891,
+     "accuracy": 0.656679816611579,
+     "roc_auc": 0.7126585975495653,
+     "ece": 0.01474460347666409
+    },
+    "form_roster": {
+     "n": 9379,
+     "brier": 0.21407899770671965,
+     "log_loss": 0.6160826414434425,
+     "accuracy": 0.6556136048619255,
+     "roc_auc": 0.714820584659837,
+     "ece": 0.015899753133409817
+    },
+    "player_cal": {
+     "n": 9379,
+     "brier": 0.2173591904382445,
+     "log_loss": 0.6241055073966737,
+     "accuracy": 0.6510288943384156,
+     "roc_auc": 0.7051468955762874,
+     "ece": 0.018532414068041743
+    },
+    "player_cal_prev": {
+     "n": 9379,
+     "brier": 0.2180632212245126,
+     "log_loss": 0.625783517654883,
+     "accuracy": 0.6496428190638661,
+     "roc_auc": 0.7030574222059538,
+     "ece": 0.01819834313653479
+    },
+    "prematch": {
+     "n": 9379,
+     "brier": 0.21406764481731566,
+     "log_loss": 0.6161942741963312,
+     "accuracy": 0.6564665742616483,
+     "roc_auc": 0.7153695520285628,
+     "ece": 0.019467174019398185
+    },
+    "all": {
+     "n": 9379,
+     "brier": 0.212988553729835,
+     "log_loss": 0.6136408908635469,
+     "accuracy": 0.65849237658599,
+     "roc_auc": 0.7184611123151072,
+     "ece": 0.018402452942376777
+    }
+   },
+   "comparisons_brier": [
+    {
+     "model": "elo_league",
+     "reference": "elo_flat",
+     "question": "League levels vs flat Elo",
+     "metric": "brier",
+     "difference": -0.00383472691111544,
+     "ci95_low": -0.00514090252039979,
+     "ci95_high": -0.002495327419560515,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 4477
+    },
+    {
+     "model": "elo_cal",
+     "reference": "elo_league",
+     "question": "Calibration of league Elo",
+     "metric": "brier",
+     "difference": -0.001803431249563451,
+     "ci95_low": -0.0023517198750971726,
+     "ci95_high": -0.0012772546099983836,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 4477
+    },
+    {
+     "model": "form",
+     "reference": "elo_cal",
+     "question": "Form features over calibrated Elo",
+     "metric": "brier",
+     "difference": -0.0005638499620294333,
+     "ci95_low": -0.0009830994268925127,
+     "ci95_high": -0.0001736054502119246,
+     "share_bootstrap_model_better": 0.997,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 4477
+    },
+    {
+     "model": "form_continuity",
+     "reference": "form",
+     "question": "Continuity alone over form",
+     "metric": "brier",
+     "difference": 8.745737639790757e-05,
+     "ci95_low": -0.00010539207899916693,
+     "ci95_high": 0.0002817107469440085,
+     "share_bootstrap_model_better": 0.174,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 4477
+    },
+    {
+     "model": "form_tenure",
+     "reference": "form",
+     "question": "Tenure alone over form",
+     "metric": "brier",
+     "difference": -0.00018022235899407016,
+     "ci95_low": -0.0007867156145472539,
+     "ci95_high": 0.00040927115725290146,
+     "share_bootstrap_model_better": 0.706,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 4477
+    },
+    {
+     "model": "form_player_exp",
+     "reference": "form",
+     "question": "Player experience alone over form",
+     "metric": "brier",
+     "difference": -0.005110619596957233,
+     "ci95_low": -0.00665874403187532,
+     "ci95_high": -0.003620867504412879,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 4477
+    },
+    {
+     "model": "form_player_exp_prev",
+     "reference": "form",
+     "question": "Player experience, previous lineup (pre-match)",
+     "metric": "brier",
+     "difference": -0.004328336949441274,
+     "ci95_low": -0.005631453254616465,
+     "ci95_high": -0.0030245596447844303,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 4477
+    },
+    {
+     "model": "form_roster",
+     "reference": "form",
+     "question": "Roster features over form",
+     "metric": "brier",
+     "difference": -0.00508225080822945,
+     "ci95_low": -0.006635535487349965,
+     "ci95_high": -0.003574460588378252,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 4477
+    },
+    {
+     "model": "player_cal",
+     "reference": "elo_cal",
+     "question": "Player Elo vs team Elo (both calibrated)",
+     "metric": "brier",
+     "difference": -0.0023659080387340575,
+     "ci95_low": -0.003858413589146059,
+     "ci95_high": -0.0008471007691176993,
+     "share_bootstrap_model_better": 0.999,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 4477
+    },
+    {
+     "model": "player_cal_prev",
+     "reference": "elo_cal",
+     "question": "Player Elo, previous lineup (pre-match) vs team Elo",
+     "metric": "brier",
+     "difference": -0.0016618772524659637,
+     "ci95_low": -0.0030275853345812635,
+     "ci95_high": -0.00027663119254114514,
+     "share_bootstrap_model_better": 0.992,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 4477
+    },
+    {
+     "model": "prematch",
+     "reference": "form",
+     "question": "Pre-match additions over form (previous lineup only)",
+     "metric": "brier",
+     "difference": -0.005093603697633443,
+     "ci95_low": -0.006602811937026033,
+     "ci95_high": -0.0036203478486328384,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 4477
+    },
+    {
+     "model": "all",
+     "reference": "form",
+     "question": "Roster + player Elo over form",
+     "metric": "brier",
+     "difference": -0.006172694785114123,
+     "ci95_low": -0.007966983619007658,
+     "ci95_high": -0.00449106566855002,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 4477
+    },
+    {
+     "model": "all",
+     "reference": "elo_cal",
+     "question": "Everything over calibrated Elo",
+     "metric": "brier",
+     "difference": -0.006736544747143555,
+     "ci95_low": -0.008554217999135692,
+     "ci95_high": -0.005065571681514008,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 4477
+    }
+   ]
+  },
+  {
+   "test_year": 2026,
+   "periods": {
+    "train": {
+     "n": 48656,
+     "start": "2020-04-02 07:47:17+00:00",
+     "end": "2024-12-08 09:03:13+00:00"
+    },
+    "validation": {
+     "n": 9379,
+     "start": "2025-01-11 14:03:27+00:00",
+     "end": "2025-12-29 10:52:27+00:00"
+    },
+    "test": {
+     "n": 9208,
+     "start": "2026-01-01 09:14:49+00:00",
+     "end": "2026-11-14 23:18:11+00:00"
+    }
+   },
+   "chosen": {
+    "elo_flat": {
+     "k": 40,
+     "carryover_shrink": 0.5,
+     "k_league": 0.0
+    },
+    "elo_league": {
+     "k": 32,
+     "carryover_shrink": 0.5,
+     "k_league": 16.0
+    },
+    "player_elo": {
+     "k": 40,
+     "carryover_shrink": 0.1,
+     "k_league": 8.0
+    },
+    "C": {
+     "elo_cal": 0.003,
+     "form": 0.003,
+     "form_continuity": 0.003,
+     "form_tenure": 0.003,
+     "form_player_exp": 0.003,
+     "form_player_exp_prev": 0.003,
+     "form_roster": 0.003,
+     "player_cal": 0.003,
+     "player_cal_prev": 0.003,
+     "prematch": 0.001,
+     "all": 0.001
+    }
+   },
+   "coefficients": {
+    "form_roster": {
+     "intercept": 0.13117503942258268,
+     "standardised": {
+      "elo_diff": 0.4705604949287062,
+      "recent_wr_diff": 0.13109716105608252,
+      "hist_wr_diff": 0.056499919769510784,
+      "opp_strength_diff": 0.05082262471278874,
+      "experience_diff": -0.00839913131706993,
+      "elo_diff_x_intl": 0.003578084933678345,
+      "continuity_diff": 0.002969504408811826,
+      "tenure_diff": 0.0036617069886803423,
+      "player_exp_diff": 0.3718215823697033
+     }
+    },
+    "prematch": {
+     "intercept": 0.1303432288228501,
+     "standardised": {
+      "elo_diff": 0.24394219658065744,
+      "recent_wr_diff": 0.08630052868299394,
+      "hist_wr_diff": 0.07230588020064521,
+      "opp_strength_diff": 0.04350673795133422,
+      "experience_diff": 0.006486050054501424,
+      "elo_diff_x_intl": 0.004356933793104793,
+      "player_exp_prev_diff": 0.2747669058409082,
+      "player_elo_prev_diff": 0.3008289772699161
+     }
+    },
+    "all": {
+     "intercept": 0.13102824774925587,
+     "standardised": {
+      "elo_diff": 0.22991189785977148,
+      "recent_wr_diff": 0.083819439291532,
+      "hist_wr_diff": 0.06818846133238537,
+      "opp_strength_diff": 0.045682652978705614,
+      "experience_diff": 0.0007984789829829866,
+      "elo_diff_x_intl": 0.0034534489711092967,
+      "continuity_diff": 0.005459675390891469,
+      "tenure_diff": 0.008406388028813218,
+      "player_exp_diff": 0.30847278438781195,
+      "player_elo_diff": 0.31372141505919127
+     }
+    }
+   },
+   "metrics": {
+    "baseline": {
+     "n": 9208,
+     "brier": 0.24876785228223625,
+     "log_loss": 0.6906811126433628,
+     "accuracy": 0.5359470026064292,
+     "roc_auc": null,
+     "ece": 0.007748501701802746
+    },
+    "elo_flat": {
+     "n": 9208,
+     "brier": 0.22097986134936443,
+     "log_loss": 0.6328180230947263,
+     "accuracy": 0.6416159860990444,
+     "roc_auc": 0.6944507476198301,
+     "ece": 0.02219943393631242
+    },
+    "elo_league": {
+     "n": 9208,
+     "brier": 0.21668000517063907,
+     "log_loss": 0.6222438246182548,
+     "accuracy": 0.6491094700260643,
+     "roc_auc": 0.707275887734084,
+     "ece": 0.021037266914310973
+    },
+    "elo_cal": {
+     "n": 9208,
+     "brier": 0.21631877657501847,
+     "log_loss": 0.6212245928241862,
+     "accuracy": 0.6496524761077324,
+     "roc_auc": 0.707275887734084,
+     "ece": 0.009969490460641687
+    },
+    "form": {
+     "n": 9208,
+     "brier": 0.21554551953746112,
+     "log_loss": 0.6192295485667727,
+     "accuracy": 0.6500868809730669,
+     "roc_auc": 0.7091896503361865,
+     "ece": 0.011803358348131284
+    },
+    "form_continuity": {
+     "n": 9208,
+     "brier": 0.21542012156349188,
+     "log_loss": 0.6189269266647539,
+     "accuracy": 0.650629887054735,
+     "roc_auc": 0.7095925477261027,
+     "ece": 0.012420909178107273
+    },
+    "form_tenure": {
+     "n": 9208,
+     "brier": 0.21485612992000946,
+     "log_loss": 0.6178397077957447,
+     "accuracy": 0.6536707211120765,
+     "roc_auc": 0.7119339145848997,
+     "ece": 0.012409557532428181
+    },
+    "form_player_exp": {
+     "n": 9208,
+     "brier": 0.20965019604689944,
+     "log_loss": 0.6056905544690998,
+     "accuracy": 0.661598609904431,
+     "roc_auc": 0.7268257058588232,
+     "ece": 0.010458295643662172
+    },
+    "form_player_exp_prev": {
+     "n": 9208,
+     "brier": 0.21070299198966608,
+     "log_loss": 0.6079884653315081,
+     "accuracy": 0.6572545612510861,
+     "roc_auc": 0.7235869723204846,
+     "ece": 0.012114963745115774
+    },
+    "form_roster": {
+     "n": 9208,
+     "brier": 0.20963742469119098,
+     "log_loss": 0.6056683829959727,
+     "accuracy": 0.6607298001737619,
+     "roc_auc": 0.7268775381148471,
+     "ece": 0.01106959402935909
+    },
+    "player_cal": {
+     "n": 9208,
+     "brier": 0.21304307875716405,
+     "log_loss": 0.6134215707463088,
+     "accuracy": 0.6584491746307559,
+     "roc_auc": 0.7174664981288461,
+     "ece": 0.01859278465841555
+    },
+    "player_cal_prev": {
+     "n": 9208,
+     "brier": 0.2138769218126603,
+     "log_loss": 0.6155345117839842,
+     "accuracy": 0.6569287576020851,
+     "roc_auc": 0.7151233292337005,
+     "ece": 0.01933839609669051
+    },
+    "prematch": {
+     "n": 9208,
+     "brier": 0.2096947911321653,
+     "log_loss": 0.6056318512198232,
+     "accuracy": 0.6619244135534318,
+     "roc_auc": 0.7270072847319389,
+     "ece": 0.014903023276008337
+    },
+    "all": {
+     "n": 9208,
+     "brier": 0.2083270624482232,
+     "log_loss": 0.6025120609750917,
+     "accuracy": 0.665616854908775,
+     "roc_auc": 0.7311586074147631,
+     "ece": 0.015323842098394052
+    }
+   },
+   "comparisons_brier": [
+    {
+     "model": "elo_league",
+     "reference": "elo_flat",
+     "question": "League levels vs flat Elo",
+     "metric": "brier",
+     "difference": -0.004299856178725366,
+     "ci95_low": -0.005645412702122116,
+     "ci95_high": -0.003071309181785311,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 4196
+    },
+    {
+     "model": "elo_cal",
+     "reference": "elo_league",
+     "question": "Calibration of league Elo",
+     "metric": "brier",
+     "difference": -0.00036122859562061994,
+     "ci95_low": -0.000915601294106609,
+     "ci95_high": 0.00017242923781882029,
+     "share_bootstrap_model_better": 0.908,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 4196
+    },
+    {
+     "model": "form",
+     "reference": "elo_cal",
+     "question": "Form features over calibrated Elo",
+     "metric": "brier",
+     "difference": -0.0007732570375573295,
+     "ci95_low": -0.0014041822728293656,
+     "ci95_high": -0.00021691215346859738,
+     "share_bootstrap_model_better": 0.997,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 4196
+    },
+    {
+     "model": "form_continuity",
+     "reference": "form",
+     "question": "Continuity alone over form",
+     "metric": "brier",
+     "difference": -0.0001253979739692343,
+     "ci95_low": -0.00028697049116578973,
+     "ci95_high": 5.363709722176448e-05,
+     "share_bootstrap_model_better": 0.926,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 4196
+    },
+    {
+     "model": "form_tenure",
+     "reference": "form",
+     "question": "Tenure alone over form",
+     "metric": "brier",
+     "difference": -0.0006893896174516371,
+     "ci95_low": -0.0013056215907186414,
+     "ci95_high": -0.00010514081882606827,
+     "share_bootstrap_model_better": 0.984,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 4196
+    },
+    {
+     "model": "form_player_exp",
+     "reference": "form",
+     "question": "Player experience alone over form",
+     "metric": "brier",
+     "difference": -0.005895323490561699,
+     "ci95_low": -0.00735533274881336,
+     "ci95_high": -0.0044544061713735405,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 4196
+    },
+    {
+     "model": "form_player_exp_prev",
+     "reference": "form",
+     "question": "Player experience, previous lineup (pre-match)",
+     "metric": "brier",
+     "difference": -0.004842527547795055,
+     "ci95_low": -0.00607094227429873,
+     "ci95_high": -0.0034666881063147794,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 4196
+    },
+    {
+     "model": "form_roster",
+     "reference": "form",
+     "question": "Roster features over form",
+     "metric": "brier",
+     "difference": -0.005908094846270121,
+     "ci95_low": -0.007372930087798863,
+     "ci95_high": -0.004464550155218571,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 4196
+    },
+    {
+     "model": "player_cal",
+     "reference": "elo_cal",
+     "question": "Player Elo vs team Elo (both calibrated)",
+     "metric": "brier",
+     "difference": -0.0032756978178543976,
+     "ci95_low": -0.004885114131674349,
+     "ci95_high": -0.0017197001559718108,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 4196
+    },
+    {
+     "model": "player_cal_prev",
+     "reference": "elo_cal",
+     "question": "Player Elo, previous lineup (pre-match) vs team Elo",
+     "metric": "brier",
+     "difference": -0.002441854762358164,
+     "ci95_low": -0.00408294735450545,
+     "ci95_high": -0.0008112616910326864,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 4196
+    },
+    {
+     "model": "prematch",
+     "reference": "form",
+     "question": "Pre-match additions over form (previous lineup only)",
+     "metric": "brier",
+     "difference": -0.005850728405295809,
+     "ci95_low": -0.007237065691018488,
+     "ci95_high": -0.004447456151549388,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 4196
+    },
+    {
+     "model": "all",
+     "reference": "form",
+     "question": "Roster + player Elo over form",
+     "metric": "brier",
+     "difference": -0.007218457089237934,
+     "ci95_low": -0.008820208230294497,
+     "ci95_high": -0.0056848725867959474,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 4196
+    },
+    {
+     "model": "all",
+     "reference": "elo_cal",
+     "question": "Everything over calibrated Elo",
+     "metric": "brier",
+     "difference": -0.007991714126795264,
+     "ci95_low": -0.009709798447891205,
+     "ci95_high": -0.006367479087536132,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 1000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 4196
+    }
+   ]
+  }
+ ],
+ "pooled": {
+  "n": 49748,
+  "metrics": {
+   "baseline": {
+    "n": 49748,
+    "brier": 0.24908351929093506,
+    "log_loss": 0.691313150774266,
+    "accuracy": 0.5305338908096808,
+    "roc_auc": 0.5026845046097392,
+    "ece": 0.0043187265701385424
+   },
+   "elo_flat": {
+    "n": 49748,
+    "brier": 0.22259563119565265,
+    "log_loss": 0.6357420173103885,
+    "accuracy": 0.63668891211707,
+    "roc_auc": 0.6899623052741249,
+    "ece": 0.029935264720146723
+   },
+   "elo_league": {
+    "n": 49748,
+    "brier": 0.21928350214405282,
+    "log_loss": 0.6280354052724002,
+    "accuracy": 0.643764573450189,
+    "roc_auc": 0.7007384704930625,
+    "ece": 0.028857973507504995
+   },
+   "elo_cal": {
+    "n": 49748,
+    "brier": 0.21841957927532382,
+    "log_loss": 0.6259799656866643,
+    "accuracy": 0.6450912599501487,
+    "roc_auc": 0.7008791093679165,
+    "ece": 0.006158982073129767
+   },
+   "form": {
+    "n": 49748,
+    "brier": 0.218052282969257,
+    "log_loss": 0.6249834839366581,
+    "accuracy": 0.6458350084425505,
+    "roc_auc": 0.7016172805464895,
+    "ece": 0.007370913205362123
+   },
+   "form_continuity": {
+    "n": 49748,
+    "brier": 0.21795523269514744,
+    "log_loss": 0.6247629728699678,
+    "accuracy": 0.645593792715285,
+    "roc_auc": 0.7019243853242358,
+    "ece": 0.006569632489254441
+   },
+   "form_tenure": {
+    "n": 49748,
+    "brier": 0.21739256853018848,
+    "log_loss": 0.6235472682172553,
+    "accuracy": 0.6479255447455174,
+    "roc_auc": 0.7039118968043456,
+    "ece": 0.007496054120427381
+   },
+   "form_player_exp": {
+    "n": 49748,
+    "brier": 0.21254106734237557,
+    "log_loss": 0.6122966576788277,
+    "accuracy": 0.6571721476240251,
+    "roc_auc": 0.7188445068770667,
+    "ece": 0.005059481317525533
+   },
+   "form_player_exp_prev": {
+    "n": 49748,
+    "brier": 0.21363620335906192,
+    "log_loss": 0.6148350004631643,
+    "accuracy": 0.6553630296695344,
+    "roc_auc": 0.7155262172197605,
+    "ece": 0.005362197954202468
+   },
+   "form_roster": {
+    "n": 49748,
+    "brier": 0.21255804607221718,
+    "log_loss": 0.6123352533384293,
+    "accuracy": 0.6570515397603923,
+    "roc_auc": 0.7187828545814297,
+    "ece": 0.005206221386450505
+   },
+   "player_cal": {
+    "n": 49748,
+    "brier": 0.215992301218075,
+    "log_loss": 0.6204866167034047,
+    "accuracy": 0.6505186138136206,
+    "roc_auc": 0.7085091937771172,
+    "ece": 0.004268735336637667
+   },
+   "player_cal_prev": {
+    "n": 49748,
+    "brier": 0.2164905292829528,
+    "log_loss": 0.621671013734328,
+    "accuracy": 0.6498150679424298,
+    "roc_auc": 0.7070645722666566,
+    "ece": 0.00433422462185511
+   },
+   "prematch": {
+    "n": 49748,
+    "brier": 0.21277011571789975,
+    "log_loss": 0.6128513808563988,
+    "accuracy": 0.6562675886467798,
+    "roc_auc": 0.7182835217647829,
+    "ece": 0.004915795399699964
+   },
+   "all": {
+    "n": 49748,
+    "brier": 0.2115003164914528,
+    "log_loss": 0.6098532141002542,
+    "accuracy": 0.6583782262603521,
+    "roc_auc": 0.7220063986299735,
+    "ece": 0.006856870209428275
+   }
+  },
+  "comparisons": [
+   {
+    "model": "elo_league",
+    "reference": "elo_flat",
+    "question": "League levels vs flat Elo",
+    "brier": {
+     "metric": "brier",
+     "difference": -0.003312129051599871,
+     "ci95_low": -0.003772433653773781,
+     "ci95_high": -0.0028471546718397372,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 2000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 28012
+    },
+    "log_loss": {
+     "metric": "log_loss",
+     "difference": -0.0077066120379884,
+     "ci95_low": -0.008791993994620662,
+     "ci95_high": -0.00659170897949277,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 2000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 28012
+    },
+    "windows_better": 5,
+    "windows_ci_below_zero": 5,
+    "window_sd": 0.0009197504043467604
+   },
+   {
+    "model": "elo_cal",
+    "reference": "elo_league",
+    "question": "Calibration of league Elo",
+    "brier": {
+     "metric": "brier",
+     "difference": -0.0008639228687289702,
+     "ci95_low": -0.001088702236262705,
+     "ci95_high": -0.0006424154573616798,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 2000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 28012
+    },
+    "log_loss": {
+     "metric": "log_loss",
+     "difference": -0.0020554395857358392,
+     "ci95_low": -0.002561823400680597,
+     "ci95_high": -0.0015539818114982955,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 2000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 28012
+    },
+    "windows_better": 5,
+    "windows_ci_below_zero": 3,
+    "window_sd": 0.0006409139697627696
+   },
+   {
+    "model": "form",
+    "reference": "elo_cal",
+    "question": "Form features over calibrated Elo",
+    "brier": {
+     "metric": "brier",
+     "difference": -0.00036729630606683017,
+     "ci95_low": -0.0005955285314980627,
+     "ci95_high": -0.0001539278332534033,
+     "share_bootstrap_model_better": 0.9995,
+     "n_boot": 2000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 28012
+    },
+    "log_loss": {
+     "metric": "log_loss",
+     "difference": -0.0009964817500061412,
+     "ci95_low": -0.0015149540623998741,
+     "ci95_high": -0.0005033655629067688,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 2000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 28012
+    },
+    "windows_better": 4,
+    "windows_ci_below_zero": 2,
+    "window_sd": 0.00037104673777757605
+   },
+   {
+    "model": "form_continuity",
+    "reference": "form",
+    "question": "Continuity alone over form",
+    "brier": {
+     "metric": "brier",
+     "difference": -9.705027410955893e-05,
+     "ci95_low": -0.00017929816510456301,
+     "ci95_high": -1.7575298777337554e-05,
+     "share_bootstrap_model_better": 0.991,
+     "n_boot": 2000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 28012
+    },
+    "log_loss": {
+     "metric": "log_loss",
+     "difference": -0.0002205110666902821,
+     "ci95_low": -0.0004037949086842275,
+     "ci95_high": -4.124032846069233e-05,
+     "share_bootstrap_model_better": 0.991,
+     "n_boot": 2000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 28012
+    },
+    "windows_better": 4,
+    "windows_ci_below_zero": 0,
+    "window_sd": 0.00010453150355118837
+   },
+   {
+    "model": "form_tenure",
+    "reference": "form",
+    "question": "Tenure alone over form",
+    "brier": {
+     "metric": "brier",
+     "difference": -0.0006597144390685049,
+     "ci95_low": -0.0009252484302175818,
+     "ci95_high": -0.0003921792409559708,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 2000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 28012
+    },
+    "log_loss": {
+     "metric": "log_loss",
+     "difference": -0.001436215719403001,
+     "ci95_low": -0.0020285810622479123,
+     "ci95_high": -0.0008371638311187343,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 2000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 28012
+    },
+    "windows_better": 5,
+    "windows_ci_below_zero": 3,
+    "window_sd": 0.00035800191662849727
+   },
+   {
+    "model": "form_player_exp",
+    "reference": "form",
+    "question": "Player experience alone over form",
+    "brier": {
+     "metric": "brier",
+     "difference": -0.00551121562688146,
+     "ci95_low": -0.0061641051590473,
+     "ci95_high": -0.0048994106478455375,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 2000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 28012
+    },
+    "log_loss": {
+     "metric": "log_loss",
+     "difference": -0.01268682625783053,
+     "ci95_low": -0.014172240049587857,
+     "ci95_high": -0.011256182762684162,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 2000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 28012
+    },
+    "windows_better": 5,
+    "windows_ci_below_zero": 5,
+    "window_sd": 0.0006039005768568011
+   },
+   {
+    "model": "form_player_exp_prev",
+    "reference": "form",
+    "question": "Player experience, previous lineup (pre-match)",
+    "brier": {
+     "metric": "brier",
+     "difference": -0.004416079610195091,
+     "ci95_low": -0.004986945883350313,
+     "ci95_high": -0.0038825341241435765,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 2000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 28012
+    },
+    "log_loss": {
+     "metric": "log_loss",
+     "difference": -0.010148483473493904,
+     "ci95_low": -0.01142909300285354,
+     "ci95_high": -0.00891449323421856,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 2000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 28012
+    },
+    "windows_better": 5,
+    "windows_ci_below_zero": 5,
+    "window_sd": 0.0003789307378292772
+   },
+   {
+    "model": "form_roster",
+    "reference": "form",
+    "question": "Roster features over form",
+    "brier": {
+     "metric": "brier",
+     "difference": -0.005494236897039842,
+     "ci95_low": -0.006138507476250795,
+     "ci95_high": -0.004875719128065163,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 2000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 28012
+    },
+    "log_loss": {
+     "metric": "log_loss",
+     "difference": -0.012648230598228798,
+     "ci95_low": -0.014150496736404075,
+     "ci95_high": -0.011206189313911883,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 2000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 28012
+    },
+    "windows_better": 5,
+    "windows_ci_below_zero": 5,
+    "window_sd": 0.000615018149229372
+   },
+   {
+    "model": "player_cal",
+    "reference": "elo_cal",
+    "question": "Player Elo vs team Elo (both calibrated)",
+    "brier": {
+     "metric": "brier",
+     "difference": -0.0024272780572488512,
+     "ci95_low": -0.0030555517434170325,
+     "ci95_high": -0.0017967587541477875,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 2000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 28012
+    },
+    "log_loss": {
+     "metric": "log_loss",
+     "difference": -0.005493348983259595,
+     "ci95_low": -0.006904850034846083,
+     "ci95_high": -0.004039410719132268,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 2000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 28012
+    },
+    "windows_better": 5,
+    "windows_ci_below_zero": 4,
+    "window_sd": 0.0008095226968706852
+   },
+   {
+    "model": "player_cal_prev",
+    "reference": "elo_cal",
+    "question": "Player Elo, previous lineup (pre-match) vs team Elo",
+    "brier": {
+     "metric": "brier",
+     "difference": -0.0019290499923710583,
+     "ci95_low": -0.002517765439476045,
+     "ci95_high": -0.0013485627951829399,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 2000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 28012
+    },
+    "log_loss": {
+     "metric": "log_loss",
+     "difference": -0.0043089519523363245,
+     "ci95_low": -0.005634241603367515,
+     "ci95_high": -0.00300464475496851,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 2000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 28012
+    },
+    "windows_better": 5,
+    "windows_ci_below_zero": 4,
+    "window_sd": 0.0007714918049453523
+   },
+   {
+    "model": "prematch",
+    "reference": "form",
+    "question": "Pre-match additions over form (previous lineup only)",
+    "brier": {
+     "metric": "brier",
+     "difference": -0.0052821672513572865,
+     "ci95_low": -0.005910078055896412,
+     "ci95_high": -0.004693950908415904,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 2000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 28012
+    },
+    "log_loss": {
+     "metric": "log_loss",
+     "difference": -0.01213210308025934,
+     "ci95_low": -0.013546426908128961,
+     "ci95_high": -0.010790977230136925,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 2000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 28012
+    },
+    "windows_better": 5,
+    "windows_ci_below_zero": 5,
+    "window_sd": 0.00038160381485334447
+   },
+   {
+    "model": "all",
+    "reference": "form",
+    "question": "Roster + player Elo over form",
+    "brier": {
+     "metric": "brier",
+     "difference": -0.006551966477804183,
+     "ci95_low": -0.007260239129992542,
+     "ci95_high": -0.0058986600826230395,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 2000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 28012
+    },
+    "log_loss": {
+     "metric": "log_loss",
+     "difference": -0.015130269836403979,
+     "ci95_low": -0.016791543425983636,
+     "ci95_high": -0.01357522627951671,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 2000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 28012
+    },
+    "windows_better": 5,
+    "windows_ci_below_zero": 5,
+    "window_sd": 0.00046622997230092654
+   },
+   {
+    "model": "all",
+    "reference": "elo_cal",
+    "question": "Everything over calibrated Elo",
+    "brier": {
+     "metric": "brier",
+     "difference": -0.006919262783871012,
+     "ci95_low": -0.007652856829302572,
+     "ci95_high": -0.0062477195462434494,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 2000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 28012
+    },
+    "log_loss": {
+     "metric": "log_loss",
+     "difference": -0.01612675158641012,
+     "ci95_low": -0.01784557538241767,
+     "ci95_high": -0.01454999236754453,
+     "share_bootstrap_model_better": 1.0,
+     "n_boot": 2000,
+     "resampling_unit": "series (cluster bootstrap)",
+     "n_units": 28012
+    },
+    "windows_better": 5,
+    "windows_ci_below_zero": 5,
+    "window_sd": 0.0007750818554786626
+   }
+  ]
+ },
+ "patch_analysis": [
+  {
+   "group": "first 7 days",
+   "n": 11056,
+   "elo_cal": {
+    "n": 11056,
+    "brier": 0.21723161656579473,
+    "log_loss": 0.6241128910546234,
+    "accuracy": 0.6508683068017366,
+    "roc_auc": 0.7042620891025988,
+    "ece": 0.012123689983271289
+   },
+   "all": {
+    "n": 11056,
+    "brier": 0.20912514286795048,
+    "log_loss": 0.6048819867118993,
+    "accuracy": 0.6673299565846599,
+    "roc_auc": 0.7285275403040322,
+    "ece": 0.011430073348213598
+   },
+   "all_vs_elo_cal_brier": {
+    "metric": "brier",
+    "difference": -0.008106473697844226,
+    "ci95_low": -0.009765322245811605,
+    "ci95_high": -0.006445390304405277,
+    "share_bootstrap_model_better": 1.0,
+    "n_boot": 2000,
+    "resampling_unit": "series (cluster bootstrap)",
+    "n_units": 6185
+   }
+  },
+  {
+   "group": "later",
+   "n": 38666,
+   "elo_cal": {
+    "n": 38666,
+    "brier": 0.21874805287795476,
+    "log_loss": 0.626489048196563,
+    "accuracy": 0.6434593699891378,
+    "roc_auc": 0.6999290710441054,
+    "ece": 0.005895099371796514
+   },
+   "all": {
+    "n": 38666,
+    "brier": 0.2121667994542639,
+    "log_loss": 0.6112454973540739,
+    "accuracy": 0.6558216520974499,
+    "roc_auc": 0.7201344712581175,
+    "ece": 0.0068180939069305635
+   },
+   "all_vs_elo_cal_brier": {
+    "metric": "brier",
+    "difference": -0.006581253423690883,
+    "ci95_low": -0.00735579349911584,
+    "ci95_high": -0.005782758856387067,
+    "share_bootstrap_model_better": 1.0,
+    "n_boot": 2000,
+    "resampling_unit": "series (cluster bootstrap)",
+    "n_units": 21880
+   }
+  }
+ ]
+}

@@ -55,6 +55,13 @@ The feature list was fixed before evaluation and is not tuned on test results.
   and checking past features do not change), no post-game statistics, scaler fitted
   on training rows, one row per `gameid`, chronological split (tested for overlap).
 
+### Walk-forward study (separate from the deployed model)
+
+Rolling test years 2022 to 2026 (train before Y-1, validate on Y-1, test on Y), with Elo,
+player Elo and C re-tuned per year on validation log loss, and roster / player-level features
+built from strictly earlier games. Design, features and results: `docs/EXPERIMENTS.md`.
+Every run is saved as a JSON record in `machine_learning/experiments/registry/`.
+
 ## 5. Evaluation
 
 Accuracy, precision, recall (0.5 threshold, positive = blue win), ROC-AUC,

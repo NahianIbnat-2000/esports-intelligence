@@ -158,7 +158,7 @@
   <div class="notes">
     <div class="label">Notes</div>
     <ol>
-      <li id="n1">The data is split by date, never at random: training until 11 August 2024, validation until 22 September 2025, test after that. Features such as recent form and head-to-head records use only games played earlier.</li>
+      <li id="n1">The data is split by date, never at random: training until 11 August 2024, validation until 22 September 2025, test after that. Every feature (Elo gap, recent form, overall win rate, strength of past opponents, experience) uses only games played earlier.</li>
       <li id="n2">Paired bootstrap with 2,000 resamples. Games from the same series are resampled together, because they are not independent.</li>
       <li id="n3">Built with Python (pandas, scikit-learn), FastAPI, PostgreSQL and Next.js. Data from Oracle's Elixir by Tim Sevenhuysen. Game statistics are the property of Riot Games; this project is not affiliated with Riot Games.</li>
     </ol>
