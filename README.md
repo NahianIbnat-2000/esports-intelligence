@@ -2,6 +2,15 @@
 
 **Beyond the Game. Inside the Data.**
 
+**Live site:** [esports-intelligence.vercel.app](https://esports-intelligence.vercel.app) ·
+**Article:** [Does machine learning beat Elo? And what actually does?](https://nahianibnat-2000.github.io/esports-intelligence/) ·
+**Five-year results:** [Experiments](https://esports-intelligence.vercel.app/experiments) ·
+**Try a prediction:** [Prediction lab](https://esports-intelligence.vercel.app/predictions) ·
+**New to the terms?** [FAQ and glossary](https://esports-intelligence.vercel.app/faq)
+
+> The live API runs on a free server that sleeps when unused. Most pages load instantly from a
+> saved snapshot; if a page says the server is waking up, wait up to a minute.
+
 ![Match centre](docs/screenshots/match-centre.png)
 
 | Overview | Prediction lab |
