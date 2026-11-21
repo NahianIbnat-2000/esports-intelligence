@@ -1,11 +1,12 @@
-\documentclass[11pt,a4paper]{article}
+\documentclass[12pt,a4paper]{article}
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage{mathpazo}
-\usepackage[scaled=0.92]{helvet}
+\usepackage{mathptmx}
+\renewcommand{\sfdefault}{ptm}
 \usepackage{microtype}
 \usepackage{amsmath}
+\usepackage{textcomp}
 \usepackage[a4paper,margin=2.5cm,headheight=14pt]{geometry}
 \usepackage{xcolor}
 \usepackage{booktabs,tabularx,threeparttable}
@@ -13,12 +14,16 @@
 \usepackage{enumitem}
 \usepackage{caption}
 \usepackage{titlesec}
+\usepackage{needspace}
 \usepackage{fancyhdr}
 \usepackage[round,authoryear]{natbib}
 \usepackage{pgfplots}
-\pgfplotsset{compat=1.18}
+\pgfplotsset{compat=1.18,
+  xticklabel={\pgfmathprintnumber[assume math mode=true]{\tick}},
+  yticklabel={\pgfmathprintnumber[assume math mode=true]{\tick}}}
 \usetikzlibrary{positioning,arrows.meta,shapes.geometric}
 \usepackage[hidelinks]{hyperref}
+\urlstyle{same}
 
 \definecolor{ink}{HTML}{1D1C1A}
 \definecolor{quiet}{HTML}{6B675F}
@@ -31,8 +36,8 @@
 
 \hypersetup{colorlinks=true,linkcolor=accent,citecolor=accent,urlcolor=accent}
 
-\titleformat{\section}{\sffamily\large\bfseries\color{ink}}{\thesection}{0.8em}{}
-\titleformat{\subsection}{\sffamily\normalsize\bfseries\color{ink}}{\thesubsection}{0.8em}{}
+\titleformat{\section}{\needspace{7\baselineskip}\sffamily\large\bfseries\color{ink}}{\thesection}{0.8em}{}
+\titleformat{\subsection}{\needspace{6\baselineskip}\sffamily\normalsize\bfseries\color{ink}}{\thesubsection}{0.8em}{}
 \titlespacing*{\section}{0pt}{1.6em}{0.6em}
 \titlespacing*{\subsection}{0pt}{1.1em}{0.4em}
 \captionsetup{font={small,sf},labelfont=bf,labelsep=period,justification=raggedright,singlelinecheck=false}
@@ -147,10 +152,10 @@ Table~\ref{tab:models} summarises the models. Elo settings and the regression pe
 Model & Inputs \\
 \midrule
 Constant baseline & Blue-side win rate of earlier games \\
-Elo with league levels & Team rating = league level + team component; league levels move only in games between leagues ($K = 40$) \\
+Elo with league levels & Team rating = league level + team component; league levels move only in games between leagues (K\,=\,40) \\
 Calibrated Elo & Logistic regression on the Elo difference; the intercept estimates the blue-side advantage \\
 Logistic regression & Six pre-game features: Elo difference, recent form, overall win rate, strength of recent opponents, experience, and an international-event term \\
-Logistic + player experience & The six features plus the difference in mean $\log(1 + \text{earlier professional games})$ of each team's players in its previous game \\
+Logistic + player experience & The six features plus the difference in mean log(1\,+\,earlier professional games) of each team's players in its previous game \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -159,7 +164,7 @@ Logistic + player experience & The six features plus the difference in mean $\lo
 
 After the first results, three checks were added:
 \begin{itemize}
-  \item \textbf{Five-year rolling test.} For each test year $Y$ from 2022 to 2026, models are trained on years before $Y-1$, tuned on $Y-1$ and scored on $Y$, with every model re-tuned each year.
+  \item \textbf{Five-year rolling test.} For each test year \textit{Y} from 2022 to 2026, models are trained on years before \textit{Y}\,\textminus\,1, tuned on \textit{Y}\,\textminus\,1 and scored on \textit{Y}, with every model re-tuned each year.
   \item \textbf{Player features.} The source lists the five players in every game. Features were built from each team's previous lineup (known before match day) and, for comparison, from the lineup that played (known only when the game starts).
   \item \textbf{Subgroups.} Test games were split by type, including games between two teams of the same league, where league levels cancel out.
 \end{itemize}
@@ -301,11 +306,11 @@ Table~\ref{tab:ablation} shows which part of player information matters. One sim
 \toprule
 Added feature & Brier change & Better in \\
 \midrule
-Lineup continuity (same players as last game) & $-0.0001$ & 4 of 5 years \\
-Player tenure with the team & $-0.0007$ & 5 of 5 \\
-Player experience, previous lineup (pre-match) & $-0.0044$ & 5 of 5 \\
-Player experience, lineup that played & $-0.0055$ & 5 of 5 \\
-Pre-match experience + player-level Elo & $-0.0053$ & 5 of 5 \\
+Lineup continuity (same players as last game) & \textminus0.0001 & 4 of 5 years \\
+Player tenure with the team & \textminus0.0007 & 5 of 5 \\
+Player experience, previous lineup (pre-match) & \textminus0.0044 & 5 of 5 \\
+Player experience, lineup that played & \textminus0.0055 & 5 of 5 \\
+Pre-match experience + player-level Elo & \textminus0.0053 & 5 of 5 \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}\footnotesize
@@ -324,13 +329,13 @@ Experienced players are more common in strong leagues, so the player measure cou
 \caption{Pre-match player model against the logistic model, by type of game}\label{tab:sub}
 \begin{tabular}{@{}lrc@{}}
 \toprule
-Games & $n$ & Brier change [95\% interval] \\
+Games & \textit{n} & Brier change [95\% interval] \\
 \midrule
-Same league, domestic game & 39,185 & $-0.0053$ [$-0.0060$, $-0.0047$] \\
-Top leagues only (LCK, LPL, LEC, LCS / LTA North) & 8,600 & $-0.0027$ [$-0.0037$, $-0.0016$] \\
-Teams from different leagues & 10,229 & $-0.0052$ [$-0.0064$, $-0.0039$] \\
-Both teams with 20 or more earlier games & 42,314 & $-0.0043$ [$-0.0049$, $-0.0037$] \\
-A team with fewer than 20 earlier games & 7,434 & $-0.0108$ [$-0.0129$, $-0.0089$] \\
+Same league, domestic game & 39,185 & \textminus0.0053 [\textminus0.0060, \textminus0.0047] \\
+Top leagues only (LCK, LPL, LEC, LCS / LTA North) & 8,600 & \textminus0.0027 [\textminus0.0037, \textminus0.0016] \\
+Teams from different leagues & 10,229 & \textminus0.0052 [\textminus0.0064, \textminus0.0039] \\
+Both teams with 20 or more earlier games & 42,314 & \textminus0.0043 [\textminus0.0049, \textminus0.0037] \\
+A team with fewer than 20 earlier games & 7,434 & \textminus0.0108 [\textminus0.0129, \textminus0.0089] \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}\footnotesize
