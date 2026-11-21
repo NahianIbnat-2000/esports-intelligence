@@ -6,6 +6,7 @@
 **Article:** [Does machine learning beat Elo? And what actually does?](https://nahianibnat-2000.github.io/esports-intelligence/) ·
 **Five-year results:** [Experiments](https://esports-intelligence.vercel.app/experiments) ·
 **Try a prediction:** [Prediction lab](https://esports-intelligence.vercel.app/predictions) ·
+**Case study (PDF):** [docs/case-study](docs/case-study/Esports_Intelligence_Case_Study_Nahian_Ibnat.pdf) ·
 **New to the terms?** [FAQ and glossary](https://esports-intelligence.vercel.app/faq)
 
 > The live API runs on a free server that sleeps when unused. Most pages load instantly from a
