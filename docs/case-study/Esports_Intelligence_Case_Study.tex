@@ -10,6 +10,7 @@
 \usepackage[a4paper,margin=2.5cm,headheight=14pt]{geometry}
 \usepackage{xcolor}
 \usepackage{booktabs,tabularx,threeparttable}
+\usepackage{float}
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
 \usepackage{enumitem}
 \usepackage{caption}
@@ -109,7 +110,7 @@ All data comes from the public historical files of Oracle's Elixir \citep{oracle
 
 The data was usable but not clean enough to trust as delivered. Table~\ref{tab:data} lists the problems found and how each was handled. Every exclusion is written to a file with its reason and shown in the platform's public data quality report.
 
-\begin{table}[h]
+\begin{table}[H]
 \centering\small
 \caption{Data problems and how they were handled}\label{tab:data}
 \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{4.6cm}Y@{}}
@@ -144,7 +145,7 @@ The task is to predict, before a game starts, the probability that the blue side
 
 Table~\ref{tab:models} summarises the models. Elo settings and the regression penalty were chosen on the validation period only. The regressions use scikit-learn \citep{pedregosa2011}. Gradient boosting \citep{friedman2001} and random forests \citep{breiman2001} were also tested; they did not beat the logistic regression on validation games and were not used.
 
-\begin{table}[h]
+\begin{table}[H]
 \centering\small
 \caption{Models compared}\label{tab:models}
 \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{4.3cm}Y@{}}
@@ -173,7 +174,7 @@ After the first results, three checks were added:
 
 The research was built as a public website so that others can check it (Figure~\ref{fig:arch}). A data pipeline validates and loads the files into PostgreSQL; a training step fits the models and writes model versions and predictions to the database; a FastAPI service serves ratings, predictions and statistics; and a Next.js site presents them, including a prediction lab and an experiments page. All hosting uses free tiers (Supabase, Render, Vercel). Because the free API server sleeps when unused, common views are served from a saved snapshot, and a monitor pings a health check every five minutes. The code has 105 backend tests, including database integration tests and a test that the live API computes exactly the same player feature the model was trained on.
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \begin{tikzpicture}[
   node distance=0.55cm and 0.7cm,
@@ -207,7 +208,7 @@ All results in this section come from the project's saved evaluation files and e
 
 Table~\ref{tab:main} shows the main test results. The logistic regression beats calibrated Elo by 0.00062 in Brier score, with a 95\% interval of 0.00023 to 0.00104; the interval also excludes zero when whole tournaments are resampled. The gain is real, but it is about 0.3\% of the score, and both models pick the right winner about 65\% of the time.
 
-\begin{table}[h]
+\begin{table}[H]
 \centering\small
 \begin{threeparttable}
 \caption{Main test results (10,087 games, 23 September 2025 to 14 November 2026)}\label{tab:main}
@@ -236,7 +237,7 @@ The first Elo version put every team on one scale. It ranked teams from small re
 
 Adding one number, the average earlier professional games of the players in each team's previous game, lowered the Brier score by 0.0048 (95\% interval 0.0035 to 0.0060), about eight times the machine learning gain. Figure~\ref{fig:gains} compares the three steps on the same games.
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -273,7 +274,7 @@ Adding one number, the average earlier professional games of the players in each
 
 In the five-year rolling test, league levels improved Elo in all five years and player experience improved the logistic model in all five years, while the machine learning step stayed close to zero: 0.0004 pooled over 49,748 games, with an interval excluding zero in only two of the five years (Figure~\ref{fig:years}).
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \begin{tikzpicture}
 \begin{axis}[
@@ -300,7 +301,7 @@ In the five-year rolling test, league levels improved Elo in all five years and 
 
 Table~\ref{tab:ablation} shows which part of player information matters. One simple number does most of the work; knowing the lineup that actually played helps a little more, but most of the gain is already there before match day.
 
-\begin{table}[h]
+\begin{table}[H]
 \centering\small
 \begin{threeparttable}
 \caption{Player features added to the logistic model, five-year test (49,748 games)}\label{tab:ablation}
@@ -325,7 +326,7 @@ Pre-match experience + player-level Elo & \textminus0.0053 & 5 of 5 \\
 
 If experienced players are concentrated in strong leagues, the player measure could simply be separating strong leagues from weak ones. In a game between two teams of the same league the league level cancels out, so league strength cannot explain a gain there. Table~\ref{tab:sub} shows that the gain is the same size inside a single league, and largest for new teams, which Elo rates at their league's average even when their players have hundreds of games behind them.
 
-\begin{table}[h]
+\begin{table}[H]
 \centering\small
 \begin{threeparttable}
 \caption{Pre-match player model against the logistic model, by type of game}\label{tab:sub}
@@ -384,26 +385,29 @@ A team with fewer than 20 earlier games & 7,434 & \textminus0.0108 [\textminus0.
   \item Code, tests and experiment records:\\ \url{https://github.com/NahianIbnat-2000/esports-intelligence}
 \end{itemize}
 
+\clearpage
+\renewcommand{\bibsection}{\begin{center}\large\bfseries References\end{center}\vspace{0.3em}}
+\setlength{\bibhang}{0.5in}
 \begin{thebibliography}{99}
-\setlength{\itemsep}{0.2em}\small
-\bibitem[Breiman(2001)]{breiman2001} Breiman, L. (2001). Random forests. \emph{Machine Learning}, 45(1), 5--32.
-\bibitem[Cameron et~al.(2008)]{cameron2008} Cameron, A.~C., Gelbach, J.~B., and Miller, D.~L. (2008). Bootstrap-based improvements for inference with clustered errors. \emph{Review of Economics and Statistics}, 90(3), 414--427.
-\bibitem[Brier(1950)]{brier1950} Brier, G.~W. (1950). Verification of forecasts expressed in terms of probability. \emph{Monthly Weather Review}, 78(1), 1--3.
-\bibitem[De Bois et al.(2025)]{debois2025} De Bois, M., Parmentier, F., Puget, R., Tanti, M., and Peltier, J. (2025). PandaSkill: player performance and skill rating in esports, application to League of Legends. arXiv:2501.10049.
-\bibitem[Efron(1979)]{efron1979} Efron, B. (1979). Bootstrap methods: another look at the jackknife. \emph{Annals of Statistics}, 7(1), 1--26.
-\bibitem[Elo(1978)]{elo1978} Elo, A.~E. (1978). \emph{The Rating of Chessplayers, Past and Present}. New York: Arco.
-\bibitem[Fawcett(2006)]{fawcett2006} Fawcett, T. (2006). An introduction to ROC analysis. \emph{Pattern Recognition Letters}, 27(8), 861--874.
-\bibitem[FIFA(2018)]{fifa2018} FIFA (2018). FIFA/Coca-Cola Men's World Ranking: procedures. \url{https://inside.fifa.com/fifa-world-ranking/procedure-men}
-\bibitem[Friedman(2001)]{friedman2001} Friedman, J.~H. (2001). Greedy function approximation: a gradient boosting machine. \emph{Annals of Statistics}, 29(5), 1189--1232.
-\bibitem[Glickman(2001)]{glickman2001} Glickman, M.~E. (2001). Dynamic paired comparison models with stochastic variances. \emph{Journal of Applied Statistics}, 28(6), 673--689.
-\bibitem[Herbrich et~al.(2007)]{herbrich2007} Herbrich, R., Minka, T., and Graepel, T. (2007). TrueSkill: a Bayesian skill rating system. In \emph{Advances in Neural Information Processing Systems 19}, 569--576.
-\bibitem[Holmes and McHale(2024)]{holmes2024} Holmes, B. and McHale, I.~G. (2024). Forecasting football match results using a player rating based model. \emph{International Journal of Forecasting}, 40(1), 302--312.
-\bibitem[Hvattum and Arntzen(2010)]{hvattum2010} Hvattum, L.~M. and Arntzen, H. (2010). Using ELO ratings for match result prediction in association football. \emph{International Journal of Forecasting}, 26(3), 460--470.
-\bibitem[Ibnat(2026)]{ei2026} Ibnat, N. (2026). Esports Intelligence: data pipeline, code, evaluation files and experiment records. GitHub repository. \url{https://github.com/NahianIbnat-2000/esports-intelligence}
-\bibitem[Jadowski and Cunningham(2022)]{jadowski2022} Jadowski, R. and Cunningham, S. (2022). Statistical models for predicting results in professional League of Legends. In \emph{ArtsIT, Interactivity and Game Creation: Creative Heritage}.
-\bibitem[Pedregosa et~al.(2011)]{pedregosa2011} Pedregosa, F. et~al. (2011). Scikit-learn: machine learning in Python. \emph{Journal of Machine Learning Research}, 12, 2825--2830.
-\bibitem[Riot Games(2024)]{riot2024} Riot Games (2024). Dev diary: unveiling the Global Power Rankings. LoL Esports. \url{https://lolesports.com/en-GB/news/dev-diary-unveiling-the-global-power-rankings}
-\bibitem[Sevenhuysen(2026)]{oracleselixir} Sevenhuysen, T. (2026). Oracle's Elixir: League of Legends esports match data. \url{https://oracleselixir.com}
+\setlength{\itemsep}{0.35em}\small
+\bibitem[Breiman(2001)]{breiman2001} Breiman, L. (2001). Random forests. \emph{Machine Learning, 45}(1), 5--32. \url{https://doi.org/10.1023/A:1010933404324}
+\bibitem[Brier(1950)]{brier1950} Brier, G.~W. (1950). Verification of forecasts expressed in terms of probability. \emph{Monthly Weather Review, 78}(1), 1--3. \url{https://doi.org/10.1175/1520-0493(1950)078<0001:VOFEIT>2.0.CO;2}
+\bibitem[Cameron et~al.(2008)]{cameron2008} Cameron, A.~C., Gelbach, J.~B., \& Miller, D.~L. (2008). Bootstrap-based improvements for inference with clustered errors. \emph{The Review of Economics and Statistics, 90}(3), 414--427. \url{https://doi.org/10.1162/rest.90.3.414}
+\bibitem[De Bois et~al.(2025)]{debois2025} De Bois, M., Parmentier, F., Puget, R., Tanti, M., \& Peltier, J. (2025). \emph{PandaSkill: Player performance and skill rating in esports: Application to League of Legends} (arXiv:2501.10049). arXiv. \url{https://doi.org/10.48550/arXiv.2501.10049}
+\bibitem[Efron(1979)]{efron1979} Efron, B. (1979). Bootstrap methods: Another look at the jackknife. \emph{The Annals of Statistics, 7}(1), 1--26. \url{https://doi.org/10.1214/aos/1176344552}
+\bibitem[Elo(1978)]{elo1978} Elo, A.~E. (1978). \emph{The rating of chessplayers, past and present}. Arco.
+\bibitem[Fawcett(2006)]{fawcett2006} Fawcett, T. (2006). An introduction to ROC analysis. \emph{Pattern Recognition Letters, 27}(8), 861--874. \url{https://doi.org/10.1016/j.patrec.2005.10.010}
+\bibitem[FIFA(n.d.)]{fifa2018} FIFA. (n.d.). \emph{FIFA/Coca-Cola men's world ranking procedures}. Retrieved November 22, 2026, from \url{https://inside.fifa.com/fifa-world-ranking/procedure-men}
+\bibitem[Friedman(2001)]{friedman2001} Friedman, J.~H. (2001). Greedy function approximation: A gradient boosting machine. \emph{The Annals of Statistics, 29}(5), 1189--1232. \url{https://doi.org/10.1214/aos/1013203451}
+\bibitem[Glickman(2001)]{glickman2001} Glickman, M.~E. (2001). Dynamic paired comparison models with stochastic variances. \emph{Journal of Applied Statistics, 28}(6), 673--689. \url{https://doi.org/10.1080/02664760120059219}
+\bibitem[Herbrich et~al.(2007)]{herbrich2007} Herbrich, R., Minka, T., \& Graepel, T. (2007). TrueSkill: A Bayesian skill rating system. In B. Sch\"olkopf, J. Platt, \& T. Hoffman (Eds.), \emph{Advances in neural information processing systems 19} (pp. 569--576). MIT Press.
+\bibitem[Holmes \& McHale(2024)]{holmes2024} Holmes, B., \& McHale, I.~G. (2024). Forecasting football match results using a player rating based model. \emph{International Journal of Forecasting, 40}(1), 302--312. \url{https://doi.org/10.1016/j.ijforecast.2023.03.002}
+\bibitem[Hvattum \& Arntzen(2010)]{hvattum2010} Hvattum, L.~M., \& Arntzen, H. (2010). Using ELO ratings for match result prediction in association football. \emph{International Journal of Forecasting, 26}(3), 460--470. \url{https://doi.org/10.1016/j.ijforecast.2009.10.002}
+\bibitem[Ibnat(2026)]{ei2026} Ibnat, N. (2026). \emph{Esports Intelligence: Data pipeline, code, evaluation files and experiment records} [Computer software]. GitHub. \url{https://github.com/NahianIbnat-2000/esports-intelligence}
+\bibitem[Jadowski \& Cunningham(2022)]{jadowski2022} Jadowski, R., \& Cunningham, S. (2022). Statistical models for predicting results in professional League of Legends. In \emph{ArtsIT, interactivity and game creation: Creative heritage. New perspectives from media arts and artificial intelligence}. Springer. \url{https://doi.org/10.1007/978-3-030-95531-1_10}
+\bibitem[Pedregosa et~al.(2011)]{pedregosa2011} Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel, O., Blondel, M., Prettenhofer, P., Weiss, R., Dubourg, V., Vanderplas, J., Passos, A., Cournapeau, D., Brucher, M., Perrot, M., \& Duchesnay, \'E. (2011). Scikit-learn: Machine learning in Python. \emph{Journal of Machine Learning Research, 12}, 2825--2830. \url{https://jmlr.org/papers/v12/pedregosa11a.html}
+\bibitem[Riot Games(2024)]{riot2024} Riot Games. (2024). \emph{Dev diary: Unveiling the Global Power Rankings}. LoL Esports. \url{https://lolesports.com/en-GB/news/dev-diary-unveiling-the-global-power-rankings}
+\bibitem[Sevenhuysen(n.d.)]{oracleselixir} Sevenhuysen, T. (n.d.). \emph{Oracle's Elixir} [Data set]. Retrieved November 22, 2026, from \url{https://oracleselixir.com}
 \end{thebibliography}
 
 \end{document}
