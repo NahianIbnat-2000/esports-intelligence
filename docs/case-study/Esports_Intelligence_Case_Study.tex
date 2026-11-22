@@ -65,50 +65,90 @@
 \vspace{0.6em}
 {\LARGE\bfseries\color{ink} Does Machine Learning Beat Elo?\par}
 \vspace{0.3em}
-{\Large\color{quiet} Rating design, model choice and player information in professional League of Legends\par}
+{\Large\color{quiet} Rating design, model choice and player experience in professional League of Legends\par}
 \vspace{1em}
 {\sffamily\normalsize\textbf{Nahian Ibnat}}\par
 {\sffamily\small\color{quiet} Independent research project \textbar{} November 2026}\par
 \vspace{0.8em}
 {\color{rule}\rule{\linewidth}{0.6pt}}
 
-\keybox{Executive summary}{%
-This case study documents the design, evaluation and deployment of \emph{Esports Intelligence}, a public research platform built on 75,830 professional League of Legends games from January 2020 to November 2026. The project asked whether machine learning predicts the winner of a game better than an Elo rating. On 10,087 games it had never seen, a logistic regression beat calibrated Elo by 0.0006 in Brier score (0.2164 against 0.2170): a gain that is statistically real but about 0.3\% of the score. Two simpler changes mattered far more. Giving each league its own rating level improved Elo by 0.0054, and adding one measure of player experience, known before match day, improved the logistic model by 0.0048. Both effects held in each of five separate test years (2022 to 2026, 49,748 games), and the player effect was the same size inside single leagues, so it is not a proxy for league strength. The lesson is that what a rating knows matters more than which model uses it.}
+\keybox{Abstract}{%
+Forecasters in sport often choose between a simple rating system and a more complex statistical model. This case study asks whether that extra complexity pays off in professional League of Legends, using 75,830 games played between January 2020 and November 2026. A logistic regression built on six pre-game team measures predicted the winner better than a calibrated Elo rating, but the improvement was very small: the Brier score, a measure of forecast error, fell from 0.2170 to 0.2164 on 10,087 games the models had never seen. Two simpler changes mattered much more. Giving each regional league its own rating level reduced the error about nine times as much, and adding one measure of how experienced a team's players are reduced it about eight times as much. In the fitted model, a team whose players had roughly twice as many earlier professional games as their opponents' was associated with about 40\% higher odds of winning, holding the team's rating and recent form fixed. These patterns held in each of five separate test years (2022 to 2026) and inside single leagues. The results are associations, not causal effects, but they suggest that what a rating system knows matters more than how sophisticated the model that uses it is.}
 
 \vspace{0.5em}
-{\small\textbf{Keywords:} forecasting, Elo rating, logistic regression, Brier score, esports, time-ordered evaluation, cluster bootstrap}
+{\small\textbf{Keywords:} forecasting, Elo rating, logistic regression, Brier score, esports, player experience, out-of-sample evaluation}
 
-\section{Background}
+\section{Introduction}
 
-Elo ratings are the standard way to predict who wins a game. Each competitor has a number; the gap between two numbers gives a win probability, and after each game the winner takes points from the loser, more so when the result is a surprise \citep{elo1978}. The system was designed for chess \citep{elo1978}; FIFA's men's world ranking has used an Elo-based method since August 2018 \citep{fifa2018}; and the official power rankings of professional League of Legends are built on Elo \citep{riot2024}. Elo ratings also have a long record as predictors of match results \citep{hvattum2010}.
+Every prediction about a sports match rests on a view of how strong each side is. The most widely used way to measure strength is the Elo rating, a number for each competitor that rises after a win and falls after a loss \citep{elo1978}. Elo ratings are simple, transparent and cheap to compute. They were designed for chess, they have been used for FIFA's men's world football ranking since August 2018 \citep{fifa2018}, and Riot Games, the company behind League of Legends, uses an Elo-based system for its official global rankings of professional teams \citep{riot2024}.
 
-Machine learning models can use far more information than a single rating. The practical question for any forecaster is whether that extra information pays for the extra complexity, and by how much. Professional League of Legends is a useful setting for this question for three reasons:
+Machine learning models can do something a rating cannot: they can combine many pieces of information at once, such as recent form, the quality of past opponents and experience. A natural question follows. If a forecaster has a good rating already, how much does a more complex model add? The answer matters beyond games. Organisations that forecast prices, credit risk or demand face the same choice between a transparent score and a richer model, and the extra model brings costs in data, maintenance and explanation. In sports economics the question has a second meaning. Economists have argued since \citet{rottenberg1956} that fans value uncertain outcomes, so how predictable results are tells us something about how competitive, and how attractive, a league is.
 
-\begin{itemize}
-  \item \textbf{Data.} Every professional game is recorded in detail and published, with one row per team and one per player \citep{oracleselixir}.
-  \item \textbf{Volume.} Teams play often: the files used here hold 75,830 games from January 2020 to November 2026 \citep{oracleselixir,ei2026}.
-  \item \textbf{Structure.} The data covers 109 leagues \citep{ei2026}. Teams play most of their games inside their own league (39,185 of the 49,748 five-year test games, 79\%, were domestic games between teams of the same league; \citealp{ei2026}), and leagues meet mainly at international events such as MSI and Worlds, which is why Riot's own rankings let those events set each league's strength \citep{riot2024}. Comparing teams that rarely play each other is therefore a real measurement problem.
-\end{itemize}
+Professional League of Legends is a good place to study this. League of Legends is a team video game in which two teams of five players compete against each other \citep{do2021}. The data used here covers 109 professional leagues around the world \citep{ei2026}, professional games are recorded and published in detail \citep{oracleselixir}, and teams play often, so there are tens of thousands of games to learn from. The league structure also creates a real measurement problem. Teams mostly play inside their own region and meet teams from other regions only at a few international events, so it is hard to tell whether a team that dominates a small league would also beat a strong team from another region.
 
-\section{The problem}
+This study asks four questions. First, does machine learning predict the winner of a professional game better than an Elo rating? Second, how much does the design of the rating matter compared with the choice of model? Third, do the answers hold across different years rather than in one test period only? Fourth, does information about the individual players add something that team ratings miss, and if so, is that simply a sign of league strength?
 
-\keybox{Central research question}{Can machine learning predict the winner of a professional League of Legends game, before it starts, better than an Elo rating?}
+The answers are clear. Machine learning wins, but by a margin too small to matter much in practice. Improving the rating itself, by giving each league its own level, helps about nine times as much. Adding a single, simple measure of player experience helps about eight times as much, and this measure can be computed before match day. Both effects appear in every one of five test years and are just as large inside single leagues, where differences in league strength cannot explain them.
 
-As the work progressed, four further questions followed from the results:
-\begin{enumerate}[label=\textbf{Q\arabic*.},leftmargin=2.4em]
-  \item How much does the design of the rating itself matter, compared with the choice of model?
-  \item Do the results hold beyond a single test period?
-  \item Does information about the players add what team ratings miss?
-  \item If it does, is the player effect simply a sign of league strength?
-\end{enumerate}
+The rest of the paper is organised as follows. Section~\ref{sec:background} explains the key ideas and terms. Section~\ref{sec:lit} reviews what earlier studies have found and where this paper fits. Sections~\ref{sec:data} and~\ref{sec:method} describe the data and the research design. Section~\ref{sec:results} presents the results, Section~\ref{sec:discussion} discusses what they mean, and Section~\ref{sec:limits} sets out the limits of the study.
 
-A second aim was practical: to make every step public and checkable, as a live website, rather than report a single accuracy number.
+\section{Background and key terms}\label{sec:background}
 
-\section{Data}
+\subsection{How an Elo rating works}
 
-All data comes from the public historical files of Oracle's Elixir \citep{oracleselixir}. The study uses every file from 2020 to November 2026: 75,830 games, 1,914 teams and 10,239 players across 109 leagues, played between 3 January 2020 and 17 November 2026 (counts from the project database; \citealp{ei2026}). Each raw file is recorded in a manifest with its SHA-256 checksum, so the exact input can be verified.
+An \textbf{Elo rating} is a single number that summarises a competitor's strength, where a higher number means a stronger competitor \citep{elo1978}. Before a game, the difference between the two ratings is turned into an expected result. For a team A with rating $R_A$ playing a team B with rating $R_B$, the expected score of A is
+\begin{equation}
+E_A = \frac{1}{1 + 10^{(R_B - R_A)/400}}.
+\end{equation}
+Two equal teams each have an expected score of 0.5, which can be read as a 50\% chance of winning. A team rated 100 points higher has an expected score of about 0.64. After the game, each rating moves towards the result:
+\begin{equation}
+R_A' = R_A + K\,(S_A - E_A),
+\end{equation}
+where $S_A$ is 1 for a win and 0 for a loss, and $K$ controls how fast ratings change. A favourite that wins gains only a few points, because the win was expected; an underdog that wins gains many, because the result was a surprise.
 
-The data was usable but not clean enough to trust as delivered. Table~\ref{tab:data} lists the problems found and how each was handled. Every exclusion is written to a file with its reason and shown in the platform's public data quality report.
+\subsection{Judging probability forecasts}
+
+A \textbf{probability forecast} states how likely an outcome is, for example ``team A wins with probability 0.64''. Such forecasts cannot be judged by a single game, because a 64\% favourite is expected to lose about a third of the time. They are judged over many games with a \textbf{scoring rule}, a formula that compares each forecast with what happened \citep{gneiting2007}. This study uses four measures.
+
+The \textbf{Brier score} is the average squared difference between the predicted probability $p_i$ and the outcome $y_i$ (1 for a win, 0 for a loss) over $n$ games \citep{brier1950}:
+\begin{equation}
+\text{Brier} = \frac{1}{n}\sum_{i=1}^{n} (p_i - y_i)^2 .
+\end{equation}
+Lower is better. A forecaster who always says 50\% scores 0.25, and a perfect forecaster scores 0. The Brier score is a \emph{proper} scoring rule, which means a forecaster gets the best expected score only by reporting the probabilities they truly believe \citep{gneiting2007}. The \textbf{log loss} (or logarithmic score) averages $-\ln$ of the probability given to the outcome that happened; it punishes confident wrong forecasts more heavily \citep{gneiting2007}. \textbf{Accuracy} is the share of games in which the team given the higher probability won. The \textbf{ROC-AUC} measures how well a model ranks winners above losers, from 0.5 (no better than chance) to 1 (perfect ranking) \citep{fawcett2006}. Finally, a forecast is \textbf{well calibrated} if events given a probability of, say, 70\% happen about 70\% of the time \citep{gneiting2007}.
+
+The main measure in this paper is the Brier score, because the question is about the quality of the probabilities, not only about who is favoured. Accuracy treats a 51\% pick and a 90\% pick as the same; the Brier score does not.
+
+\subsection{Logistic regression and odds}
+
+A \textbf{logistic regression} is a standard statistical model for a yes-or-no outcome \citep{hosmer2013}. It explains the log of the \textbf{odds} of winning, where the odds are the probability of winning divided by the probability of losing, as a weighted sum of inputs:
+\begin{equation}
+\ln\!\left(\frac{p}{1-p}\right) = \beta_0 + \beta_1 x_1 + \dots + \beta_k x_k .
+\end{equation}
+Each coefficient $\beta_j$ is easiest to read through its \textbf{odds ratio}, $e^{\beta_j}$: the factor by which the odds of winning change when that input rises by one unit and the other inputs stay the same \citep{hosmer2013}. An odds ratio of 1.4 means the odds are 40\% higher. In this study every input is first \textbf{standardised}, that is, rescaled to have a standard deviation (SD) of one, so each odds ratio describes the change linked to a one-SD difference in that input \citep{hastie2009}. The model is also lightly \textbf{regularised}, which means the coefficients are shrunk slightly towards zero to avoid fitting noise in the training data \citep{hastie2009}.
+
+A coefficient in such a model describes an \textbf{association}: how the chance of winning differs between games that differ in one input, other inputs being equal. It is not a \textbf{causal effect}, which would tell us what would happen if we changed that input while everything else stayed fixed. Causal claims need a research design that rules out other explanations \citep{angrist2009}, and this study does not have one. All coefficients below are therefore read as associations.
+
+\subsection{Uncertainty and significance}
+
+Any difference between two models measured on a sample of games could be partly luck. A \textbf{95\% confidence interval} gives a range of values that is consistent with the data; if the interval for a difference excludes zero, the difference is unlikely to be due to chance alone \citep{wasserstein2016}. This study builds intervals with the \textbf{bootstrap}, which re-draws the sample many times with replacement and recomputes the result each time \citep{efron1979}. Because games from the same series (for example, a best-of-five) are related, whole series are re-drawn together, a \textbf{cluster bootstrap} \citep{cameron2008}. A result that is \textbf{statistically significant} is not necessarily \textbf{practically important}: a tiny difference can be estimated precisely and still not matter \citep{wasserstein2016}. Keeping these two ideas apart is central to this paper.
+
+\section{What earlier studies have found}\label{sec:lit}
+
+\textbf{Elo ratings as predictors.} Elo-based ratings have a long record in sports forecasting. In football, Hvattum and Arntzen \citeyearpar{hvattum2010} used Elo ratings as inputs to a regression model and found that they predicted match results well compared with several other methods. This paper uses the same idea, an Elo rating as an input to a regression, and asks how much the regression adds beyond the rating itself.
+
+\textbf{Ratings in professional League of Legends.} Riot Games' Global Power Rankings combine a team Elo with a league Elo, so that results at international events such as the Mid-Season Invitational (MSI) and the World Championship (Worlds) move the strength of a whole league \citep{riot2024}. Riot reports a predictive accuracy of about 65\% for this system. The league-level Elo used here follows the same idea; the two accuracy figures come from different games, so they cannot be compared directly.
+
+\textbf{Machine learning on professional games.} Jadowski and Cunningham \citeyearpar{jadowski2022} built statistical and machine learning models for 306 international games from 2020 and predicted 67\% of them correctly. Most recently, Guan and Tung \citeyearpar{guan2026} built a pre-game forecaster for 5,135 games from six major leagues and three international events in 2024 to 2026. They found that their logistic model and a more complex two-stage model were statistically indistinguishable, and that both beat simpler benchmarks. Their models use team-level information only, and they note that day-of information such as roster news is not part of their inputs.
+
+\textbf{Player-based approaches.} In football, Holmes and McHale \citeyearpar{holmes2024} built forecasts from the ratings of individual players rather than whole teams. In League of Legends, \citet{debois2025} rated players from their in-game statistics and reported better predictions than existing rating methods, and \citet{do2021} found that players' experience with their chosen characters helps predict the outcome of ordinary (non-professional) ranked games.
+
+\textbf{The gap.} Earlier studies usually report one model's accuracy on one sample, or compare model types while keeping the information fixed. They rarely separate three possible sources of improvement on the same games: a better rating design, a more complex model, and new information about the players. They also rarely check whether a result holds in several different years. This paper fills that gap. It compares all three sources side by side on identical games, with intervals that respect how games are grouped; it repeats the comparison in five separate test years; and it tests the most obvious alternative explanation for the player result, namely that it only reflects differences in league strength. The player measure it uses is deliberately simple, a count of earlier games, and is available before match day.
+
+\section{Data}\label{sec:data}
+
+All data comes from the public historical files of Oracle's Elixir, a widely used collection of professional League of Legends game records \citep{oracleselixir}. Each game has one row for each team and one for each of the ten players. The study uses every file from 2020 to November 2026: 75,830 games, 1,914 teams and 10,239 players across 109 leagues, played between 3 January 2020 and 17 November 2026 \citep{ei2026}. Each raw file is recorded with a checksum so that the exact input can be verified.
+
+The data was usable but not clean enough to trust as delivered. Table~\ref{tab:data} lists the problems found and how each was handled.
 
 \begin{table}[H]
 \centering\small
@@ -121,92 +161,70 @@ Duplicate and conflicting rows & Exact duplicates dropped (one kept); conflictin
 Games without exactly two teams, one blue and one red, and one winner & Excluded, with the reason recorded \\
 Missing statistics & Kept as missing, never filled with zero; averages use only games where the value exists \\
 No series identifier in the source & Best-of-three and best-of-five series rebuilt from game times and the source's game number \\
-Season label differs from calendar year & Some late-2026 qualifiers are labelled 2027; ratings use the game date, season tables use the label \\
+Season label differs from calendar year & Some late-2026 qualifiers are labelled 2027; ratings use the game date \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-\section{Approach}
+Table~\ref{tab:data} matters because every row is a decision that changes the numbers that follow. Filling missing statistics with zero, for example, would make teams look weaker than they were, and treating games of one series as independent would make the results look more certain than they are. Every excluded record is written to a file with its reason and published, so that a reader can check these choices.
 
-\subsection{Prediction task and evaluation design}
+\section{Research design}\label{sec:method}
 
-The task is to predict, before a game starts, the probability that the blue side wins. The design follows how a forecaster would actually be used:
+\subsection{The prediction task}
 
-\begin{enumerate}
-  \item \textbf{Split by date, never at random.} Models are trained on games up to 11 August 2024, tuned on games up to 22 September 2025, and scored once on 10,087 games from 23 September 2025 to 14 November 2026. A random split would let a model learn from the future.
-  \item \textbf{Use only earlier information.} Every input to a prediction comes from games played strictly before it. Automated tests change future results and lineups and check that earlier inputs do not move.
-  \item \textbf{Compare against simple baselines.} A constant blue-side win rate, Elo, and calibrated Elo. A model is useful only if it beats these clearly.
-  \item \textbf{Score probabilities, not only picks.} The main measure is the Brier score \citep{brier1950}, the mean squared gap between the predicted probability and the result; lower is better and a constant 50\% scores 0.25. Log loss, accuracy and ROC-AUC \citep{fawcett2006} are also reported.
-  \item \textbf{Put an interval on every difference.} Model differences use a paired bootstrap \citep{efron1979} with 2,000 resamples. Games from the same series are resampled together, because they are not independent \citep{cameron2008}; the check is repeated with whole tournaments as the unit.
-  \item \textbf{Keep statistical and practical size apart.} A difference can be real and still too small to matter.
-\end{enumerate}
+The task is to predict, before a game starts, the probability that the team on the blue side of the map wins. Each game is predicted once, using only information from games played strictly earlier. Using any information from the game itself, or from later games, is called \textbf{data leakage}; it makes a model look better in testing than it would be in real use \citep{kaufman2012}. Automated tests check this: they change the results and lineups of later games and confirm that the inputs for earlier games do not move.
+
+\subsection{Splitting the data by time}
+
+Models are judged \textbf{out of sample}, on games they did not see while they were built \citep{tashman2000}. The data is split by date, never at random, because a random split would let a model learn from the future. Models are trained on games up to 11 August 2024 (47,070 games), their settings are chosen on games up to 22 September 2025 (10,086 games), and they are scored once on the 10,087 games played between 23 September 2025 and 14 November 2026. Games in the first 90 days of the data, and games involving a team with fewer than five earlier games, are not scored, because no model can know such teams well.
 
 \subsection{Models}
 
-Table~\ref{tab:models} summarises the models. Elo settings and the regression penalty were chosen on the validation period only. The regressions use scikit-learn \citep{pedregosa2011}. Gradient boosting \citep{friedman2001} and random forests \citep{breiman2001} were also tested; they did not beat the logistic regression on validation games and were not used.
+Table~\ref{tab:models} lists the models. They are nested: each one adds something to the one before, so the difference between neighbours shows what that addition is worth.
 
 \begin{table}[H]
 \centering\small
 \caption{Models compared}\label{tab:models}
 \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{4.3cm}Y@{}}
 \toprule
-Model & Inputs \\
+Model & What it uses \\
 \midrule
-Constant baseline & Blue-side win rate of earlier games \\
-Elo with league levels & Team rating = league level + team component; league levels move only in games between leagues (K\,=\,40) \\
-Calibrated Elo & Logistic regression on the Elo difference; the intercept estimates the blue-side advantage \\
-Logistic regression & Six pre-game features: Elo difference, recent form, overall win rate, strength of recent opponents, experience, and an international-event term \\
-Logistic + player experience & The six features plus the difference in mean log(1\,+\,earlier professional games) of each team's players in its previous game \\
+Constant baseline & Always predicts the blue side's historical win rate \\
+Elo with league levels & Team rating = league level + team component; league levels change only in games between leagues ($K = 40$, league $K = 16$) \\
+Calibrated Elo & A logistic regression on the Elo difference alone, which corrects the Elo probabilities and estimates the blue-side advantage \\
+Logistic regression & Six pre-game measures: Elo difference, recent form, overall win rate, strength of recent opponents, team experience, and an international-event term \\
+Logistic + player experience & The same six measures plus the difference in player experience between the two teams \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
+\textbf{League levels.} A plain Elo system puts every team on one scale. Because points move between leagues only when their teams meet, a team that beats everyone in a small, isolated league can end up rated above the best teams in the world. Here, each league has its own level, which changes only in games between teams of different leagues, and each team is rated relative to its league.
+
+\textbf{Player experience.} For each team, the measure takes the five players who played the team's previous game, counts how many professional games each had played before, and averages $\ln(1 + \text{games})$ over the five. The model uses the difference between the two teams. The logarithm means that the step from 10 to 20 earlier games counts as much as the step from 100 to 200: doubling experience always adds the same amount. Because the measure uses the previous lineup, it is known before match day.
+
+Two more flexible machine learning methods, gradient boosting \citep{friedman2001} and random forests \citep{breiman2001}, were also tested. They did not beat the logistic regression on the validation games and are not reported further. All regressions use scikit-learn \citep{pedregosa2011}.
+
+\subsection{Comparing models fairly}
+
+All models are scored on exactly the same games, so they can be compared game by game. The difference in Brier score between two models is given with a 95\% interval from a cluster bootstrap with 2,000 re-draws, in which whole series are re-drawn together \citep{cameron2008,efron1979}. The check is repeated with whole tournaments as the unit.
+
 \subsection{Robustness checks}
 
-After the first results, three checks were added:
-\begin{itemize}
-  \item \textbf{Five-year rolling test.} For each test year \textit{Y} from 2022 to 2026, models are trained on years before \textit{Y}\,\textminus\,1, tuned on \textit{Y}\,\textminus\,1 and scored on \textit{Y}, with every model re-tuned each year.
-  \item \textbf{Player features.} The source lists the five players in every game. Features were built from each team's previous lineup (known before match day) and, for comparison, from the lineup that played (known only when the game starts).
-  \item \textbf{Subgroups.} Test games were split by type, including games between two teams of the same league, where league levels cancel out.
-\end{itemize}
+A result from one test period could reflect that period only. The whole comparison is therefore repeated in a \textbf{rolling-origin} design \citep{tashman2000}: for each test year from 2022 to 2026, the models are trained on earlier years, tuned on the year before, and scored on the test year, with every setting chosen again each time. In total these five test years contain 49,748 games. The player result is also examined by type of game, to test whether it simply reflects differences in league strength.
 
 \section{Implementation}
 
-The research was built as a public website so that others can check it (Figure~\ref{fig:arch}). A data pipeline validates and loads the files into PostgreSQL; a training step fits the models and writes model versions and predictions to the database; a FastAPI service serves ratings, predictions and statistics; and a Next.js site presents them, including a prediction lab and an experiments page. All hosting uses free tiers (Supabase, Render, Vercel). Because the free API server sleeps when unused, common views are served from a saved snapshot, and a monitor pings a health check every five minutes. The code has 105 backend tests, including database integration tests and a test that the live API computes exactly the same player feature the model was trained on.
+The research is published as an open website so that others can inspect every step (Figure~\ref{fig:arch}). The figure shows how raw files become checked data, how the models are trained and stored, and how the results reach a reader. It matters because it shows that the reported numbers are produced by one traceable pipeline, not assembled by hand: the same code that computes the results also serves them on the website, and an automated test checks that the website computes the player measure exactly as the model was trained on it.
 
-\begin{figure}[H]
-\centering
-\begin{tikzpicture}[
-  node distance=0.55cm and 0.7cm,
-  every node/.style={font=\sffamily\footnotesize},
-  box/.style={draw=quiet,rounded corners=3pt,align=center,minimum width=3.9cm,minimum height=1.25cm,fill=white},
-  arr/.style={-{Stealth[length=2mm]},draw=quiet,line width=0.6pt},
-  lab/.style={font=\sffamily\scriptsize,text=quiet}]
-\node[box] (src) {\textbf{Oracle's Elixir files}\\public CSVs, 2020 to 2026\\checked by SHA-256};
-\node[box,right=of src] (pipe) {\textbf{Data pipeline}\\validate, clean, exclude\\every exclusion logged};
-\node[box,right=of pipe] (db) {\textbf{PostgreSQL (Supabase)}\\games, teams, players,\\ratings, predictions};
-\node[box,below=of pipe] (train) {\textbf{Model training}\\Elo, logistic, player model\\split by date, leakage tests};
-\node[box,below=of db] (api) {\textbf{FastAPI (Render)}\\ratings, predictions, stats\\rate limited, health check};
-\node[box,below=of train] (snap) {\textbf{Static snapshot}\\saved views as JSON\\loads instantly};
-\node[box,below=of api] (site) {\textbf{Next.js site (Vercel)}\\snapshot first, then live API\\prediction lab, experiments};
-\draw[arr] (src) -- (pipe);
-\draw[arr] (pipe) -- (db);
-\draw[arr] (pipe) -- node[lab,right]{processed files} (train);
-\draw[arr] (train) -- (api);
-\draw[arr] (db) -- node[lab,right]{reads} (api);
-\draw[arr] (api) -- node[lab,right]{live data} (site);
-\draw[arr] (snap) -- (site);
-\end{tikzpicture}
-\caption{System architecture. Training also writes model versions and test predictions to the database.}\label{fig:arch}
-\end{figure}
+\input{/tmp/fig0.tex}
 
-\section{Results}
+\section{Results}\label{sec:results}
 
 All results in this section come from the project's saved evaluation files and experiment record \citep{ei2026}.
 
-\subsection{Machine learning wins, but only just}
+\subsection{Machine learning beats Elo, but only just}
 
-Table~\ref{tab:main} shows the main test results. The logistic regression beats calibrated Elo by 0.00062 in Brier score, with a 95\% interval of 0.00023 to 0.00104; the interval also excludes zero when whole tournaments are resampled. The gain is real, but it is about 0.3\% of the score, and both models pick the right winner about 65\% of the time.
+Table~\ref{tab:main} reports how each model performed on the 10,087 test games. This table is the core of the study: because every model is scored on the same games, the differences between rows show what each addition is worth.
 
 \begin{table}[H]
 \centering\small
@@ -224,96 +242,83 @@ Logistic regression & 0.2164 & 0.6215 & 64.9\% & 0.707 \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}\footnotesize
-\item Lower is better for Brier score and log loss. All models are scored on the same games.
+\item Lower is better for Brier score and log loss; higher is better for accuracy and ROC-AUC.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
-\subsection{The rating design matters more than the model}
+The logistic regression beats calibrated Elo by 0.00062 in Brier score, with a 95\% interval from 0.00023 to 0.00104. The interval excludes zero, and it still does when whole tournaments are re-drawn, so the improvement is statistically real. Its practical size is another matter. Calibrated Elo improves on the constant baseline by 0.0318 (from 0.2488 to 0.2170). Against that scale, the machine learning step adds about 2\% more. In terms of picking winners, both models are right about 65\% of the time.
 
-The first Elo version put every team on one scale. It ranked teams from small regional leagues above the best teams in Korea and China, because they beat their neighbours and rarely played anyone else. Since Elo points move between leagues only when their teams meet, a single scale cannot be right. Giving each league its own level, learned only from games between leagues, lowered the Brier score by 0.0054 (95\% interval 0.0041 to 0.0068), about nine times the machine learning gain. The design follows the same idea as the industry's own ratings, which blend a team Elo with a league Elo \citep{riot2024}.
+The player model is different. Adding player experience lowers the Brier score by a further 0.0048 (95\% interval 0.0035 to 0.0060), which is about 15\% of the improvement Elo achieves over the baseline, and about eight times the machine learning gain. It also picks the right winner in 65.7\% of games instead of 64.9\%: about 88 more correct calls out of 10,087, or roughly one more in every 115 games. Most of its gain, however, comes from better-judged probabilities rather than more correct picks, which is exactly what the Brier score and the log loss reward.
 
-\subsection{Player experience helps most}
+\subsection{The design of the rating matters more than the model}
 
-Adding one number, the average earlier professional games of the players in each team's previous game, lowered the Brier score by 0.0048 (95\% interval 0.0035 to 0.0060), about eight times the machine learning gain. Figure~\ref{fig:gains} compares the three steps on the same games.
+The first version of the Elo rating put every team on one scale and ranked teams from small regional leagues above the best teams in Korea and China, because they had beaten their neighbours and rarely played anyone else. Giving each league its own level, learned only from games between leagues, lowered the Brier score by 0.0054 (95\% interval 0.0041 to 0.0068) compared with this one-scale Elo. That is about nine times the gain from machine learning.
 
-\begin{figure}[H]
-\centering
-\begin{tikzpicture}
-\begin{axis}[
-  xbar, width=0.82\linewidth, height=5.2cm,
-  xmin=0, xmax=0.0075, bar width=13pt, bar shift=0pt,
-  ytick={1,2,3},
-  yticklabels={{Player experience\\added to logistic model},{Machine learning\\logistic vs.\ calibrated Elo},{League levels in Elo\\vs.\ one flat Elo scale}},
-  yticklabel style={align=right,font=\sffamily\footnotesize},
-  xticklabel style={font=\sffamily\scriptsize,/pgf/number format/fixed,/pgf/number format/precision=3},
-  scaled x ticks=false,
-  xlabel={\sffamily\footnotesize Reduction in Brier score (longer = bigger improvement)},
-  axis x line*=bottom, axis y line*=left,
-  enlarge y limits=0.3,
-  error bars/x dir=both, error bars/x explicit,
-  error bars/error bar style={line width=0.7pt,ink},
-  error bars/error mark options={rotate=90,mark size=3pt,line width=0.7pt,ink},
-]
-\addplot[fill=grey,draw=none] coordinates {
-  (0.0054,3) += (0.0014,0) -= (0.0013,0)
-  (0.0006,2) += (0.0004,0) -= (0.0004,0)
-};
-\addplot[fill=accent,draw=none] coordinates {
-  (0.0048,1) += (0.0012,0) -= (0.0013,0)
-};
-\node[right,font=\sffamily\footnotesize] at (axis cs:0.0068,3) {0.0054};
-\node[right,font=\sffamily\footnotesize] at (axis cs:0.0010,2) {0.0006};
-\node[right,font=\sffamily\footnotesize\bfseries] at (axis cs:0.0060,1) {0.0048};
-\end{axis}
-\end{tikzpicture}
-\caption{Improvement from each step on the same 10,087 test games. Error bars show 95\% intervals from a series-clustered bootstrap.}\label{fig:gains}
-\end{figure}
+Figure~\ref{fig:gains} puts the three improvements side by side on the same test games. It is the single most important picture in the study, because it answers the opening question directly: the two bars that concern \emph{what the forecast knows} (league structure and player experience) are many times longer than the bar for \emph{how complex the model is}. The error bars show that this ranking is not a matter of luck: the intervals for the two long bars do not come close to the short one.
 
-\subsection{The results hold in every year}
+\input{/tmp/fig1.tex}
 
-In the five-year rolling test, league levels improved Elo in all five years and player experience improved the logistic model in all five years, while the machine learning step stayed close to zero: 0.0004 pooled over 49,748 games, with an interval excluding zero in only two of the five years (Figure~\ref{fig:years}).
+\subsection{What the coefficients mean}
 
-\begin{figure}[H]
-\centering
-\begin{tikzpicture}
-\begin{axis}[
-  ybar, width=0.95\linewidth, height=5.6cm,
-  bar width=8pt, ymin=-0.0004, ymax=0.0055,
-  symbolic x coords={2022,2023,2024,2025,2026}, xtick=data,
-  xticklabel style={font=\sffamily\footnotesize},
-  yticklabel style={font=\sffamily\scriptsize,/pgf/number format/fixed,/pgf/number format/precision=3},
-  scaled y ticks=false,
-  ylabel={\sffamily\footnotesize Reduction in Brier score},
-  axis x line*=bottom, axis y line*=left,
-  legend style={font=\sffamily\scriptsize,draw=none,at={(0.5,-0.18)},anchor=north,legend columns=3},
-  legend cell align=left, area legend,
-  ymajorgrids, grid style={rule},
-]
-\addplot[fill=red!85,draw=none] coordinates {(2022,0.0027) (2023,0.0021) (2024,0.0039) (2025,0.0038) (2026,0.0043)};
-\addplot[fill=gold,draw=none] coordinates {(2022,0.0006) (2023,-0.0001) (2024,0.0000) (2025,0.0006) (2026,0.0008)};
-\addplot[fill=accent,draw=none] coordinates {(2022,0.0048) (2023,0.0041) (2024,0.0040) (2025,0.0043) (2026,0.0048)};
-\legend{League levels in Elo, Machine learning step, Player experience (previous lineup)}
-\end{axis}
-\end{tikzpicture}
-\caption{The same three steps by test year. Each year the models were tuned and fitted only on earlier years.}\label{fig:years}
-\end{figure}
-
-Table~\ref{tab:ablation} shows which part of player information matters. One simple number does most of the work; knowing the lineup that actually played helps a little more, but most of the gain is already there before match day.
+Table~\ref{tab:coef} shows the fitted coefficients of the player model. Each row reports the coefficient for a one-SD difference in that measure between the blue and the red team, its odds ratio, and a 95\% interval. The table matters because it shows not only \emph{that} the player model predicts better, but \emph{how} it weighs the information it receives.
 
 \begin{table}[H]
 \centering\small
 \begin{threeparttable}
-\caption{Player features added to the logistic model, five-year test (49,748 games)}\label{tab:ablation}
+\caption{Coefficients of the player model (logistic regression, standardised inputs)}\label{tab:coef}
+\begin{tabularx}{\linewidth}{@{}Yccc@{}}
+\toprule
+Input (blue minus red) & Coefficient per SD & Odds ratio & 95\% interval (odds ratio) \\
+\midrule
+Elo difference (1 SD = 149 rating points) & 0.563 & 1.76 & 1.68 to 1.83 \\
+Player experience, previous lineup (1 SD = 0.70 log points) & 0.336 & 1.40 & 1.37 to 1.43 \\
+Recent form (last 10 games) & 0.064 & 1.07 & 1.04 to 1.10 \\
+Overall win rate & 0.049 & 1.05 & 1.02 to 1.08 \\
+Strength of recent opponents & 0.026 & 1.03 & 1.00 to 1.05 \\
+Team experience (games as a team) & $-$0.009 & 0.99 & 0.97 to 1.01 \\
+Elo difference $\times$ international event & $-$0.001 & 1.00 & 0.98 to 1.02 \\
+\midrule
+Intercept (blue-side advantage) & 0.131 & & \\
+\bottomrule
+\end{tabularx}
+\begin{tablenotes}\footnotesize
+\item Fitted on training and validation games (57,156). Intervals from 200 cluster-bootstrap re-draws of whole series on the same games, with the same light regularisation. All coefficients are associations, not causal effects.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\textbf{Rating difference.} The Elo difference remains by far the strongest input. A team rated one SD (about 149 points) higher than its opponent is associated with 76\% higher odds of winning, other inputs held constant. The rating already contains most of what the results history has to say.
+
+\textbf{Player experience.} The player measure is the second strongest input. One SD of the measure is 0.70 log points, and $e^{0.70} \approx 2$, so a one-SD difference corresponds roughly to one lineup whose typical player has played twice as many earlier professional games as the other's. For a sense of scale, the typical player in a median lineup had about 83 earlier games; the comparison is like 83 against 166. Such a difference is associated with odds of winning that are about 40\% higher (interval 37\% to 43\%), with the rating and every other input held constant. For two teams that are otherwise equal, this moves the blue side's estimated chance of winning from about 53\% to about 61\%. In economic terms, experience behaves like an asset the rating does not see: two teams with the same rating are not equally strong if one has fielded players with much longer professional careers.
+
+\textbf{Other team measures.} Recent form, overall win rate and the strength of recent opponents add only a little once the rating and player experience are known, with odds ratios between 1.03 and 1.07. Team experience, meaning how many games the team itself has played, adds nothing (odds ratio 0.99, interval 0.97 to 1.01) once player experience is included. In other words, what seems to matter is the experience of the people on the team, not the history of the team's name.
+
+\textbf{Blue-side advantage.} The intercept of 0.131 corresponds to a win probability of about 53\% for the blue side when the two teams are otherwise equal, close to the blue side's share of wins in the training data (52.7\%).
+
+These coefficients describe associations. A positive link between experience and winning does not show that adding experience would make a team win more. Experienced players may simply be better players who have survived in a competitive labour market; strong organisations may also be more likely to sign and keep them. The study cannot separate these explanations.
+
+\subsection{The results hold in every year}
+
+Figure~\ref{fig:years} repeats the three comparisons in each of five test years, with every model tuned and fitted only on earlier years. This figure matters because it guards against a result that is true only in one period. League levels improved Elo in all five years, and player experience improved the logistic model in all five years. The machine learning step stayed close to zero throughout: pooled over 49,748 games its gain was 0.0004, and its interval excluded zero in only two of the five years.
+
+\input{/tmp/fig2.tex}
+
+Table~\ref{tab:ablation} asks which part of player information carries the gain. Its value is that it separates a simple, robust signal from several weaker ones.
+
+\begin{table}[H]
+\centering\small
+\begin{threeparttable}
+\caption{Player measures added to the logistic model, five-year test (49,748 games)}\label{tab:ablation}
 \begin{tabular}{@{}lcc@{}}
 \toprule
-Added feature & Brier change & Better in \\
+Added measure & Brier change & Better in \\
 \midrule
-Lineup continuity (same players as last game) & \textminus0.0001 & 4 of 5 years \\
-Player tenure with the team & \textminus0.0007 & 5 of 5 \\
-Player experience, previous lineup (pre-match) & \textminus0.0044 & 5 of 5 \\
-Player experience, lineup that played & \textminus0.0055 & 5 of 5 \\
-Pre-match experience + player-level Elo & \textminus0.0053 & 5 of 5 \\
+Lineup continuity (same players as last game) & $-$0.0001 & 4 of 5 years \\
+Player tenure with the team & $-$0.0007 & 5 of 5 \\
+Player experience, previous lineup (pre-match) & $-$0.0044 & 5 of 5 \\
+Player experience, lineup that played & $-$0.0055 & 5 of 5 \\
+Pre-match experience + player-level Elo & $-$0.0053 & 5 of 5 \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}\footnotesize
@@ -322,9 +327,11 @@ Pre-match experience + player-level Elo & \textminus0.0053 & 5 of 5 \\
 \end{threeparttable}
 \end{table}
 
-\subsection{It is not just league strength}
+Whether a team kept the same five players matters very little, and how long players have been with the team matters a little. What matters is how much professional experience the players have in total. Knowing the lineup that actually played helps slightly more than knowing the previous one ($-$0.0055 against $-$0.0044), but four-fifths of the gain is already available before match day.
 
-If experienced players are concentrated in strong leagues, the player measure could simply be separating strong leagues from weak ones. In a game between two teams of the same league the league level cancels out, so league strength cannot explain a gain there. Table~\ref{tab:sub} shows that the gain is the same size inside a single league, and largest for new teams, which Elo rates at their league's average even when their players have hundreds of games behind them.
+\subsection{The player result is not a league-strength effect}
+
+One concern is that experienced players may be concentrated in strong leagues, in which case the player measure could simply be telling strong leagues from weak ones. In a game between two teams of the same league, however, the league level is identical for both sides and cancels out, so league strength cannot explain a gain there. Table~\ref{tab:sub} splits the test games by type. It matters because it tests the most obvious alternative explanation directly.
 
 \begin{table}[H]
 \centering\small
@@ -332,13 +339,13 @@ If experienced players are concentrated in strong leagues, the player measure co
 \caption{Pre-match player model against the logistic model, by type of game}\label{tab:sub}
 \begin{tabular}{@{}lrc@{}}
 \toprule
-Games & \textit{n} & Brier change [95\% interval] \\
+Games & $n$ & Brier change [95\% interval] \\
 \midrule
-Same league, domestic game & 39,185 & \textminus0.0053 [\textminus0.0060, \textminus0.0047] \\
-Top leagues only (LCK, LPL, LEC, LCS / LTA North) & 8,600 & \textminus0.0027 [\textminus0.0037, \textminus0.0016] \\
-Teams from different leagues & 10,229 & \textminus0.0052 [\textminus0.0064, \textminus0.0039] \\
-Both teams with 20 or more earlier games & 42,314 & \textminus0.0043 [\textminus0.0049, \textminus0.0037] \\
-A team with fewer than 20 earlier games & 7,434 & \textminus0.0108 [\textminus0.0129, \textminus0.0089] \\
+Same league, domestic game & 39,185 & $-$0.0053 [$-$0.0060, $-$0.0047] \\
+Top leagues only (LCK, LPL, LEC, LCS / LTA North) & 8,600 & $-$0.0027 [$-$0.0037, $-$0.0016] \\
+Teams from different leagues & 10,229 & $-$0.0052 [$-$0.0064, $-$0.0039] \\
+Both teams with 20 or more earlier games & 42,314 & $-$0.0043 [$-$0.0049, $-$0.0037] \\
+A team with fewer than 20 earlier games & 7,434 & $-$0.0108 [$-$0.0129, $-$0.0089] \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}\footnotesize
@@ -347,67 +354,62 @@ A team with fewer than 20 earlier games & 7,434 & \textminus0.0108 [\textminus0.
 \end{threeparttable}
 \end{table}
 
-\section{Discussion and lessons}
+Inside a single league the gain is the same size as overall ($-$0.0053), so it is not a league effect. It is largest, about twice the average, in games involving a team with fewer than 20 earlier games. This fits a simple explanation: a new or renamed team starts with its league's average rating, even when its players have hundreds of games behind them, and the experience measure supplies what the rating does not yet know. The gain is smaller but still clear among the top leagues, where rosters are more stable and fewer inexperienced players appear.
 
-\textbf{What the model knows beats what kind of model it is.} League structure and player experience moved the score far more than switching from a rating to machine learning. The type of model mattered little once the rating measured the right things.
+\section{Discussion}\label{sec:discussion}
 
-\textbf{A real result can be a small one.} The machine learning gain passed every significance check and still did not matter much in practice. Reporting both is the honest answer, and it is the kind of distinction that a single accuracy figure hides.
+The study set out to ask whether machine learning beats Elo. It does, but the more useful finding is what beats both: knowing more about the structure of the competition and about the people in it. A forecaster who improved the rating's design and added a count of the players' earlier games would gain far more than one who replaced the rating with a more complex model of the same information.
 
-\textbf{Check your own headline.} The first published conclusion was correct but incomplete. The five-year test and the player features found a larger effect that the original design had left out.
+This pattern agrees with earlier work. Guan and Tung \citeyearpar{guan2026} found that a more complex architecture did not beat a simpler logistic model on professional League of Legends games, and they suggested that information about rosters might explain why betting markets were slightly better than their model in some games. The results here are consistent with that suggestion: a roster-based measure is the largest single improvement found. In football, Holmes and McHale \citeyearpar{holmes2024} also found value in building forecasts from players rather than teams, and in non-professional League games \citet{do2021} found that player experience predicts results. This study adds evidence from the professional game, measured with a simple pre-match count and tested over five years and inside single leagues.
 
-\textbf{Data rules are research decisions.} How series are rebuilt, what counts as a duplicate and what is excluded all change the numbers, so they are written down and made public.
+For economics, the findings have two readings. First, from the forecasting side, a large part of what a team rating misses is information about its workers: when players move between teams or a team is rebuilt, the rating is slow to catch up, while the players' experience moves with them. Second, from the side of league design, results remain hard to predict. Even the best model here picks the right winner in only about two out of three games, which is consistent with the view that uncertain outcomes are a central feature of professional competition \citep{rottenberg1956}.
 
-\textbf{Relation to earlier work.} The results agree with work showing that player-based ratings improve football forecasts \citep{holmes2024} and that player-level performance measures improve League of Legends ratings \citep{debois2025}. Earlier studies of professional League games report accuracy on a single sample \citep{jadowski2022}. This study adds a paired, time-ordered comparison of rating design, model type and player information on the same games, checked over five years and inside single leagues.
+\section{Limitations}\label{sec:limits}
 
-\section{Limitations}
+The findings should be read with several limits in mind. Most importantly, the link between experience and winning is an association. Experience may stand for skill, for the judgement of organisations that choose players, or for both, and the study cannot tell these apart. Second, the pre-match model uses each team's previous lineup, so it does not see a change made since that game. Third, league levels are measured well only for leagues whose teams often play teams from other leagues. Fourth, best-of series are rebuilt from game times because the source has no series identifier, which may occasionally group games wrongly. Finally, the models use no information about the draft (the characters each team picks), the game version, or events within a game, and they are fixed at the start of each test period.
 
-\begin{itemize}
-  \item Player experience is associated with winning, but this does not show that it causes wins: it may reflect skill, or which players strong organisations choose to sign.
-  \item The pre-match model uses each team's previous lineup, so it does not see a lineup change made since the last game.
-  \item League levels are only well measured for leagues that often play other leagues.
-  \item Series are rebuilt from game times, because the source has no series identifier.
-  \item No draft, patch or in-game information is used, and the models are fixed at the start of each test period.
-\end{itemize}
+\section{Conclusion and future work}
 
-\section{Recommendations and next steps}
+Across 75,830 professional League of Legends games, a machine learning model predicted results better than an Elo rating, but by a margin that is statistically real and practically small. Two changes that improve what the forecast knows, rather than how complex it is, mattered far more: giving each league its own rating level, and adding the experience of the players. Both held in every test year, and the player result held inside single leagues.
 
-\begin{enumerate}
-  \item \textbf{Compare with established rating systems} such as Glicko-2 \citep{glickman2001} and TrueSkill \citep{herbrich2007}, which model rating uncertainty and may help with new teams.
-  \item \textbf{Test other definitions of experience}, such as recent games only or top-league games only, to check that the result does not depend on one definition.
-  \item \textbf{Compare with betting odds.} If bookmaker odds already reflect player experience, the gain is public information that markets price in; if not, the result says something about market efficiency.
-\end{enumerate}
+Three extensions would strengthen these findings. The player model could be compared with established rating systems that account for uncertainty about new competitors, such as Glicko-2 \citep{glickman2001} and TrueSkill \citep{herbrich2007}. Other definitions of experience, such as recent games only or games in top leagues only, would show whether the result depends on one choice of measure. Finally, a comparison with betting odds would show whether markets already price in player experience, which would turn a forecasting result into a question about market efficiency.
 
 \section*{Resources}
-\begin{itemize}[leftmargin=1.2em]
-  \item Live platform: \url{https://esports-intelligence.vercel.app}
-  \item Five-year results: \url{https://esports-intelligence.vercel.app/experiments}
-  \item Research article: \url{https://nahianibnat-2000.github.io/esports-intelligence/}
-  \item Code, tests and experiment records:\\ \url{https://github.com/NahianIbnat-2000/esports-intelligence}
-\end{itemize}
+{\raggedright The live platform, the five-year results and the full code are available at \url{https://esports-intelligence.vercel.app}, \url{https://esports-intelligence.vercel.app/experiments} and \url{https://github.com/NahianIbnat-2000/esports-intelligence}. A shorter article is at \url{https://nahianibnat-2000.github.io/esports-intelligence/}.\par}
 
 \clearpage
 \renewcommand{\bibsection}{\begin{center}\large\bfseries References\end{center}\vspace{0.3em}}
 \setlength{\bibhang}{0.5in}
 \begin{thebibliography}{99}
 \setlength{\itemsep}{0.35em}\small
+\bibitem[Angrist \& Pischke(2009)]{angrist2009} Angrist, J.~D., \& Pischke, J.-S. (2009). \emph{Mostly harmless econometrics: An empiricist's companion}. Princeton University Press. \url{https://doi.org/10.1515/9781400829828}
 \bibitem[Breiman(2001)]{breiman2001} Breiman, L. (2001). Random forests. \emph{Machine Learning, 45}(1), 5--32. \url{https://doi.org/10.1023/A:1010933404324}
 \bibitem[Brier(1950)]{brier1950} Brier, G.~W. (1950). Verification of forecasts expressed in terms of probability. \emph{Monthly Weather Review, 78}(1), 1--3. \url{https://doi.org/10.1175/1520-0493(1950)078<0001:VOFEIT>2.0.CO;2}
 \bibitem[Cameron et~al.(2008)]{cameron2008} Cameron, A.~C., Gelbach, J.~B., \& Miller, D.~L. (2008). Bootstrap-based improvements for inference with clustered errors. \emph{The Review of Economics and Statistics, 90}(3), 414--427. \url{https://doi.org/10.1162/rest.90.3.414}
 \bibitem[De Bois et~al.(2025)]{debois2025} De Bois, M., Parmentier, F., Puget, R., Tanti, M., \& Peltier, J. (2025). \emph{PandaSkill: Player performance and skill rating in esports: Application to League of Legends} (arXiv:2501.10049). arXiv. \url{https://doi.org/10.48550/arXiv.2501.10049}
+\bibitem[Do et~al.(2021)]{do2021} Do, T.~D., Wang, S.~I., Yu, D.~S., McMillian, M.~G., \& McMahan, R.~P. (2021). Using machine learning to predict game outcomes based on player-champion experience in League of Legends. In \emph{Proceedings of the 16th International Conference on the Foundations of Digital Games}. Association for Computing Machinery. \url{https://doi.org/10.1145/3472538.3472579}
 \bibitem[Efron(1979)]{efron1979} Efron, B. (1979). Bootstrap methods: Another look at the jackknife. \emph{The Annals of Statistics, 7}(1), 1--26. \url{https://doi.org/10.1214/aos/1176344552}
 \bibitem[Elo(1978)]{elo1978} Elo, A.~E. (1978). \emph{The rating of chessplayers, past and present}. Arco.
 \bibitem[Fawcett(2006)]{fawcett2006} Fawcett, T. (2006). An introduction to ROC analysis. \emph{Pattern Recognition Letters, 27}(8), 861--874. \url{https://doi.org/10.1016/j.patrec.2005.10.010}
 \bibitem[FIFA(n.d.)]{fifa2018} FIFA. (n.d.). \emph{FIFA/Coca-Cola men's world ranking procedures}. Retrieved November 22, 2026, from \url{https://inside.fifa.com/fifa-world-ranking/procedure-men}
 \bibitem[Friedman(2001)]{friedman2001} Friedman, J.~H. (2001). Greedy function approximation: A gradient boosting machine. \emph{The Annals of Statistics, 29}(5), 1189--1232. \url{https://doi.org/10.1214/aos/1013203451}
 \bibitem[Glickman(2001)]{glickman2001} Glickman, M.~E. (2001). Dynamic paired comparison models with stochastic variances. \emph{Journal of Applied Statistics, 28}(6), 673--689. \url{https://doi.org/10.1080/02664760120059219}
+\bibitem[Gneiting \& Raftery(2007)]{gneiting2007} Gneiting, T., \& Raftery, A.~E. (2007). Strictly proper scoring rules, prediction, and estimation. \emph{Journal of the American Statistical Association, 102}(477), 359--378. \url{https://doi.org/10.1198/016214506000001437}
+\bibitem[Guan \& Tung(2026)]{guan2026} Guan, M.-R., \& Tung, S.-N. (2026). \emph{Pre-game paired-comparison modeling of professional League of Legends map outcomes} (arXiv:2609.08060). arXiv. \url{https://doi.org/10.48550/arXiv.2609.08060}
+\bibitem[Hastie et~al.(2009)]{hastie2009} Hastie, T., Tibshirani, R., \& Friedman, J. (2009). \emph{The elements of statistical learning: Data mining, inference, and prediction} (2nd ed.). Springer. \url{https://doi.org/10.1007/978-0-387-84858-7}
 \bibitem[Herbrich et~al.(2007)]{herbrich2007} Herbrich, R., Minka, T., \& Graepel, T. (2007). TrueSkill: A Bayesian skill rating system. In B. Sch\"olkopf, J. Platt, \& T. Hoffman (Eds.), \emph{Advances in neural information processing systems 19} (pp. 569--576). MIT Press.
 \bibitem[Holmes \& McHale(2024)]{holmes2024} Holmes, B., \& McHale, I.~G. (2024). Forecasting football match results using a player rating based model. \emph{International Journal of Forecasting, 40}(1), 302--312. \url{https://doi.org/10.1016/j.ijforecast.2023.03.002}
+\bibitem[Hosmer et~al.(2013)]{hosmer2013} Hosmer, D.~W., Lemeshow, S., \& Sturdivant, R.~X. (2013). \emph{Applied logistic regression} (3rd ed.). Wiley. \url{https://doi.org/10.1002/9781118548387}
 \bibitem[Hvattum \& Arntzen(2010)]{hvattum2010} Hvattum, L.~M., \& Arntzen, H. (2010). Using ELO ratings for match result prediction in association football. \emph{International Journal of Forecasting, 26}(3), 460--470. \url{https://doi.org/10.1016/j.ijforecast.2009.10.002}
 \bibitem[Ibnat(2026)]{ei2026} Ibnat, N. (2026). \emph{Esports Intelligence: Data pipeline, code, evaluation files and experiment records} [Computer software]. GitHub. \url{https://github.com/NahianIbnat-2000/esports-intelligence}
 \bibitem[Jadowski \& Cunningham(2022)]{jadowski2022} Jadowski, R., \& Cunningham, S. (2022). Statistical models for predicting results in professional League of Legends. In \emph{ArtsIT, interactivity and game creation: Creative heritage. New perspectives from media arts and artificial intelligence}. Springer. \url{https://doi.org/10.1007/978-3-030-95531-1_10}
+\bibitem[Kaufman et~al.(2012)]{kaufman2012} Kaufman, S., Rosset, S., Perlich, C., \& Stitelman, O. (2012). Leakage in data mining: Formulation, detection, and avoidance. \emph{ACM Transactions on Knowledge Discovery from Data, 6}(4), Article 15. \url{https://doi.org/10.1145/2382577.2382579}
 \bibitem[Pedregosa et~al.(2011)]{pedregosa2011} Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel, O., Blondel, M., Prettenhofer, P., Weiss, R., Dubourg, V., Vanderplas, J., Passos, A., Cournapeau, D., Brucher, M., Perrot, M., \& Duchesnay, \'E. (2011). Scikit-learn: Machine learning in Python. \emph{Journal of Machine Learning Research, 12}, 2825--2830. \url{https://jmlr.org/papers/v12/pedregosa11a.html}
 \bibitem[Riot Games(2024)]{riot2024} Riot Games. (2024). \emph{Dev diary: Unveiling the Global Power Rankings}. LoL Esports. \url{https://lolesports.com/en-GB/news/dev-diary-unveiling-the-global-power-rankings}
+\bibitem[Rottenberg(1956)]{rottenberg1956} Rottenberg, S. (1956). The baseball players' labor market. \emph{Journal of Political Economy, 64}(3), 242--258. \url{https://doi.org/10.1086/257790}
 \bibitem[Sevenhuysen(n.d.)]{oracleselixir} Sevenhuysen, T. (n.d.). \emph{Oracle's Elixir} [Data set]. Retrieved November 22, 2026, from \url{https://oracleselixir.com}
+\bibitem[Tashman(2000)]{tashman2000} Tashman, L.~J. (2000). Out-of-sample tests of forecasting accuracy: An analysis and review. \emph{International Journal of Forecasting, 16}(4), 437--450. \url{https://doi.org/10.1016/S0169-2070(00)00065-0}
+\bibitem[Wasserstein \& Lazar(2016)]{wasserstein2016} Wasserstein, R.~L., \& Lazar, N.~A. (2016). The ASA statement on p-values: Context, process, and purpose. \emph{The American Statistician, 70}(2), 129--133. \url{https://doi.org/10.1080/00031305.2016.1154108}
 \end{thebibliography}
 
 \end{document}
