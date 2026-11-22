@@ -79,14 +79,14 @@ This case study documents the design, evaluation and deployment of \emph{Esports
 
 \section{Background}
 
-Elo ratings are the standard way to predict who wins a game. Each competitor has a number; the gap between two numbers gives a win probability, and after each game the winner takes points from the loser, more so when the result is a surprise. Elo ratings are used in chess, in football rankings and in esports, and they have a long record as predictors \citep{hvattum2010}.
+Elo ratings are the standard way to predict who wins a game. Each competitor has a number; the gap between two numbers gives a win probability, and after each game the winner takes points from the loser, more so when the result is a surprise \citep{elo1978}. The system was designed for chess \citep{elo1978}; FIFA's men's world ranking has used an Elo-based method since August 2018 \citep{fifa2018}; and the official power rankings of professional League of Legends are built on Elo \citep{riot2024}. Elo ratings also have a long record as predictors of match results \citep{hvattum2010}.
 
 Machine learning models can use far more information than a single rating. The practical question for any forecaster is whether that extra information pays for the extra complexity, and by how much. Professional League of Legends is a useful setting for this question for three reasons:
 
 \begin{itemize}
   \item \textbf{Data.} Every professional game is recorded in detail and published, with one row per team and one per player \citep{oracleselixir}.
-  \item \textbf{Volume.} Teams play often, so there are tens of thousands of games over a few years.
-  \item \textbf{Structure.} About a hundred regional leagues mostly play inside their own region and meet only at a few international events. Comparing teams that rarely play each other is a real measurement problem, similar to ranking national football leagues against each other.
+  \item \textbf{Volume.} Teams play often: the files used here hold 75,830 games from January 2020 to November 2026 \citep{oracleselixir,ei2026}.
+  \item \textbf{Structure.} The data covers 109 leagues \citep{ei2026}. Teams play most of their games inside their own league (39,185 of the 49,748 five-year test games, 79\%, were domestic games between teams of the same league; \citealp{ei2026}), and leagues meet mainly at international events such as MSI and Worlds, which is why Riot's own rankings let those events set each league's strength \citep{riot2024}. Comparing teams that rarely play each other is therefore a real measurement problem.
 \end{itemize}
 
 \section{The problem}
@@ -105,7 +105,7 @@ A second aim was practical: to make every step public and checkable, as a live w
 
 \section{Data}
 
-All data comes from the public historical files of Oracle's Elixir \citep{oracleselixir}. The study uses every file from 2020 to November 2026: 75,830 games, 1,914 teams and 10,239 players across 109 leagues, played between 3 January 2020 and 17 November 2026. Each raw file is recorded in a manifest with its SHA-256 checksum, so the exact input can be verified.
+All data comes from the public historical files of Oracle's Elixir \citep{oracleselixir}. The study uses every file from 2020 to November 2026: 75,830 games, 1,914 teams and 10,239 players across 109 leagues, played between 3 January 2020 and 17 November 2026 (counts from the project database; \citealp{ei2026}). Each raw file is recorded in a manifest with its SHA-256 checksum, so the exact input can be verified.
 
 The data was usable but not clean enough to trust as delivered. Table~\ref{tab:data} lists the problems found and how each was handled. Every exclusion is written to a file with its reason and shown in the platform's public data quality report.
 
@@ -135,14 +135,14 @@ The task is to predict, before a game starts, the probability that the blue side
   \item \textbf{Split by date, never at random.} Models are trained on games up to 11 August 2024, tuned on games up to 22 September 2025, and scored once on 10,087 games from 23 September 2025 to 14 November 2026. A random split would let a model learn from the future.
   \item \textbf{Use only earlier information.} Every input to a prediction comes from games played strictly before it. Automated tests change future results and lineups and check that earlier inputs do not move.
   \item \textbf{Compare against simple baselines.} A constant blue-side win rate, Elo, and calibrated Elo. A model is useful only if it beats these clearly.
-  \item \textbf{Score probabilities, not only picks.} The main measure is the Brier score \citep{brier1950}, the mean squared gap between the predicted probability and the result; lower is better and a constant 50\% scores 0.25. Log loss, accuracy and ROC-AUC are also reported.
-  \item \textbf{Put an interval on every difference.} Model differences use a paired bootstrap with 2,000 resamples. Games from the same series are resampled together, because they are not independent; the check is repeated with whole tournaments as the unit.
+  \item \textbf{Score probabilities, not only picks.} The main measure is the Brier score \citep{brier1950}, the mean squared gap between the predicted probability and the result; lower is better and a constant 50\% scores 0.25. Log loss, accuracy and ROC-AUC \citep{fawcett2006} are also reported.
+  \item \textbf{Put an interval on every difference.} Model differences use a paired bootstrap \citep{efron1979} with 2,000 resamples. Games from the same series are resampled together, because they are not independent \citep{cameron2008}; the check is repeated with whole tournaments as the unit.
   \item \textbf{Keep statistical and practical size apart.} A difference can be real and still too small to matter.
 \end{enumerate}
 
 \subsection{Models}
 
-Table~\ref{tab:models} summarises the models. Elo settings and the regression penalty were chosen on the validation period only. Gradient boosting and random forests were also tested; they did not beat the logistic regression on validation games and were not used.
+Table~\ref{tab:models} summarises the models. Elo settings and the regression penalty were chosen on the validation period only. The regressions use scikit-learn \citep{pedregosa2011}. Gradient boosting \citep{friedman2001} and random forests \citep{breiman2001} were also tested; they did not beat the logistic regression on validation games and were not used.
 
 \begin{table}[h]
 \centering\small
@@ -200,6 +200,8 @@ The research was built as a public website so that others can check it (Figure~\
 \end{figure}
 
 \section{Results}
+
+All results in this section come from the project's saved evaluation files and experiment record \citep{ei2026}.
 
 \subsection{Machine learning wins, but only just}
 
@@ -321,7 +323,7 @@ Pre-match experience + player-level Elo & \textminus0.0053 & 5 of 5 \\
 
 \subsection{It is not just league strength}
 
-Experienced players are more common in strong leagues, so the player measure could simply be separating strong leagues from weak ones. In a game between two teams of the same league the league level cancels out, so league strength cannot explain a gain there. Table~\ref{tab:sub} shows that the gain is the same size inside a single league, and largest for new teams, which Elo rates at their league's average even when their players have hundreds of games behind them.
+If experienced players are concentrated in strong leagues, the player measure could simply be separating strong leagues from weak ones. In a game between two teams of the same league the league level cancels out, so league strength cannot explain a gain there. Table~\ref{tab:sub} shows that the gain is the same size inside a single league, and largest for new teams, which Elo rates at their league's average even when their players have hundreds of games behind them.
 
 \begin{table}[h]
 \centering\small
@@ -369,7 +371,7 @@ A team with fewer than 20 earlier games & 7,434 & \textminus0.0108 [\textminus0.
 \section{Recommendations and next steps}
 
 \begin{enumerate}
-  \item \textbf{Compare with established rating systems} such as Glicko-2 and TrueSkill, which model rating uncertainty and may help with new teams.
+  \item \textbf{Compare with established rating systems} such as Glicko-2 \citep{glickman2001} and TrueSkill \citep{herbrich2007}, which model rating uncertainty and may help with new teams.
   \item \textbf{Test other definitions of experience}, such as recent games only or top-league games only, to check that the result does not depend on one definition.
   \item \textbf{Compare with betting odds.} If bookmaker odds already reflect player experience, the gain is public information that markets price in; if not, the result says something about market efficiency.
 \end{enumerate}
@@ -382,13 +384,24 @@ A team with fewer than 20 earlier games & 7,434 & \textminus0.0108 [\textminus0.
   \item Code, tests and experiment records:\\ \url{https://github.com/NahianIbnat-2000/esports-intelligence}
 \end{itemize}
 
-\begin{thebibliography}{9}
+\begin{thebibliography}{99}
 \setlength{\itemsep}{0.2em}\small
+\bibitem[Breiman(2001)]{breiman2001} Breiman, L. (2001). Random forests. \emph{Machine Learning}, 45(1), 5--32.
+\bibitem[Cameron et~al.(2008)]{cameron2008} Cameron, A.~C., Gelbach, J.~B., and Miller, D.~L. (2008). Bootstrap-based improvements for inference with clustered errors. \emph{Review of Economics and Statistics}, 90(3), 414--427.
 \bibitem[Brier(1950)]{brier1950} Brier, G.~W. (1950). Verification of forecasts expressed in terms of probability. \emph{Monthly Weather Review}, 78(1), 1--3.
 \bibitem[De Bois et al.(2025)]{debois2025} De Bois, M., Parmentier, F., Puget, R., Tanti, M., and Peltier, J. (2025). PandaSkill: player performance and skill rating in esports, application to League of Legends. arXiv:2501.10049.
+\bibitem[Efron(1979)]{efron1979} Efron, B. (1979). Bootstrap methods: another look at the jackknife. \emph{Annals of Statistics}, 7(1), 1--26.
+\bibitem[Elo(1978)]{elo1978} Elo, A.~E. (1978). \emph{The Rating of Chessplayers, Past and Present}. New York: Arco.
+\bibitem[Fawcett(2006)]{fawcett2006} Fawcett, T. (2006). An introduction to ROC analysis. \emph{Pattern Recognition Letters}, 27(8), 861--874.
+\bibitem[FIFA(2018)]{fifa2018} FIFA (2018). FIFA/Coca-Cola Men's World Ranking: procedures. \url{https://inside.fifa.com/fifa-world-ranking/procedure-men}
+\bibitem[Friedman(2001)]{friedman2001} Friedman, J.~H. (2001). Greedy function approximation: a gradient boosting machine. \emph{Annals of Statistics}, 29(5), 1189--1232.
+\bibitem[Glickman(2001)]{glickman2001} Glickman, M.~E. (2001). Dynamic paired comparison models with stochastic variances. \emph{Journal of Applied Statistics}, 28(6), 673--689.
+\bibitem[Herbrich et~al.(2007)]{herbrich2007} Herbrich, R., Minka, T., and Graepel, T. (2007). TrueSkill: a Bayesian skill rating system. In \emph{Advances in Neural Information Processing Systems 19}, 569--576.
 \bibitem[Holmes and McHale(2024)]{holmes2024} Holmes, B. and McHale, I.~G. (2024). Forecasting football match results using a player rating based model. \emph{International Journal of Forecasting}, 40(1), 302--312.
 \bibitem[Hvattum and Arntzen(2010)]{hvattum2010} Hvattum, L.~M. and Arntzen, H. (2010). Using ELO ratings for match result prediction in association football. \emph{International Journal of Forecasting}, 26(3), 460--470.
+\bibitem[Ibnat(2026)]{ei2026} Ibnat, N. (2026). Esports Intelligence: data pipeline, code, evaluation files and experiment records. GitHub repository. \url{https://github.com/NahianIbnat-2000/esports-intelligence}
 \bibitem[Jadowski and Cunningham(2022)]{jadowski2022} Jadowski, R. and Cunningham, S. (2022). Statistical models for predicting results in professional League of Legends. In \emph{ArtsIT, Interactivity and Game Creation: Creative Heritage}.
+\bibitem[Pedregosa et~al.(2011)]{pedregosa2011} Pedregosa, F. et~al. (2011). Scikit-learn: machine learning in Python. \emph{Journal of Machine Learning Research}, 12, 2825--2830.
 \bibitem[Riot Games(2024)]{riot2024} Riot Games (2024). Dev diary: unveiling the Global Power Rankings. LoL Esports. \url{https://lolesports.com/en-GB/news/dev-diary-unveiling-the-global-power-rankings}
 \bibitem[Sevenhuysen(2026)]{oracleselixir} Sevenhuysen, T. (2026). Oracle's Elixir: League of Legends esports match data. \url{https://oracleselixir.com}
 \end{thebibliography}
