@@ -30,8 +30,11 @@ lot, extra team features help a little. Two open questions:
   train + validation and scored once on test.
 - **Lineup timing.** "Today's lineup" features use the five who played. That lineup is
   public when the game starts (draft), usually not days before. Every player feature was
-  therefore also built from each team's *previous* game ("previous lineup"), which is known
-  before match day. The `prematch` model uses only those.
+  therefore also built from each team's *previous* game ("previous lineup"), so it needs no
+  knowledge of today's lineup. The `prematch` model uses only those. Note (23 Nov 2026): all models
+  update after every game, so inside a series the previous lineup is that day's earlier game.
+  Freezing every input before the series gives the same experience gain
+  (`ROBUSTNESS_AND_SENSITIVITY.md` §1).
 
 Models: constant blue-side rate; flat Elo; Elo with league levels; calibrated Elo; the
 published logistic model ("form", 6 features); form plus one roster feature at a time; form
@@ -125,7 +128,8 @@ the prediction, so league tier cannot be what player experience is picking up th
 2. **Player information is the largest gain found so far, and it is stable.** Adding
    player experience lowers Brier by about 0.005, more than ten times the form features,
    in all five years with intervals below zero each year. Most of it (about 80%) survives
-   when only the previous game's lineup is used, so it is usable before match day.
+   when only the previous game's lineup is used, so it is usable before a series starts
+   (checked in `ROBUSTNESS_AND_SENSITIVITY.md` §1).
 3. **It is not a league-tier effect.** The gain is the same inside same-league domestic
    games, largest for new teams, and still clear in the top leagues and for established
    teams.

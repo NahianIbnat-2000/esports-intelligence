@@ -109,7 +109,7 @@ export default function ExperimentsView() {
 
       <Card className="mb-3 border-l-2 border-l-cyan" title="Read this first">
         <p className="text-sm leading-relaxed text-ink-2">
-          Most roster and player-Elo features use the five players who actually played. That lineup is visible when the game starts (in the draft), but usually not days before. Models marked <b className="text-ink">previous lineup</b> or <b className="text-ink">pre-match</b> use only the players from each team&apos;s last game, so they can be used before match day. The <Link className="link" href="/predictions">prediction lab</Link> includes a pre-match player model (logistic + player experience of the previous lineup); rows marked <b className="text-ink">today&apos;s lineup</b> below are research only.
+          Most roster and player-Elo features use the five players who actually played. That lineup is visible when the game starts (in the draft), but usually not days before. Models marked <b className="text-ink">previous lineup</b> or <b className="text-ink">pre-match</b> use only the players from each team&apos;s last game, so they never need today&apos;s lineup and work before a series starts. The <Link className="link" href="/predictions">prediction lab</Link> includes a pre-match player model (logistic + player experience of the previous lineup); rows marked <b className="text-ink">today&apos;s lineup</b> below are research only.
         </p>
       </Card>
 

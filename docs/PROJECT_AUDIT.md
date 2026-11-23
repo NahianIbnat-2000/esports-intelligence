@@ -1,5 +1,7 @@
 # Project audit (Esports Intelligence 2.0, stage 1)
 
+> Historical record, kept as written. Current status of every issue: [`ISSUE_STATUS.md`](ISSUE_STATUS.md) (23 November 2026).
+
 Date: 20 Nov 2026. Audited: the GitHub repository (commit `30ef549`, "Updated index.html"),
 the local working copy with the same code plus the unpushed methodology update, the local
 database built from the same Oracle's Elixir files, the saved model artifact

@@ -14,3 +14,12 @@ difference is called "better" only when its 95% bootstrap interval excludes zero
 Until the analysis has been run on real data, each report is labelled "proposed".
 
 Use `research/reports/` for notebooks or exports you write on top of the platform.
+
+## Reproducibility files (added 23 November 2026)
+
+- `claims.json`: every headline number on the README, article and paper, with the artifact
+  that produced it. Check with `make verify`.
+- `release_manifest.json`: checksums linking source data, model artifacts, experiment records,
+  paper and website data. Rewrite with `make manifest` after changing a checked file.
+- `preregistration_2027/`: models frozen for the prospective 2027 test
+  (`docs/PREREGISTRATION_2027.md`). Do not change these files.

@@ -77,6 +77,13 @@ bins), confusion matrix, quarter-by-quarter and league breakdowns, and a paired
 cluster bootstrap (2,000 resamples) of per-game loss differences that resamples whole
 series (same tournament, same two teams, same UTC day).
 
+**Forecast timing.** Every forecast is made before each game, not before the series: ratings and
+features update after every game, so game 2 of a series uses game 1. Checks with every input
+frozen at the start of the series, the multiple-testing correction and other robustness checks
+are in `ROBUSTNESS_AND_SENSITIVITY.md`. What the player-experience feature captures is studied in
+`PLAYER_EXPERIENCE_MECHANISMS.md`; the pre-registered test on future games is
+`PREREGISTRATION_2027.md`.
+
 ## 6. Competitive economics
 
 | Indicator | Formula | Concentrated quantity |

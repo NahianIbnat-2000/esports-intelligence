@@ -56,12 +56,34 @@ re-tuned and refit for each year (`docs/EXPERIMENTS.md`, page `/experiments`):
 - The finding above holds every year: league levels are the largest gain over flat Elo, and
   the six form features add little over calibrated Elo (-0.0004 Brier pooled).
 - Player information adds far more. Using only the players from each team's previous game
-  (known before match day), the Brier score falls a further 0.0053 [95% CI -0.0059 to
+  (no knowledge of today's lineup needed), the Brier score falls a further 0.0053 [95% CI -0.0059 to
   -0.0047] over the form model, better in all five years. One feature, the average number
   of earlier pro games of the players, does most of the work.
 - The prediction lab now includes this as a fourth model (logistic + player experience of
   each team's previous lineup). On the original test period: Brier 0.2116 vs 0.2164, a
   difference of -0.0048 [95% CI -0.0060 to -0.0035]; accuracy 65.7% vs 64.9%.
+- **Timing.** All models update after every game, so in a best-of series the forecast for game 2
+  already knows game 1. With every input frozen before the series starts, the experience gain is
+  the same (-0.0044 pooled), so the player feature is usable the day before.
+
+### What player experience captures, and a pre-registered test (Nov 2026)
+
+- About **55%** of the experience gain remains after adding four point-in-time measures of player
+  skill (shrunk win rate, lane gold lead at 15 minutes, player Elo, rating of previous teams), in
+  every test year. Most of the rest overlaps with career length and recent activity: the signal
+  is the players' professional track record, not the exact game count.
+- It is **not mainly a new-team fix**: 68% of the gain comes from games between established,
+  stable teams.
+- These are associations. Skill, survival in the pro scene and team resources cannot be separated
+  in this data.
+- Every game in the data has now been used to choose or study the models, so the models are
+  frozen and a **prospective test on games after 17 November 2026** is pre-registered
+  ([plan](docs/PREREGISTRATION_2027.md)). Results will be published whether or not they support
+  the finding.
+- Reports: [mechanisms](docs/PLAYER_EXPERIENCE_MECHANISMS.md) ·
+  [robustness](docs/ROBUSTNESS_AND_SENSITIVITY.md) ·
+  [league uncertainty](docs/LEAGUE_RATING_UNCERTAINTY.md) ·
+  [reproduction](docs/REPRODUCTION_VERIFICATION.md) · [audit](docs/AUDIT_2026_11_FOLLOWUP.md)
 
 ## Related work
 
@@ -190,6 +212,12 @@ Not affiliated with Riot Games.
 `docs/data_sources.md`, `docs/data_dictionary.md`, `docs/methodology.md`,
 `docs/RESULTS_2020_2026.md`, `docs/AUDIT_AND_IMPROVEMENTS_v1.2.md`,
 `docs/deployment.md`, `docs/DEVELOPMENT_REPORT.md`.
+
+Follow-up research (Nov 2026): `docs/PLAYER_EXPERIENCE_MECHANISMS.md`,
+`docs/ROBUSTNESS_AND_SENSITIVITY.md`, `docs/LEAGUE_RATING_UNCERTAINTY.md`,
+`docs/PREREGISTRATION_2027.md`, `docs/REPRODUCTION_VERIFICATION.md`,
+`docs/AUDIT_2026_11_FOLLOWUP.md`, `docs/ISSUE_STATUS.md`. Every headline number is checked
+against its artifact by `make verify` (`research/claims.json`).
 
 ## Author
 
