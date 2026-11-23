@@ -1,43 +1,565 @@
 {
-  "about": "Every headline number on the public surfaces, traced to the artifact that produced it. Checked by: python -m machine_learning.experiments.verify_claims. A claim passes when the artifact value, formatted as stated, appears in every listed file. Signs are dropped before matching, because the text writes differences as 'lowers by 0.0048' as well as '-0.0048'.",
-  "sources": {
-    "E": "machine_learning/models/artifacts/1.0.0+c8b6f8e19c/evaluation.json",
-    "P": "machine_learning/models/artifacts/1.0.0+c8b6f8e19c/evaluation_logreg_player.json",
-    "W": "machine_learning/experiments/registry/walk-forward-20261120-154137-c8b6f8e19c.json",
-    "C": "machine_learning/experiments/registry/coefficients-20261123-110345-c8b6f8e19c.json"
+ "about": "Every headline number on the public surfaces, traced to the artifact that produced it. Checked by: python -m machine_learning.experiments.verify_claims. A claim passes when the artifact value, formatted as stated, appears in every listed file. Signs are dropped before matching, because the text writes differences as 'lowers by 0.0048' as well as '-0.0048'.",
+ "sources": {
+  "E": "machine_learning/models/artifacts/1.0.0+c8b6f8e19c/evaluation.json",
+  "P": "machine_learning/models/artifacts/1.0.0+c8b6f8e19c/evaluation_logreg_player.json",
+  "W": "machine_learning/experiments/registry/walk-forward-20261120-154137-c8b6f8e19c.json",
+  "C": "machine_learning/experiments/registry/coefficients-20261123-110345-c8b6f8e19c.json",
+  "M": "machine_learning/experiments/registry/mechanisms-20261123-110321-c8b6f8e19c.json",
+  "R": "machine_learning/experiments/registry/robustness-20261123-110344-c8b6f8e19c.json"
+ },
+ "claims": [
+  {
+   "id": "games_total",
+   "sum": [
+    [
+     "E",
+     "split.train.n"
+    ],
+    [
+     "E",
+     "split.validation.n"
+    ],
+    [
+     "E",
+     "split.test.n"
+    ],
+    [
+     "E",
+     "split.excluded.n"
+    ]
+   ],
+   "format": "{:,.0f}",
+   "in": [
+    "README.md",
+    "index.html",
+    "PAPER"
+   ]
   },
-  "claims": [
-    {"id": "games_total", "sum": [["E", "split.train.n"], ["E", "split.validation.n"], ["E", "split.test.n"], ["E", "split.excluded.n"]], "format": "{:,.0f}", "in": ["README.md", "index.html", "PAPER"]},
-    {"id": "train_n", "ref": ["E", "split.train.n"], "format": "{:,.0f}", "in": ["PAPER", "docs/RESULTS_2020_2026.md"]},
-    {"id": "validation_n", "ref": ["E", "split.validation.n"], "format": "{:,.0f}", "in": ["PAPER", "docs/RESULTS_2020_2026.md"]},
-    {"id": "test_n", "ref": ["E", "split.test.n"], "format": "{:,.0f}", "in": ["README.md", "index.html", "PAPER", "docs/EXPERIMENTS.md"]},
-    {"id": "walk_forward_n", "ref": ["W", "pooled.n"], "format": "{:,.0f}", "in": ["README.md", "index.html", "PAPER", "docs/EXPERIMENTS.md"]},
-    {"id": "brier_baseline", "ref": ["E", "evaluation.baseline_prevalence.test.brier"], "format": "{:.4f}", "in": ["README.md", "index.html", "PAPER"]},
-    {"id": "brier_elo", "ref": ["E", "evaluation.elo.test.brier"], "format": "{:.4f}", "in": ["README.md", "index.html", "PAPER"]},
-    {"id": "brier_elo_logit", "ref": ["E", "evaluation.elo_logit.test.brier"], "format": "{:.4f}", "in": ["README.md", "index.html", "PAPER"]},
-    {"id": "brier_logreg", "ref": ["E", "evaluation.logreg.test.brier"], "format": "{:.4f}", "in": ["README.md", "index.html", "PAPER", "docs/EXPERIMENTS.md"]},
-    {"id": "brier_player", "ref": ["P", "test.brier"], "format": "{:.4f}", "in": ["README.md", "index.html", "PAPER", "docs/EXPERIMENTS.md"]},
-    {"id": "log_loss_player", "ref": ["P", "test.log_loss"], "format": "{:.4f}", "in": ["PAPER"]},
-    {"id": "auc_player", "ref": ["P", "test.roc_auc"], "format": "{:.3f}", "in": ["PAPER"]},
-    {"id": "accuracy_player_pct", "ref": ["P", "test.accuracy"], "scale": 100, "format": "{:.1f}", "in": ["README.md", "index.html", "PAPER"]},
-    {"id": "accuracy_logreg_pct", "ref": ["E", "evaluation.logreg.test.accuracy"], "scale": 100, "format": "{:.1f}", "in": ["README.md", "index.html", "PAPER"]},
-    {"id": "logreg_vs_elo_logit", "ref": ["E", "comparisons.logreg_vs_elo_logit_brier.difference"], "format": "{:.5f}", "in": ["README.md", "index.html", "PAPER"]},
-    {"id": "player_vs_logreg", "ref": ["P", "comparisons.logreg_player_vs_logreg_brier.difference"], "format": "{:.4f}", "in": ["README.md", "index.html", "PAPER", "docs/EXPERIMENTS.md"]},
-    {"id": "league_vs_flat_main", "ref": ["E", "league_offsets.selected_vs_flat_brier.difference"], "format": "{:.4f}", "in": ["README.md", "index.html", "PAPER"]},
-    {"id": "wf_league_vs_flat", "ref": ["W", "pooled.comparisons[model=elo_league,reference=elo_flat].brier.difference"], "format": "{:.4f}", "in": ["docs/EXPERIMENTS.md"]},
-    {"id": "wf_form_vs_elo_cal", "ref": ["W", "pooled.comparisons[model=form,reference=elo_cal].brier.difference"], "format": "{:.4f}", "in": ["README.md", "index.html", "PAPER", "docs/EXPERIMENTS.md"]},
-    {"id": "wf_player_exp_prev", "ref": ["W", "pooled.comparisons[model=form_player_exp_prev,reference=form].brier.difference"], "format": "{:.4f}", "in": ["index.html", "PAPER", "docs/EXPERIMENTS.md"]},
-    {"id": "wf_player_exp_today", "ref": ["W", "pooled.comparisons[model=form_player_exp,reference=form].brier.difference"], "format": "{:.4f}", "in": ["index.html", "PAPER", "docs/EXPERIMENTS.md"]},
-    {"id": "wf_prematch", "ref": ["W", "pooled.comparisons[model=prematch,reference=form].brier.difference"], "format": "{:.4f}", "in": ["README.md", "index.html", "PAPER", "docs/EXPERIMENTS.md"]},
-    {"id": "wf_new_team_prematch", "ref": ["W", "subgroups[n=7434].comparisons[model=prematch,reference=form].difference"], "format": "{:.4f}", "in": ["index.html", "PAPER", "docs/EXPERIMENTS.md"]},
-    {"id": "coef_elo", "ref": ["C", "coefficients[feature=elo_diff].coef_per_sd"], "format": "{:.3f}", "in": ["PAPER"]},
-    {"id": "or_elo", "ref": ["C", "coefficients[feature=elo_diff].odds_ratio"], "format": "{:.2f}", "in": ["PAPER"]},
-    {"id": "or_elo_ci", "ref": ["C", "coefficients[feature=elo_diff].odds_ratio_ci95"], "format": "{:.2f} to {:.2f}", "in": ["PAPER"]},
-    {"id": "coef_player_exp", "ref": ["C", "coefficients[feature=player_exp_prev_diff].coef_per_sd"], "format": "{:.3f}", "in": ["PAPER"]},
-    {"id": "or_player_exp", "ref": ["C", "coefficients[feature=player_exp_prev_diff].odds_ratio"], "format": "{:.2f}", "in": ["PAPER"]},
-    {"id": "or_player_exp_ci", "ref": ["C", "coefficients[feature=player_exp_prev_diff].odds_ratio_ci95"], "format": "{:.2f} to {:.2f}", "in": ["PAPER"]},
-    {"id": "or_recent_ci", "ref": ["C", "coefficients[feature=recent_wr_diff].odds_ratio_ci95"], "format": "{:.2f} to {:.2f}", "in": ["PAPER"]},
-    {"id": "median_lineup_games", "ref": ["C", "scale_facts.median_lineup_typical_earlier_games"], "format": "about {:.0f} earlier games", "keep_sign": true, "in": ["PAPER"]}
-  ],
-  "files": {"PAPER": "docs/case-study/Esports_Intelligence_Case_Study.tex"}
+  {
+   "id": "train_n",
+   "ref": [
+    "E",
+    "split.train.n"
+   ],
+   "format": "{:,.0f}",
+   "in": [
+    "PAPER",
+    "docs/RESULTS_2020_2026.md"
+   ]
+  },
+  {
+   "id": "validation_n",
+   "ref": [
+    "E",
+    "split.validation.n"
+   ],
+   "format": "{:,.0f}",
+   "in": [
+    "PAPER",
+    "docs/RESULTS_2020_2026.md"
+   ]
+  },
+  {
+   "id": "test_n",
+   "ref": [
+    "E",
+    "split.test.n"
+   ],
+   "format": "{:,.0f}",
+   "in": [
+    "README.md",
+    "index.html",
+    "PAPER",
+    "docs/EXPERIMENTS.md"
+   ]
+  },
+  {
+   "id": "walk_forward_n",
+   "ref": [
+    "W",
+    "pooled.n"
+   ],
+   "format": "{:,.0f}",
+   "in": [
+    "README.md",
+    "index.html",
+    "PAPER",
+    "docs/EXPERIMENTS.md"
+   ]
+  },
+  {
+   "id": "brier_baseline",
+   "ref": [
+    "E",
+    "evaluation.baseline_prevalence.test.brier"
+   ],
+   "format": "{:.4f}",
+   "in": [
+    "README.md",
+    "index.html",
+    "PAPER"
+   ]
+  },
+  {
+   "id": "brier_elo",
+   "ref": [
+    "E",
+    "evaluation.elo.test.brier"
+   ],
+   "format": "{:.4f}",
+   "in": [
+    "README.md",
+    "index.html",
+    "PAPER"
+   ]
+  },
+  {
+   "id": "brier_elo_logit",
+   "ref": [
+    "E",
+    "evaluation.elo_logit.test.brier"
+   ],
+   "format": "{:.4f}",
+   "in": [
+    "README.md",
+    "index.html",
+    "PAPER"
+   ]
+  },
+  {
+   "id": "brier_logreg",
+   "ref": [
+    "E",
+    "evaluation.logreg.test.brier"
+   ],
+   "format": "{:.4f}",
+   "in": [
+    "README.md",
+    "index.html",
+    "PAPER",
+    "docs/EXPERIMENTS.md"
+   ]
+  },
+  {
+   "id": "brier_player",
+   "ref": [
+    "P",
+    "test.brier"
+   ],
+   "format": "{:.4f}",
+   "in": [
+    "README.md",
+    "index.html",
+    "PAPER",
+    "docs/EXPERIMENTS.md"
+   ]
+  },
+  {
+   "id": "log_loss_player",
+   "ref": [
+    "P",
+    "test.log_loss"
+   ],
+   "format": "{:.4f}",
+   "in": [
+    "PAPER"
+   ]
+  },
+  {
+   "id": "auc_player",
+   "ref": [
+    "P",
+    "test.roc_auc"
+   ],
+   "format": "{:.3f}",
+   "in": [
+    "PAPER"
+   ]
+  },
+  {
+   "id": "accuracy_player_pct",
+   "ref": [
+    "P",
+    "test.accuracy"
+   ],
+   "scale": 100,
+   "format": "{:.1f}",
+   "in": [
+    "README.md",
+    "index.html",
+    "PAPER"
+   ]
+  },
+  {
+   "id": "accuracy_logreg_pct",
+   "ref": [
+    "E",
+    "evaluation.logreg.test.accuracy"
+   ],
+   "scale": 100,
+   "format": "{:.1f}",
+   "in": [
+    "README.md",
+    "index.html",
+    "PAPER"
+   ]
+  },
+  {
+   "id": "logreg_vs_elo_logit",
+   "ref": [
+    "E",
+    "comparisons.logreg_vs_elo_logit_brier.difference"
+   ],
+   "format": "{:.5f}",
+   "in": [
+    "README.md",
+    "index.html",
+    "PAPER"
+   ]
+  },
+  {
+   "id": "player_vs_logreg",
+   "ref": [
+    "P",
+    "comparisons.logreg_player_vs_logreg_brier.difference"
+   ],
+   "format": "{:.4f}",
+   "in": [
+    "README.md",
+    "index.html",
+    "PAPER",
+    "docs/EXPERIMENTS.md"
+   ]
+  },
+  {
+   "id": "league_vs_flat_main",
+   "ref": [
+    "E",
+    "league_offsets.selected_vs_flat_brier.difference"
+   ],
+   "format": "{:.4f}",
+   "in": [
+    "README.md",
+    "index.html",
+    "PAPER"
+   ]
+  },
+  {
+   "id": "wf_league_vs_flat",
+   "ref": [
+    "W",
+    "pooled.comparisons[model=elo_league,reference=elo_flat].brier.difference"
+   ],
+   "format": "{:.4f}",
+   "in": [
+    "docs/EXPERIMENTS.md"
+   ]
+  },
+  {
+   "id": "wf_form_vs_elo_cal",
+   "ref": [
+    "W",
+    "pooled.comparisons[model=form,reference=elo_cal].brier.difference"
+   ],
+   "format": "{:.4f}",
+   "in": [
+    "README.md",
+    "index.html",
+    "PAPER",
+    "docs/EXPERIMENTS.md"
+   ]
+  },
+  {
+   "id": "wf_player_exp_prev",
+   "ref": [
+    "W",
+    "pooled.comparisons[model=form_player_exp_prev,reference=form].brier.difference"
+   ],
+   "format": "{:.4f}",
+   "in": [
+    "index.html",
+    "PAPER",
+    "docs/EXPERIMENTS.md"
+   ]
+  },
+  {
+   "id": "wf_player_exp_today",
+   "ref": [
+    "W",
+    "pooled.comparisons[model=form_player_exp,reference=form].brier.difference"
+   ],
+   "format": "{:.4f}",
+   "in": [
+    "index.html",
+    "PAPER",
+    "docs/EXPERIMENTS.md"
+   ]
+  },
+  {
+   "id": "wf_prematch",
+   "ref": [
+    "W",
+    "pooled.comparisons[model=prematch,reference=form].brier.difference"
+   ],
+   "format": "{:.4f}",
+   "in": [
+    "README.md",
+    "index.html",
+    "PAPER",
+    "docs/EXPERIMENTS.md"
+   ]
+  },
+  {
+   "id": "wf_new_team_prematch",
+   "ref": [
+    "W",
+    "subgroups[n=7434].comparisons[model=prematch,reference=form].difference"
+   ],
+   "format": "{:.4f}",
+   "in": [
+    "index.html",
+    "PAPER",
+    "docs/EXPERIMENTS.md"
+   ]
+  },
+  {
+   "id": "coef_elo",
+   "ref": [
+    "C",
+    "coefficients[feature=elo_diff].coef_per_sd"
+   ],
+   "format": "{:.3f}",
+   "in": [
+    "PAPER"
+   ]
+  },
+  {
+   "id": "or_elo",
+   "ref": [
+    "C",
+    "coefficients[feature=elo_diff].odds_ratio"
+   ],
+   "format": "{:.2f}",
+   "in": [
+    "PAPER"
+   ]
+  },
+  {
+   "id": "or_elo_ci",
+   "ref": [
+    "C",
+    "coefficients[feature=elo_diff].odds_ratio_ci95"
+   ],
+   "format": "{:.2f} to {:.2f}",
+   "in": [
+    "PAPER"
+   ]
+  },
+  {
+   "id": "coef_player_exp",
+   "ref": [
+    "C",
+    "coefficients[feature=player_exp_prev_diff].coef_per_sd"
+   ],
+   "format": "{:.3f}",
+   "in": [
+    "PAPER"
+   ]
+  },
+  {
+   "id": "or_player_exp",
+   "ref": [
+    "C",
+    "coefficients[feature=player_exp_prev_diff].odds_ratio"
+   ],
+   "format": "{:.2f}",
+   "in": [
+    "PAPER"
+   ]
+  },
+  {
+   "id": "or_player_exp_ci",
+   "ref": [
+    "C",
+    "coefficients[feature=player_exp_prev_diff].odds_ratio_ci95"
+   ],
+   "format": "{:.2f} to {:.2f}",
+   "in": [
+    "PAPER"
+   ]
+  },
+  {
+   "id": "or_recent_ci",
+   "ref": [
+    "C",
+    "coefficients[feature=recent_wr_diff].odds_ratio_ci95"
+   ],
+   "format": "{:.2f} to {:.2f}",
+   "in": [
+    "PAPER"
+   ]
+  },
+  {
+   "id": "median_lineup_games",
+   "ref": [
+    "C",
+    "scale_facts.median_lineup_typical_earlier_games"
+   ],
+   "format": "about {:.0f} earlier games",
+   "keep_sign": true,
+   "in": [
+    "PAPER"
+   ]
+  },
+  {
+   "id": "mech_exp_after_skill",
+   "ref": [
+    "M",
+    "walk_forward.comparisons[model=skill_exp,reference=skill].brier.difference"
+   ],
+   "format": "{:.4f}",
+   "in": [
+    "index.html",
+    "PAPER",
+    "docs/PLAYER_EXPERIENCE_MECHANISMS.md"
+   ]
+  },
+  {
+   "id": "mech_share_after_skill_pct",
+   "ratio": [
+    [
+     "M",
+     "walk_forward.comparisons[model=skill_exp,reference=skill].brier.difference"
+    ],
+    [
+     "M",
+     "walk_forward.comparisons[model=exp,reference=form].brier.difference"
+    ]
+   ],
+   "scale": 100,
+   "format": "{:.0f}%",
+   "in": [
+    "README.md",
+    "index.html",
+    "PAPER",
+    "docs/PLAYER_EXPERIENCE_MECHANISMS.md"
+   ]
+  },
+  {
+   "id": "mech_exp_after_all",
+   "ref": [
+    "M",
+    "walk_forward.comparisons[model=all_exp,reference=all_noexp].brier.difference"
+   ],
+   "format": "{:.4f}",
+   "in": [
+    "index.html",
+    "PAPER",
+    "docs/PLAYER_EXPERIENCE_MECHANISMS.md"
+   ]
+  },
+  {
+   "id": "mech_init_over_form",
+   "ref": [
+    "M",
+    "walk_forward.comparisons[model=init,reference=form].brier.difference"
+   ],
+   "format": "{:.4f}",
+   "in": [
+    "index.html",
+    "PAPER"
+   ]
+  },
+  {
+   "id": "mech_skill_exp_vs_exp",
+   "diff": [
+    [
+     "M",
+     "walk_forward.metrics.exp.brier"
+    ],
+    [
+     "M",
+     "walk_forward.metrics.skill_exp.brier"
+    ]
+   ],
+   "format": "{:.4f}",
+   "in": [
+    "index.html",
+    "PAPER",
+    "docs/PLAYER_EXPERIENCE_MECHANISMS.md"
+   ]
+  },
+  {
+   "id": "rob_exp_pre_series",
+   "ref": [
+    "R",
+    "contracts.walk_forward.comparisons[model=exp|pre-series,reference=form|pre-series].brier.difference"
+   ],
+   "format": "{:.4f}",
+   "in": [
+    "README.md",
+    "index.html",
+    "PAPER",
+    "frontend/app/methodology/view.tsx"
+   ]
+  },
+  {
+   "id": "rob_today_lineup",
+   "ref": [
+    "R",
+    "contracts.walk_forward.comparisons[model=exp_today|lineup,reference=exp|pre-game].brier.difference"
+   ],
+   "format": "{:.4f}",
+   "in": [
+    "index.html",
+    "PAPER"
+   ]
+  },
+  {
+   "id": "rob_in_series_value",
+   "ref": [
+    "R",
+    "contracts.walk_forward.comparisons[model=elo_cal|pre-game,reference=elo_cal|pre-series].brier.difference"
+   ],
+   "format": "{:.4f}",
+   "in": [
+    "PAPER"
+   ]
+  },
+  {
+   "id": "rob_holm",
+   "refs": [
+    [
+     "R",
+     "multiple_comparisons.holm_significant_5pct"
+    ],
+    [
+     "R",
+     "multiple_comparisons.nominal_significant"
+    ]
+   ],
+   "keep_sign": true,
+   "format": "keeps {:.0f} of the {:.0f}",
+   "in": [
+    "PAPER"
+   ]
+  },
+  {
+   "id": "rob_n_tests",
+   "ref": [
+    "R",
+    "multiple_comparisons.n_tests"
+   ],
+   "keep_sign": true,
+   "format": "reports {:.0f} pooled comparisons",
+   "in": [
+    "PAPER",
+    "docs/ROBUSTNESS_AND_SENSITIVITY.md"
+   ]
+  }
+ ],
+ "files": {
+  "PAPER": "docs/case-study/Esports_Intelligence_Case_Study.tex"
+ }
 }

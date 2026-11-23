@@ -18,7 +18,7 @@ earlier audits and reports. The earlier documents are kept unchanged as historic
 | Source `year` is a season label | v1.0 L, PROJECT_AUDIT §3.7 | **Documented**; Elo uses dates, not affected | `RESULTS_2020_2026.md` |
 | Experiment metadata partial | PROJECT_AUDIT §3.8 | **Resolved**: registry; release manifest added | `research/release_manifest.json` |
 | Models fixed for the whole test period (no rolling refit) | v1.2 §7 | **Measured**: yearly refits help by 0.0002 to 0.0005; rolling vs expanding training makes no difference | `ROBUSTNESS_AND_SENSITIVITY.md` §5 |
-| Forecast timing not stated (pre-game updating) | AUDIT_2026_11 D2 | **Measured; wording change pending** | `ROBUSTNESS_AND_SENSITIVITY.md` §1 |
+| Forecast timing not stated (pre-game updating) | AUDIT_2026_11 D2 | **Resolved**: measured; README, article, paper, methodology, FAQ and Experiments page updated | `ROBUSTNESS_AND_SENSITIVITY.md` §1 |
 | Paper Table 4 not reproducible | AUDIT_2026_11 D1 | **Resolved** | `coefficients.py`, paper |
 | Published numbers can go stale across surfaces | AUDIT_2026_11 G2 | **Resolved**: claims registry checked in CI | `research/claims.json` |
 | Many comparisons, none pre-registered | AUDIT_2026_11 R3 | **Measured**: Holm correction reported | `ROBUSTNESS_AND_SENSITIVITY.md` §4 |

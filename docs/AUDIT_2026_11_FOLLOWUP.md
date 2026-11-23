@@ -25,7 +25,7 @@ Classes: **Confirmed defect**, **Research limitation**, **Enhancement opportunit
 | # | Finding | Class | Evidence | Status |
 |---|---|---|---|---|
 | D1 | Table 4 of the paper (coefficient intervals) and "about 83 earlier games" were computed in an earlier session and not saved; rebuilt values differ slightly: 1.68 to 1.82 (paper: 1.83), 1.36 to 1.43 (1.37), 1.03 to 1.10 (1.04), 82 games (83) | Confirmed defect | `coefficients-20261123-110345-c8b6f8e19c.json` | **Fixed**: `coefficients.py`, paper corrected, PDF rebuilt (15 pages) |
-| D2 | Forecast timing is not stated. All published forecasts are **pre-game**: game 2 of a series already uses game 1's result and lineup. The pages call the player feature "known before match day" | Confirmed defect (documentation) | `ROBUSTNESS_AND_SENSITIVITY.md` §1 | Measured: the player gain is the same before the series (−0.0044). **Text change pending your approval** (§9) |
+| D2 | Forecast timing is not stated. All published forecasts are **pre-game**: game 2 of a series already uses game 1's result and lineup. The pages call the player feature "known before match day" | Confirmed defect (documentation) | `ROBUSTNESS_AND_SENSITIVITY.md` §1 | Measured: the player gain is the same before the series (−0.0044). **Wording fixed** (§9) |
 | D3 | The "previous-team Elo" idea cannot test transfers with this data: it equals the team's own Elo in 81% of games | Confirmed defect (in a new measure, found and reported, not used) | `PLAYER_EXPERIENCE_MECHANISMS.md` §4.1 | Documented |
 
 No defect was found in the published model results.
@@ -79,7 +79,7 @@ No browser automation was run in this session. Findings from reading the code:
 
 | # | Finding | Status |
 |---|---|---|
-| DOC1 | "known before match day" / "pre-match" (README, article, paper) vs actual pre-game updating | Pending text change (§9) |
+| DOC1 | "known before match day" / "pre-match" (README, article, paper) vs actual pre-game updating | **Fixed** (§9) |
 | DOC2 | `PROJECT_AUDIT.md` §8 lists items 5 to 9 as "not started"; some are now done | **Done**: `ISSUE_STATUS.md` gives the current status of every past finding; old audits keep their text and get a pointer at the top |
 | DOC3 | Paper Table 4 values | Fixed (D1) |
 
@@ -91,10 +91,10 @@ No browser automation was run in this session. Findings from reading the code:
 | 2 | Mechanism study of player experience | Main open research question | **Done** |
 | 3 | Claims registry, checker, manifest, CI test | Stops stale numbers, links paper to code | **Done** |
 | 4 | Fix Table 4 reproducibility | Published numbers must rebuild | **Done** |
-| 5 | Forecast-timing contracts and wording | Defensible claims about when forecasts are usable | Measured; wording pending approval |
+| 5 | Forecast-timing contracts and wording | Defensible claims about when forecasts are usable | **Done** |
 | 6 | Robustness: bootstrap units, multiple testing, temporal checks | Strength of evidence | **Done** |
 | 7 | League connectivity and intervals | Ranking claims | **Done** (analysis); site table with intervals pending |
-| 8 | Add the new findings to the paper and article | Publication consistency | Pending your review |
+| 8 | Add the new findings to the paper and article | Publication consistency | **Done** (paper section 8, article section 6) |
 | 9 | Snapshot data/model version in `meta`; API timeout with a clear message | Reliability | Not started |
 | 10 | Player-model contributions in the Prediction Lab | Transparency | Not started |
 | 11 | Chart text alternatives, focus styles, Playwright journeys | Accessibility, reliability | Not started; needs a browser session |
@@ -104,9 +104,9 @@ Not recommended now: replacing league Elo with a hierarchical model (no forecast
 deploying the better `skill_exp` model before the prospective test, an LLM assistant, VALORANT or
 CS2.
 
-## 9. Text changes that need your approval
+## 9. Text changes (approved and made, 23 November 2026)
 
-These are corrections of wording to match evidence, but they change public pages:
+Corrections of wording to match evidence; all three are now in place:
 
 1. README, article and paper: replace "known before match day" with "uses only each team's
    previous lineup; measured between games, and the gain is the same when all inputs are frozen

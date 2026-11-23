@@ -67,7 +67,20 @@ keyboard and screen-reader behaviour, browser journeys.
 - Exact reproduction needs the 18 November 2026 source files (the 2026 file keeps changing).
 - Site changes listed in the audit (§8, ranks 9 to 12) are not started.
 
-## 5. What you need to do
+## 5. Publication update (same day, after approval)
+
+- Paper: new section 8 "What player experience captures" (four explanations, forecast timing,
+  strength of evidence, the pre-registered test); wording on timing fixed; discussion,
+  limitations and future work brought in line; Holm (1979) and Nosek et al. (2018) added to the
+  references. 17 pages.
+- Article: new section 6 with the same content in short; RQ6 added; timing wording fixed; two FAQ
+  entries; links to the follow-up reports.
+- README, `methodology.md`, `EXPERIMENTS.md`, and the site's Methodology, FAQ and Experiments pages:
+  timing wording.
+- Claims registry: 41 claims (10 new, from the mechanism and robustness records); all pass.
+- Frontend: typecheck, 13 tests and production build pass.
+
+## 6. What you need to do (original list)
 
 1. Review the new reports. If you agree with them, approve the wording changes in
    `AUDIT_2026_11_FOLLOWUP.md` §9; I can then update the paper, article, README and site text.
@@ -76,7 +89,7 @@ keyboard and screen-reader behaviour, browser journeys.
 3. After pushing, merging into master is safe: no deployed file changes behaviour (the frontend
    and API code are unchanged).
 
-## 6. Next research opportunities
+## 7. Next research opportunities
 
 - Run the prospective test after 31 August 2027.
 - Transfer events: follow players across teams directly, to test whether strength moves with

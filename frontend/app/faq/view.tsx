@@ -68,6 +68,18 @@ const FAQ: QA[] = [
     a: <>The source data has no series identifier, so series are rebuilt from game times. Games between the same two teams in the same tournament are grouped when they are close in time, and the game number in the source is used to keep long series together. A rebuilt series can be wrong in rare cases.</>,
   },
   {
+    id: "timing",
+    q: "Are forecasts made before the match or before each game?",
+    text: "timing before match series game 2 pre-game pre-series lineup day before",
+    a: <>Before each game. All models update after every game, so in a best-of-three the forecast for game 2 already knows who won game 1. When every input is frozen before the series starts, the player-experience gain is the same, so the player model also works the day before. It never needs to know who plays today.</>,
+  },
+  {
+    id: "preregistration",
+    q: "What is the pre-registered test?",
+    text: "pre-registration preregistered prospective test 2027 frozen models",
+    a: <>Every game in the current data has been used to choose or study the models, so the models were frozen on 23 November 2026 and the test plan was published before the new games exist. The test uses games played up to 31 August 2027 and will be reported whatever it shows. See <a className="link" href="https://github.com/NahianIbnat-2000/esports-intelligence/blob/master/docs/PREREGISTRATION_2027.md">the plan</a>.</>,
+  },
+  {
     id: "betting",
     q: "Can I use this for betting?",
     text: "betting odds gambling advice",

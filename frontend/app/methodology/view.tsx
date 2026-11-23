@@ -26,6 +26,7 @@ const SECTIONS: Section[] = [
     "Games between the same two teams in the same tournament are one series if they are less than 3 hours apart, or up to 12 hours apart when the source's game number is exactly one higher (long pauses inside a best-of-5). A game the source numbers as game 1 always starts a new series.",
     "The series score counts game wins. The format (best of 1, 3 or 5) is not in the source and is not inferred.",
     "Models still work per game. For uncertainty intervals, games from the same series (same tournament, same two teams, same UTC day) are resampled together.",
+    "Forecasts are made before each game, not before the series: ratings and features update after every game, so the forecast for game 2 already knows game 1. With every input frozen before the series starts, the player-experience gain is the same (−0.0044 Brier, five test years).",
   ] },
   { title: "Features (fixed before evaluation)", items: [
     "elo_diff: blue pre-game Elo minus red pre-game Elo.",

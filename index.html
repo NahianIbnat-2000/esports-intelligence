@@ -97,15 +97,16 @@
   <div class="label">Research article · Sports analytics and forecasting</div>
   <h1>Does machine learning beat Elo in League of Legends? And what actually does?</h1>
   <p class="dek">A study of 75,830 professional games from 2020 to 2026. Machine learning beats Elo, but only by about 0.3%. What helps far more is what the rating knows: which league a team plays in, and how experienced its players are.</p>
-  <div class="byline"><span>By <b>Nahian Ibnat</b></span><span>November 2026, updated 20 November 2026</span><span>Data: Oracle's Elixir, January 2020 to November 2026</span></div>
+  <div class="byline"><span>By <b>Nahian Ibnat</b></span><span>November 2026, updated 23 November 2026</span><span>Data: Oracle's Elixir, January 2020 to November 2026</span></div>
 
   <div class="box">
     <div class="label">In short</div>
     <ul>
       <li>A logistic regression on pre-game team features beats a calibrated Elo rating, but the gain is tiny: Brier score 0.2164 vs 0.2170 on 10,087 unseen games.</li>
       <li>Giving each league its own rating level inside Elo helps about nine times more than the machine learning step.</li>
-      <li>Adding one number about the players, their earlier professional games, helps about eight times more than the machine learning step. It uses only each team's previous lineup, so it is known before match day.</li>
+      <li>Adding one number about the players, their earlier professional games, helps about eight times more than the machine learning step. It uses only each team's previous lineup, so it works before a series starts.</li>
       <li>Both results hold in each of five separate test years (2022 to 2026, 49,748 games), and the player result is not a league-strength effect.</li>
+      <li>A follow-up shows player experience mostly measures the players' professional track record, not a fix for new teams. A pre-registered test on games after November 2026 is set.</li>
     </ul>
     <p class="links"><a href="https://esports-intelligence.vercel.app">Live site</a> · <a href="https://esports-intelligence.vercel.app/predictions">Prediction lab</a> · <a href="https://esports-intelligence.vercel.app/experiments">Five-year results</a> · <a href="https://esports-intelligence.vercel.app/faq">FAQ and glossary</a> · <a href="docs/case-study/Esports_Intelligence_Case_Study_Nahian_Ibnat.pdf">Case study paper (PDF)</a> · <a href="https://github.com/NahianIbnat-2000/esports-intelligence">Code and data pipeline</a></p>
   </div>
@@ -118,6 +119,7 @@
       <li><a href="#data">Data</a></li>
       <li><a href="#design">Research design</a></li>
       <li><a href="#results">Results</a></li>
+      <li><a href="#mechanisms">What player experience captures</a></li>
       <li><a href="#literature">How this adds to earlier work</a></li>
       <li><a href="#limits">Limits</a></li>
       <li><a href="#faq">FAQ</a></li>
@@ -141,6 +143,7 @@
       <tr><td><b>RQ3.</b> Do these results hold beyond one test period?</td><td>Yes. In five separate test years, league levels help every year and the machine learning step stays close to zero. <a href="#rq3">Details</a></td></tr>
       <tr><td><b>RQ4.</b> Does information about the players add what team ratings miss?</td><td>Yes. Players' earlier professional games, taken from each team's previous lineup, improve the Brier score by 0.0048, in every test year. <a href="#rq4">Details</a></td></tr>
       <tr><td><b>RQ5.</b> Is the player effect just a sign of league strength?</td><td>No. The gain is the same size in games between teams from the same league, and largest for new teams. <a href="#rq5">Details</a></td></tr>
+      <tr><td><b>RQ6.</b> What does player experience capture?</td><td>Mostly the players' professional track record. About half its gain survives four skill measures, and most of it comes from established teams. <a href="#mechanisms">Details</a></td></tr>
     </tbody>
   </table>
 
@@ -166,7 +169,7 @@
   <p><b>Scoring.</b> The main score is the Brier score: the average squared gap between the predicted probability and what happened.<sup><a href="#r1">[1]</a></sup> Lower is better; always saying 50% scores 0.25. I also report log loss, accuracy, ROC-AUC and calibration charts.</p>
   <p><b>Uncertainty.</b> Model differences come with 95% intervals from a paired bootstrap with 2,000 resamples. Games from the same series are resampled together because they are not independent; I repeat the check with whole tournaments as the unit.<sup><a href="#n2">2</a></sup></p>
   <p><b>Five-year check.</b> For each test year Y from 2022 to 2026, models are trained on years before Y−1, tuned on Y−1 and scored on Y. Every model is re-tuned for every year. This tests whether a result is stable or a feature of one period.</p>
-  <p><b>Player features.</b> The source lists the five players in every game. For the main model I use only each team's previous lineup, which is known before match day. In the five-year check I also tested today's lineup (known when the game starts), lineup continuity, player tenure with the team, and a player-level Elo rating, to see which part of player information matters.<sup><a href="#n4">4</a></sup></p>
+  <p><b>Player features.</b> The source lists the five players in every game. For the main model I use only each team's previous lineup, so the model never needs to know who plays today. All models update after every game, so inside a series the previous lineup is that day's earlier game; freezing every input before the series gives the same result (section 6). In the five-year check I also tested today's lineup (known when the game starts), lineup continuity, player tenure with the team, and a player-level Elo rating, to see which part of player information matters.<sup><a href="#n4">4</a></sup></p>
   <p><b>Subgroups.</b> To test whether the player effect only reflects league strength, I split the five-year test games by type: games between two teams of the same league (where league levels cancel out), games in the top leagues, games between leagues, and games involving a team with fewer than 20 earlier games.</p>
 
   <h2 id="results">5. Results</h2>
@@ -307,10 +310,10 @@
     </tbody>
   </table>
   <p class="cap">Pooled over 49,748 test games, 2022 to 2026. Negative = better. Intervals for every row are on the Experiments page.</p>
-  <p>One simple number does most of the work. Knowing today's lineup helps a little more, but most of the gain is already there before match day. The prediction lab now includes the pre-match player model next to the other models.</p>
+  <p>One simple number does most of the work. Knowing today's lineup helps a little more, but most of the gain is already there without it. The prediction lab now includes the pre-match player model next to the other models.</p>
 
   <h3 id="rq5">RQ5. It is not just league strength</h3>
-  <p>Experienced players are more common in strong leagues, so the player number could simply be telling strong leagues from weak ones. In a game between two teams of the same league, the league level cancels out, so league strength cannot explain a gain there.</p>
+  <p>Experienced players may be more common in strong leagues, so the player number could simply be telling strong leagues from weak ones. In a game between two teams of the same league, the league level cancels out, so league strength cannot explain a gain there.</p>
   <table class="num">
     <thead><tr><th>Games</th><th class="r">Games</th><th class="r">Brier change [95%]</th></tr></thead>
     <tbody>
@@ -325,40 +328,63 @@
   <p>The gain is the same size inside a single league. It is largest for new or renamed teams: they start at their league's average rating, even when their players have hundreds of games behind them. It is smaller, but still clear, in the top leagues, where rosters are more stable.</p>
   <p class="aside">The lesson is not "which model?" but "what does the rating know?" The type of model mattered little. League structure and the players mattered a lot.</p>
 
-  <h2 id="literature">6. How this adds to earlier work</h2>
+  <h2 id="mechanisms">6. What player experience captures, and a pre-registered test</h2>
+  <p>A count of earlier games is a blunt measure, so the obvious next question is what it stands for. In a follow-up I tested four explanations. Every new measure uses only earlier games and each team's previous lineup, the same information the experience measure uses, and every test was run on the five test years with the same rules as before.</p>
+  <table class="num">
+    <thead><tr><th>If experience mainly stands for...</th><th>Test</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td>Player skill</td><td>Add four skill measures: earlier win rate, lane gold lead at 15 minutes, player-level Elo, rating of the players' previous teams</td><td>Experience still helps by 0.0024 [0.0020, 0.0029], every year: about 55% of its gain alone</td></tr>
+      <tr><td>Career length or activity</td><td>Add years since the first pro game and games in the last 180 days, plus the skill measures</td><td>Experience then adds only 0.0003</td></tr>
+      <tr><td>A fix for new teams</td><td>Split games by team type; give new teams a starting rating from their players' previous teams</td><td>68% of the gain comes from games between established, stable teams; the better starting rating adds 0.0005</td></tr>
+      <tr><td>A lucky formula</td><td>Nine other ways to measure experience</td><td>None is better than the simple average by more than 0.0001</td></tr>
+    </tbody>
+  </table>
+  <p class="cap">Brier score improvements, pooled over 49,748 test games, 2022 to 2026, with 95% intervals.</p>
+  <p>So experience is not just skill, and it is not mainly a patch for new teams. It is best read as the players' <b>professional track record</b>: how long and how much they have played at this level. Two teams with the same rating are not equally strong when one fields players with much longer careers. Why that is, I cannot say from this data: players may improve with practice, only good players may last, or richer teams may hire veterans. All three fit; none is shown to be the cause.</p>
+  <p><b>When is a forecast made?</b> Every model here updates after each game, so in a best-of-three the forecast for game 2 already knows game 1. To check this does not drive the result, I froze every input at the start of each series. The experience gain is the same (−0.0044 either way). Knowing who actually plays, once lineups are announced, adds a further 0.0011.</p>
+  <p><b>A pre-registered test.</b> One problem cannot be fixed with the current data: the experience measure was chosen after a study whose last test years overlap the main test, so every game has now been used. On 23 November 2026 I froze the models, with checksums of every model file, and published the plan before the games exist: every eligible game from 18 November 2026 to 31 August 2027, main hypothesis that the player model beats the logistic model, judged by a 95% interval below zero. A stronger model found in the follow-up (it adds the skill measures, and was 0.0013 better on the five test years) is tested only as a secondary hypothesis, because it was found after looking at test results; it is not deployed. The result will be published here whatever it shows.</p>
+  <p class="aside">Pre-registration means fixing the hypotheses and the analysis in public before the data exist, so the result cannot shape the choices.</p>
+  <p>Details: <a href="https://github.com/NahianIbnat-2000/esports-intelligence/blob/master/docs/PLAYER_EXPERIENCE_MECHANISMS.md">what experience captures</a> · <a href="https://github.com/NahianIbnat-2000/esports-intelligence/blob/master/docs/ROBUSTNESS_AND_SENSITIVITY.md">timing, intervals and multiple tests</a> · <a href="https://github.com/NahianIbnat-2000/esports-intelligence/blob/master/docs/LEAGUE_RATING_UNCERTAINTY.md">league rating uncertainty</a> · <a href="https://github.com/NahianIbnat-2000/esports-intelligence/blob/master/docs/PREREGISTRATION_2027.md">the pre-registration</a></p>
+
+  <h2 id="literature">7. How this adds to earlier work</h2>
   <p><b>Elo in sports forecasting.</b> Elo ratings have a long record as predictors. In football, Hvattum and Arntzen used Elo-based covariates in regression models and compared them with six benchmark methods on both statistical and economic measures.<sup><a href="#r2">[2]</a></sup> My setup follows the same idea, Elo as an input to a regression, and asks how much the regression adds beyond the rating.</p>
   <p><b>Ratings in professional League of Legends.</b> Riot Games and AWS launched the <a href="https://lolesports.com/en-GB/news/dev-diary-unveiling-the-global-power-rankings">LoL Esports Global Power Rankings</a> at Worlds 2024. They blend a team Elo with a league Elo, weighted 80/20, and results at MSI and Worlds move the league Elo. That is close to the league-level Elo here. Riot reports about 65% accuracy; my Elo reaches 64.7% on my test games. The two figures come from different games, so they are not directly comparable, but they point the same way.</p>
   <p><b>Machine learning on professional games.</b> <a href="https://e-space.mmu.ac.uk/629272">Jadowski and Cunningham (2022)</a> predicted 67% of 306 international games from 2020. A <a href="https://www.sbgames.org/proceedings2021/ComputacaoShort/217082.pdf">2021 SBGames paper</a> trained several classifiers on the same Oracle's Elixir data. Accuracy figures from different games and periods cannot be ranked against each other.</p>
-  <p><b>Player-based ratings.</b> <a href="https://arxiv.org/abs/2501.10049">PandaSkill (De Bois et al., 2025)</a> rates League players from in-game statistics, adds regional ratings, and reports better predictions than Elo and TrueSkill. In football, Holmes and McHale built a forecasting model on player ratings.<sup><a href="#r3">[3]</a></sup> My player result points the same way with a much simpler input: a count of earlier games, available before match day.</p>
+  <p><b>Player-based ratings.</b> <a href="https://arxiv.org/abs/2501.10049">PandaSkill (De Bois et al., 2025)</a> rates League players from in-game statistics, adds regional ratings, and reports better predictions than Elo and TrueSkill. In football, Holmes and McHale built a forecasting model on player ratings.<sup><a href="#r3">[3]</a></sup> My player result points the same way with a much simpler input: a count of earlier games, available before a series starts.</p>
   <p><b>What this study adds.</b></p>
   <ul class="site">
     <li><b>A paired, time-ordered comparison of rating design, model type and player information on the same games.</b> This separates three sources of improvement that earlier work reports one at a time, and ranks them: league structure and player experience matter far more than model complexity.</li>
     <li><b>A five-year rolling test.</b> Each result is checked in five separate test years with re-tuning, not on one split.</li>
     <li><b>A test of the obvious alternative explanation.</b> The player effect is checked inside single leagues, where league strength cannot explain it.</li>
+    <li><b>A test of what the player measure means</b>, against direct skill measures, career length and new-team effects, and a pre-registered test on future games.</li>
     <li><b>Evaluation that keeps statistical and practical size apart</b>, with intervals that resample whole series.</li>
     <li><b>Openness.</b> Data processing, exclusions, code, every experiment record and an interactive site are public, so the results can be checked and rerun.</li>
   </ul>
 
-  <h2 id="limits">7. Limits</h2>
+  <h2 id="limits">8. Limits</h2>
   <ul class="site">
     <li>Player experience is linked to winning, but that does not show it causes wins. It may reflect skill, or which players strong organisations choose to sign.</li>
     <li>The pre-match player model uses each team's previous lineup, so it does not see a lineup change made since the last game.</li>
+    <li>Forecasts are made between games: inside a series they know the earlier games of that day. Freezing everything before the series does not change the findings.</li>
+    <li>Every game in the current data has been used to choose or study the models. The pre-registered test on new games is the clean check.</li>
     <li>League levels are only well measured for leagues that often play other leagues. Raw levels of small, mostly isolated leagues should not be read as a world ranking.</li>
     <li>Series are rebuilt from game times, because the source has no series identifier.</li>
     <li>Models are fixed at the start of each test period, and no draft, patch or in-game information is used. Results are a look at the future, not a guarantee.</li>
     <li>VALORANT and Counter-Strike 2 are planned but not included; no verified data source is connected yet.</li>
   </ul>
 
-  <h2 id="faq">8. FAQ</h2>
+  <h2 id="faq">9. FAQ</h2>
   <details><summary>What is Elo, in plain words?</summary><p>A rating system first made for chess. Every team has a number; a higher number means a stronger team. The gap between two numbers gives each side a win chance, and after the game the winner takes points from the loser. The site has an <a href="https://esports-intelligence.vercel.app/faq">interactive Elo calculator</a>.</p></details>
   <details><summary>What is the Brier score, and why use it?</summary><p>The average squared gap between the predicted chance and the result (1 for a win, 0 for a loss). Lower is better; always saying 50% scores 0.25. The models give probabilities, so the score should judge the probabilities. Accuracy only checks who was favoured, so a 51% pick and a 90% pick count the same.</p></details>
   <details><summary>Why are the improvements so small in absolute terms?</summary><p>Professional games are close to a coin flip more often than people expect, so every model's Brier score stays near 0.21 to 0.22. Differences are best read against each other: the player gain is about eight times the machine learning gain on the same games.</p></details>
   <details><summary>Does the model use head-to-head records?</summary><p>No. Most pairs of teams have met only a few times and rosters change every year, so the record is mostly noise, and those games are already part of each team's Elo. The prediction lab shows head-to-head as context only.</p></details>
+  <details><summary>Are the forecasts made before the match?</summary><p>Before each game. All models update after every game, so in a best-of-three the forecast for game 2 knows who won game 1. When every input is frozen before the series starts, the player gain is the same, so the player model also works the day before.</p></details>
+  <details><summary>What is a pre-registered test?</summary><p>The hypotheses, data period and analysis are fixed and published before the data exist, so the result cannot shape the choices. Here the models were frozen on 23 November 2026 and will be tested on games played up to 31 August 2027.</p></details>
   <details><summary>Can I use the predictions for betting?</summary><p>No. This is a research project. It shows no odds, and the models do not react to news or roster changes.</p></details>
   <details><summary>Why does a team with a 70% chance sometimes lose?</summary><p>A 70% chance means it should lose about 3 games in 10 like it. A model is judged over many games; the calibration chart in the <a href="https://esports-intelligence.vercel.app/predictions">prediction lab</a> checks whether 70% calls win about 70% of the time.</p></details>
   <p>More questions and a glossary of every term on the site: <a href="https://esports-intelligence.vercel.app/faq">FAQ and glossary</a>.</p>
 
-  <h2 id="find">9. Where to find the charts, data and code</h2>
+  <h2 id="find">10. Where to find the charts, data and code</h2>
   <table class="find">
     <thead><tr><th>What</th><th>Where</th></tr></thead>
     <tbody>
@@ -370,8 +396,9 @@
       <tr><td>Exact rules for cleaning, ratings, features and evaluation</td><td><a href="https://esports-intelligence.vercel.app/methodology">Methodology</a></td></tr>
       <tr><td>What was excluded and why; file provenance</td><td><a href="https://esports-intelligence.vercel.app/data-quality">Data quality</a> · <a href="https://esports-intelligence.vercel.app/data-sources">Data sources</a></td></tr>
       <tr><td>Definitions and the Elo calculator</td><td><a href="https://esports-intelligence.vercel.app/faq">FAQ and glossary</a></td></tr>
-      <tr><td>The full study as a paper: background, design, results tables and figures, limitations</td><td><a href="docs/case-study/Esports_Intelligence_Case_Study_Nahian_Ibnat.pdf">Case study paper (PDF, 15 pages)</a></td></tr>
+      <tr><td>The full study as a paper: background, design, results tables and figures, limitations</td><td><a href="docs/case-study/Esports_Intelligence_Case_Study_Nahian_Ibnat.pdf">Case study paper (PDF, 17 pages)</a></td></tr>
       <tr><td>Detailed write-ups</td><td><a href="https://github.com/NahianIbnat-2000/esports-intelligence/blob/master/docs/EXPERIMENTS.md">EXPERIMENTS.md</a> · <a href="https://github.com/NahianIbnat-2000/esports-intelligence/blob/master/docs/methodology.md">methodology.md</a> · <a href="https://github.com/NahianIbnat-2000/esports-intelligence/blob/master/docs/RESULTS_2020_2026.md">RESULTS_2020_2026.md</a> · <a href="https://github.com/NahianIbnat-2000/esports-intelligence/blob/master/docs/PROJECT_AUDIT.md">PROJECT_AUDIT.md</a></td></tr>
+      <tr><td>Follow-up: what experience captures, timing and robustness, league uncertainty, the pre-registered test, reproduction check</td><td><a href="https://github.com/NahianIbnat-2000/esports-intelligence/blob/master/docs/PLAYER_EXPERIENCE_MECHANISMS.md">Mechanisms</a> · <a href="https://github.com/NahianIbnat-2000/esports-intelligence/blob/master/docs/ROBUSTNESS_AND_SENSITIVITY.md">Robustness</a> · <a href="https://github.com/NahianIbnat-2000/esports-intelligence/blob/master/docs/LEAGUE_RATING_UNCERTAINTY.md">Leagues</a> · <a href="https://github.com/NahianIbnat-2000/esports-intelligence/blob/master/docs/PREREGISTRATION_2027.md">Pre-registration</a> · <a href="https://github.com/NahianIbnat-2000/esports-intelligence/blob/master/docs/REPRODUCTION_VERIFICATION.md">Reproduction</a></td></tr>
       <tr><td>Code, tests, experiment records</td><td><a href="https://github.com/NahianIbnat-2000/esports-intelligence">GitHub repository</a> · <a href="https://github.com/NahianIbnat-2000/esports-intelligence/tree/master/machine_learning/experiments/registry">experiment registry</a></td></tr>
     </tbody>
   </table>

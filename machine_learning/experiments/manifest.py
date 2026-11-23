@@ -71,7 +71,7 @@ def build(release: str, paper_version: str) -> dict:
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--release", default="research-2026-11-23")
-    ap.add_argument("--paper-version", default="case study, 15 pages, 23 November 2026")
+    ap.add_argument("--paper-version", default="case study, 17 pages, revised 23 November 2026")
     a = ap.parse_args(argv)
     out = ROOT / "research" / "release_manifest.json"
     out.write_text(json.dumps(build(a.release, a.paper_version), indent=1))

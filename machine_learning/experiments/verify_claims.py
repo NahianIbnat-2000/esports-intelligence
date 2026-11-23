@@ -38,7 +38,7 @@ def lookup(obj, path: str):
 
 def normalise(text: str) -> str:
     text = text.replace("$-$", "-").replace("\\textminus{}", "-").replace("\\textminus", "-").replace("−", "-")
-    return text.replace("{,}", ",")
+    return text.replace("{,}", ",").replace("\\%", "%")
 
 
 def render(claim: dict, value) -> str:
@@ -59,6 +59,14 @@ def check_claims(root: Path = ROOT) -> list[dict]:
     for c in spec["claims"]:
         if "sum" in c:
             value = sum(lookup(sources[s], p) for s, p in c["sum"])
+        elif "diff" in c:
+            (s1, p1), (s2, p2) = c["diff"]
+            value = lookup(sources[s1], p1) - lookup(sources[s2], p2)
+        elif "ratio" in c:
+            (s1, p1), (s2, p2) = c["ratio"]
+            value = lookup(sources[s1], p1) / lookup(sources[s2], p2)
+        elif "refs" in c:
+            value = [lookup(sources[s], p) for s, p in c["refs"]]
         else:
             value = lookup(sources[c["ref"][0]], c["ref"][1])
         expected = render(c, value)

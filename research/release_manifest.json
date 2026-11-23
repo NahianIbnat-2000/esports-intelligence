@@ -1,7 +1,7 @@
 {
  "release": "research-2026-11-23",
- "created_at": "2026-11-23T11:37:06+00:00",
- "git_commit_at_generation": "315294685d88b8fefbc0ce4ef7084323a41c7c25",
+ "created_at": "2026-11-23T11:49:28+00:00",
+ "git_commit_at_generation": "a6519e63ae39b56fd305ba7c135f1a4576c0bca4",
  "data": {
   "source": "Oracle's Elixir match data CSVs (downloaded manually; not redistributed)",
   "fingerprint": "c8b6f8e19c",
@@ -136,18 +136,18 @@
  "publications": [
   {
    "path": "docs/case-study/Esports_Intelligence_Case_Study_Nahian_Ibnat.pdf",
-   "sha256": "8ba87efbf6e2518758d02fda689790f1396fac3b7dbfc60b28980750e6cedfea",
-   "bytes": 162653
+   "sha256": "7d59f16d4a13205bfa175135bc6b8b697fab6db2ac117ea74e6c57ae6130d0d5",
+   "bytes": 175871
   },
   {
    "path": "docs/case-study/Esports_Intelligence_Case_Study.tex",
-   "sha256": "f28421e1cddcb6e5e73af7361a5a4acbb50dcc7a7229764ef13382f19abd01f0",
-   "bytes": 45495
+   "sha256": "67c5f178ff6ffbfb42844830f326898b8d67ea2908eddd8bbe470fc613929682",
+   "bytes": 53646
   },
   {
    "path": "research/claims.json",
-   "sha256": "53187fa85ca7d16fc325723db53140c8f559f844c2fee20d32757063f2b6d4d4",
-   "bytes": 5649
+   "sha256": "3467d49b135257c16e1db27202b209c227d53ef1bbbbc5c94862ebd3d9f37954",
+   "bytes": 9947
   },
   {
    "path": "frontend/public/experiments/walk-forward.json",
@@ -155,13 +155,13 @@
    "bytes": 45624
   }
  ],
- "paper_version": "case study, 15 pages, 23 November 2026",
+ "paper_version": "case study, 17 pages, revised 23 November 2026",
  "website": {
   "frontend_package_version": "1.0.0",
   "live": "https://esports-intelligence.vercel.app",
   "article": "https://nahianibnat-2000.github.io/esports-intelligence/"
  },
- "code_sha256": "9a3997dddfb6e0217b0ecacfecdba259653e651845c25ec5017e2d5ac1b6c331",
+ "code_sha256": "c242c1871d863ceec685760a7337ab71df41c2fd97cdd2d7a25b60458efb437f",
  "requirements_sha256": "a4ff40112fc3618f3f0db90e82a53a836e750b90fbb9888b700ebb6b79c7ae4c",
  "environment_at_generation": {
   "python": "3.13.18",

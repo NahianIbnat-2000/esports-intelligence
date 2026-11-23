@@ -120,6 +120,7 @@ def test_claim_helpers():
     assert lookup(obj, "a[m=y].v") == -0.00477
     assert render({"format": "{:.4f}"}, -0.00477) == "0.0048"
     assert normalise("$-$0.0048 and \\textminus 1") == "-0.0048 and - 1"
+    assert normalise("55\\%") == "55%"
 
 
 def test_published_claims_match_artifacts():
