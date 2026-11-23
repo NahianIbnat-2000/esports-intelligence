@@ -271,9 +271,9 @@ Table~\ref{tab:coef} shows the fitted coefficients of the player model. Each row
 \toprule
 Input (blue minus red) & Coefficient per SD & Odds ratio & 95\% interval (odds ratio) \\
 \midrule
-Elo difference (1 SD = 149 rating points) & 0.563 & 1.76 & 1.68 to 1.83 \\
-Player experience, previous lineup (1 SD = 0.70 log points) & 0.336 & 1.40 & 1.37 to 1.43 \\
-Recent form (last 10 games) & 0.064 & 1.07 & 1.04 to 1.10 \\
+Elo difference (1 SD = 149 rating points) & 0.563 & 1.76 & 1.68 to 1.82 \\
+Player experience, previous lineup (1 SD = 0.70 log points) & 0.336 & 1.40 & 1.36 to 1.43 \\
+Recent form (last 10 games) & 0.064 & 1.07 & 1.03 to 1.10 \\
 Overall win rate & 0.049 & 1.05 & 1.02 to 1.08 \\
 Strength of recent opponents & 0.026 & 1.03 & 1.00 to 1.05 \\
 Team experience (games as a team) & $-$0.009 & 0.99 & 0.97 to 1.01 \\
@@ -283,14 +283,14 @@ Intercept (blue-side advantage) & 0.131 & & \\
 \bottomrule
 \end{tabularx}
 \begin{tablenotes}\footnotesize
-\item Fitted on training and validation games (57,156). Intervals from 200 cluster-bootstrap re-draws of whole series on the same games, with the same light regularisation. All coefficients are associations, not causal effects.
+\item Fitted on training and validation games (57,156). Intervals from 200 cluster-bootstrap re-draws of whole series on the same games, with the same light regularisation (seed 0; reproduced by \texttt{machine\_learning/experiments/coefficients.py}). All coefficients are associations, not causal effects.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
 \textbf{Rating difference.} The Elo difference remains by far the strongest input. A team rated one SD (about 149 points) higher than its opponent is associated with 76\% higher odds of winning, other inputs held constant. The rating already contains most of what the results history has to say.
 
-\textbf{Player experience.} The player measure is the second strongest input. One SD of the measure is 0.70 log points, and $e^{0.70} \approx 2$, so a one-SD difference corresponds roughly to one lineup whose typical player has played twice as many earlier professional games as the other's. For a sense of scale, the typical player in a median lineup had about 83 earlier games; the comparison is like 83 against 166. Such a difference is associated with odds of winning that are about 40\% higher (interval 37\% to 43\%), with the rating and every other input held constant. For two teams that are otherwise equal, this moves the blue side's estimated chance of winning from about 53\% to about 61\%. In economic terms, experience behaves like an asset the rating does not see: two teams with the same rating are not equally strong if one has fielded players with much longer professional careers.
+\textbf{Player experience.} The player measure is the second strongest input. One SD of the measure is 0.70 log points, and $e^{0.70} \approx 2$, so a one-SD difference corresponds roughly to one lineup whose typical player has played twice as many earlier professional games as the other's. For a sense of scale, the typical player in a median lineup had about 82 earlier games; the comparison is like 82 against 164. Such a difference is associated with odds of winning that are about 40\% higher (interval 36\% to 43\%), with the rating and every other input held constant. For two teams that are otherwise equal, this moves the blue side's estimated chance of winning from about 53\% to about 61\%. In economic terms, experience behaves like an asset the rating does not see: two teams with the same rating are not equally strong if one has fielded players with much longer professional careers.
 
 \textbf{Other team measures.} Recent form, overall win rate and the strength of recent opponents add only a little once the rating and player experience are known, with odds ratios between 1.03 and 1.07. Team experience, meaning how many games the team itself has played, adds nothing (odds ratio 0.99, interval 0.97 to 1.01) once player experience is included. In other words, what seems to matter is the experience of the people on the team, not the history of the team's name.
 

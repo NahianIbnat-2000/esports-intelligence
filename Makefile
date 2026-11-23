@@ -10,6 +10,9 @@
 #   make snapshot       write the website's static snapshot from the current database
 #   make api / make web run the servers
 #   make test           backend + frontend tests
+#   make research       follow-up studies (mechanisms, robustness, league uncertainty, coefficients)
+#   make verify         check published numbers against artifacts and the release manifest
+#   make manifest       rewrite research/release_manifest.json after changing a checked file
 
 PY ?= python
 
@@ -29,6 +32,18 @@ models:
 # add the pre-game player model to an existing trained version (no Elo retraining)
 player-model:
 	$(PY) -m machine_learning.training.player_model
+
+research:
+	$(PY) -m machine_learning.experiments.mechanisms
+	$(PY) -m machine_learning.experiments.robustness
+	$(PY) -m machine_learning.experiments.league_uncertainty
+	$(PY) -m machine_learning.experiments.coefficients
+
+verify:
+	$(PY) -m machine_learning.experiments.verify_claims
+
+manifest:
+	$(PY) -m machine_learning.experiments.manifest
 
 analytics:
 	$(PY) -m analytics.run_all
@@ -60,4 +75,4 @@ test:
 build-web:
 	cd frontend && npm run build
 
-.PHONY: install db data models player-model analytics snapshot all reset-db reload api web test build-web
+.PHONY: install db data models player-model analytics snapshot all reset-db reload api web test build-web research verify manifest

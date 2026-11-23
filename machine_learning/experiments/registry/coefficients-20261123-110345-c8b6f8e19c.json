@@ -1,0 +1,167 @@
+{
+ "experiment_id": "coefficients-20261123-110345-c8b6f8e19c",
+ "kind": "coefficients",
+ "created_at": "2026-11-23T11:03:45.520547+00:00",
+ "code_sha256": "88c707bd652b9ffa45c6a01a2d8c097df8fdf5103fbee4c2953ab26c43e11d1e",
+ "git_commit": "315294685d88b8fefbc0ce4ef7084323a41c7c25",
+ "environment": {
+  "python": "3.13.18",
+  "packages": {
+   "numpy": "2.5.3",
+   "pandas": "3.0.5",
+   "scikit-learn": "1.9.1",
+   "scipy": "1.18.1"
+  }
+ },
+ "data": {
+  "sha256": "c8b6f8e19c33c247ef27b534e344e6425bc2f69588699a03227c7cd074fbd61b",
+  "fingerprint": "c8b6f8e19c",
+  "n_files": 7,
+  "files": [
+   {
+    "filename": "2020_LoL_esports_match_data_from_OraclesElixir.csv",
+    "sha256": "4c271d944d3747fc26177aeac733069e5568026e16ace799f8895e3bddacd358"
+   },
+   {
+    "filename": "2021_LoL_esports_match_data_from_OraclesElixir.csv",
+    "sha256": "bf1b54172f7d3af8177fbbf880bdbe07acb791159164331f6e7015e18a542054"
+   },
+   {
+    "filename": "2022_LoL_esports_match_data_from_OraclesElixir.csv",
+    "sha256": "76b7cb8afc1c65c7e220053b1c5296c593e00c3a6dfaee4ef47373aa64b42a0a"
+   },
+   {
+    "filename": "2023_LoL_esports_match_data_from_OraclesElixir.csv",
+    "sha256": "efe4d2abe53ec3a19c77196a1a132ee88864f317b1791e544ca9e0077fd47050"
+   },
+   {
+    "filename": "2024_LoL_esports_match_data_from_OraclesElixir.csv",
+    "sha256": "a2c67680a53c73622cc974db4f534e49e44cc11dab2e5fd5ecfae421f772d865"
+   },
+   {
+    "filename": "2025_LoL_esports_match_data_from_OraclesElixir.csv",
+    "sha256": "882245414e94e13a9c70f14ed1047a36bffe2279f29526bffe884130d4aaf592"
+   },
+   {
+    "filename": "2026_LoL_esports_match_data_from_OraclesElixir.csv",
+    "sha256": "5bbfb43fd934ae1568be7d3fd58c0b2257a47476850bb936435dd11fb7e08f21"
+   }
+  ]
+ },
+ "design": {
+  "model": "logreg_player",
+  "C": 10.0,
+  "n_fit": 57156,
+  "n_boot": 200,
+  "seed": 0,
+  "unit": "series (tournament, team pair, UTC day)",
+  "intervals": "percentile"
+ },
+ "coefficients": [
+  {
+   "feature": "elo_diff",
+   "sd": 148.67353059100512,
+   "coef_per_sd": 0.5627644963182481,
+   "odds_ratio": 1.7555189238511237,
+   "coef_ci95": [
+    0.5210292770008463,
+    0.600166558482633
+   ],
+   "odds_ratio_ci95": [
+    1.6837598133586946,
+    1.8224223150088446
+   ]
+  },
+  {
+   "feature": "recent_wr_diff",
+   "sd": 0.2326368768089097,
+   "coef_per_sd": 0.0639085836130462,
+   "odds_ratio": 1.0659949449007593,
+   "coef_ci95": [
+    0.027159757561801796,
+    0.09609372336152319
+   ],
+   "odds_ratio_ci95": [
+    1.027531945649917,
+    1.1008622356684061
+   ]
+  },
+  {
+   "feature": "hist_wr_diff",
+   "sd": 0.1565948998374357,
+   "coef_per_sd": 0.04866540056388378,
+   "odds_ratio": 1.0498690063859621,
+   "coef_ci95": [
+    0.021266554783965608,
+    0.0794421280706525
+   ],
+   "odds_ratio_ci95": [
+    1.0214942995437628,
+    1.0826829007680256
+   ]
+  },
+  {
+   "feature": "opp_strength_diff",
+   "sd": 73.2704877663788,
+   "coef_per_sd": 0.02581620395336396,
+   "odds_ratio": 1.026152328398955,
+   "coef_ci95": [
+    0.0044037888590896055,
+    0.0470923985019074
+   ],
+   "odds_ratio_ci95": [
+    1.0044134997869731,
+    1.0482188584574106
+   ]
+  },
+  {
+   "feature": "experience_diff",
+   "sd": 0.9512921873925473,
+   "coef_per_sd": -0.009441343675629066,
+   "odds_ratio": 0.9906030858747449,
+   "coef_ci95": [
+    -0.02590636728631124,
+    0.01191367499932628
+   ],
+   "odds_ratio_ci95": [
+    0.9744263235184042,
+    1.0119849254959352
+   ]
+  },
+  {
+   "feature": "elo_diff_x_intl",
+   "sd": 21.57913456741185,
+   "coef_per_sd": -0.0013916360982319253,
+   "odds_ratio": 0.9986093317782537,
+   "coef_ci95": [
+    -0.01877579762259056,
+    0.017433933525761346
+   ],
+   "odds_ratio_ci95": [
+    0.9813993696506563,
+    1.017586791558392
+   ]
+  },
+  {
+   "feature": "player_exp_prev_diff",
+   "sd": 0.7036038945982676,
+   "coef_per_sd": 0.33605280058396675,
+   "odds_ratio": 1.399412912679252,
+   "coef_ci95": [
+    0.30993464085822314,
+    0.35641363009052224
+   ],
+   "odds_ratio_ci95": [
+    1.3633360047489291,
+    1.4281981718446852
+   ]
+  }
+ ],
+ "intercept": 0.13133043111294065,
+ "scale_facts": {
+  "median_lineup_typical_earlier_games": 81.98595077713429,
+  "p_blue_equal_teams": 0.5309317450758163,
+  "p_blue_plus_1sd_player_experience": 0.6129994637548007,
+  "refit_matches_saved_model_max_abs_diff": 1.1102230246251565e-16
+ }
+}

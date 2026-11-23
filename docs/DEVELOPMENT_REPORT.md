@@ -1,5 +1,7 @@
 # Development report: Esports Intelligence v1.0
 
+> Historical record, kept as written. Current status of every issue: [`ISSUE_STATUS.md`](ISSUE_STATUS.md) (23 November 2026).
+
 Date: 18 November 2026
 
 ## Summary

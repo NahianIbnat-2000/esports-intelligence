@@ -1,0 +1,1754 @@
+{
+ "experiment_id": "league-uncertainty-20261123-110629-c8b6f8e19c",
+ "kind": "league-uncertainty",
+ "created_at": "2026-11-23T11:06:29.193831+00:00",
+ "code_sha256": "88c707bd652b9ffa45c6a01a2d8c097df8fdf5103fbee4c2953ab26c43e11d1e",
+ "git_commit": "315294685d88b8fefbc0ce4ef7084323a41c7c25",
+ "environment": {
+  "python": "3.13.18",
+  "packages": {
+   "numpy": "2.5.3",
+   "pandas": "3.0.5",
+   "scikit-learn": "1.9.1",
+   "scipy": "1.18.1"
+  }
+ },
+ "data": {
+  "sha256": "c8b6f8e19c33c247ef27b534e344e6425bc2f69588699a03227c7cd074fbd61b",
+  "fingerprint": "c8b6f8e19c",
+  "n_files": 7,
+  "files": [
+   {
+    "filename": "2020_LoL_esports_match_data_from_OraclesElixir.csv",
+    "sha256": "4c271d944d3747fc26177aeac733069e5568026e16ace799f8895e3bddacd358"
+   },
+   {
+    "filename": "2021_LoL_esports_match_data_from_OraclesElixir.csv",
+    "sha256": "bf1b54172f7d3af8177fbbf880bdbe07acb791159164331f6e7015e18a542054"
+   },
+   {
+    "filename": "2022_LoL_esports_match_data_from_OraclesElixir.csv",
+    "sha256": "76b7cb8afc1c65c7e220053b1c5296c593e00c3a6dfaee4ef47373aa64b42a0a"
+   },
+   {
+    "filename": "2023_LoL_esports_match_data_from_OraclesElixir.csv",
+    "sha256": "efe4d2abe53ec3a19c77196a1a132ee88864f317b1791e544ca9e0077fd47050"
+   },
+   {
+    "filename": "2024_LoL_esports_match_data_from_OraclesElixir.csv",
+    "sha256": "a2c67680a53c73622cc974db4f534e49e44cc11dab2e5fd5ecfae421f772d865"
+   },
+   {
+    "filename": "2025_LoL_esports_match_data_from_OraclesElixir.csv",
+    "sha256": "882245414e94e13a9c70f14ed1047a36bffe2279f29526bffe884130d4aaf592"
+   },
+   {
+    "filename": "2026_LoL_esports_match_data_from_OraclesElixir.csv",
+    "sha256": "5bbfb43fd934ae1568be7d3fd58c0b2257a47476850bb936435dd11fb7e08f21"
+   }
+  ]
+ },
+ "design": {
+  "window_months": 24,
+  "cutoff": "2026-11-14 23:18:11+00:00",
+  "ridge_C": 10.0,
+  "n_boot": 500,
+  "bootstrap_unit": "series",
+  "scale": "Elo points (400/ln 10 per logit), 0 = mean of LCK and LPL",
+  "min_games_table": 30,
+  "elo_configs": {
+   "published k=40, shrink=0.5, k_league=16.0": [
+    40,
+    0.5,
+    16.0
+   ],
+   "walk-forward choice k=32, shrink=0.5, k_league=16.0": [
+    32,
+    0.5,
+    16.0
+   ],
+   "walk-forward choice k=40, shrink=0.5, k_league=16.0": [
+    40,
+    0.5,
+    16.0
+   ],
+   "sensitivity k=40, shrink=0.5, k_league=8.0": [
+    40,
+    0.5,
+    8.0
+   ],
+   "sensitivity k=40, shrink=0.5, k_league=16.0": [
+    40,
+    0.5,
+    16.0
+   ],
+   "sensitivity k=40, shrink=0.5, k_league=32.0": [
+    40,
+    0.5,
+    32.0
+   ]
+  }
+ },
+ "per_year": {
+  "2020": {
+   "leagues": 46,
+   "edges": 111,
+   "cross_games": 860,
+   "components": 12,
+   "largest_component": 17,
+   "isolated_leagues": [
+    "DDH",
+    "HC",
+    "LAS",
+    "LCSA",
+    "LHE",
+    "LMF",
+    "NASG",
+    "OCS",
+    "TAL"
+   ],
+   "small_components": [
+    [
+     "BL",
+     "BM",
+     "DL",
+     "EBL",
+     "EUM",
+     "GLL",
+     "HM",
+     "LFL",
+     "LPLOL",
+     "NEXO",
+     "NLC",
+     "OTBLX",
+     "PGN",
+     "PRM",
+     "SLO",
+     "UKLC",
+     "UL"
+    ],
+    [
+     "BIG",
+     "RCL",
+     "UPL"
+    ]
+   ]
+  },
+  "2021": {
+   "leagues": 59,
+   "edges": 142,
+   "cross_games": 1789,
+   "components": 11,
+   "largest_component": 22,
+   "isolated_leagues": [
+    "CBLOLA",
+    "GL",
+    "LJLA",
+    "NASG",
+    "SL (LATAM)",
+    "TAL",
+    "VCS",
+    "VL"
+   ],
+   "small_components": [
+    [
+     "BL",
+     "BM",
+     "CT",
+     "DL",
+     "EBL",
+     "GLL",
+     "HC",
+     "HM",
+     "HW",
+     "LFL",
+     "LFL2",
+     "LPLOL",
+     "LVP SL",
+     "NEXO",
+     "NLC",
+     "OTBLX",
+     "PGN",
+     "PRM",
+     "SLO",
+     "UKLC",
+     "UL"
+    ],
+    [
+     "BIG",
+     "CU",
+     "EGL",
+     "GSG",
+     "LCSA",
+     "NERD",
+     "RCL",
+     "UPL"
+    ]
+   ]
+  },
+  "2022": {
+   "leagues": 63,
+   "edges": 161,
+   "cross_games": 2104,
+   "components": 8,
+   "largest_component": 51,
+   "isolated_leagues": [
+    "CBLOLA",
+    "GL",
+    "LAS",
+    "LCL",
+    "TAL",
+    "VL"
+   ],
+   "small_components": [
+    [
+     "CU",
+     "EGL",
+     "LCSA",
+     "PGC",
+     "RCL",
+     "UPL"
+    ]
+   ]
+  },
+  "2023": {
+   "leagues": 58,
+   "edges": 149,
+   "cross_games": 1607,
+   "components": 4,
+   "largest_component": 52,
+   "isolated_leagues": [
+    "CBLOLA",
+    "LAS"
+   ],
+   "small_components": [
+    [
+     "NACL",
+     "PGC",
+     "RCL",
+     "UPL"
+    ]
+   ]
+  },
+  "2024": {
+   "leagues": 57,
+   "edges": 154,
+   "cross_games": 1947,
+   "components": 5,
+   "largest_component": 53,
+   "isolated_leagues": [
+    "IGNIS",
+    "LAS",
+    "LCKC",
+    "LDL"
+   ],
+   "small_components": []
+  },
+  "2025": {
+   "leagues": 58,
+   "edges": 197,
+   "cross_games": 2821,
+   "components": 2,
+   "largest_component": 57,
+   "isolated_leagues": [
+    "LAS"
+   ],
+   "small_components": []
+  },
+  "2026": {
+   "leagues": 57,
+   "edges": 215,
+   "cross_games": 2819,
+   "components": 2,
+   "largest_component": 56,
+   "isolated_leagues": [
+    "LAS"
+   ],
+   "small_components": []
+  }
+ },
+ "window_network": {
+  "leagues": 65,
+  "edges": 274,
+  "cross_games": 5653,
+  "components": 2,
+  "largest_component": 64,
+  "isolated_leagues": [
+   "LAS"
+  ],
+  "small_components": [],
+  "per_league": {
+   "ESLOL": {
+    "opponent_leagues": 13,
+    "cross_games": 228,
+    "component": 0
+   },
+   "LFL2": {
+    "opponent_leagues": 10,
+    "cross_games": 335,
+    "component": 0
+   },
+   "AL": {
+    "opponent_leagues": 16,
+    "cross_games": 113,
+    "component": 0
+   },
+   "NACL": {
+    "opponent_leagues": 8,
+    "cross_games": 238,
+    "component": 0
+   },
+   "LAS": {
+    "opponent_leagues": 0,
+    "cross_games": 0,
+    "component": 1
+   },
+   "LIT": {
+    "opponent_leagues": 17,
+    "cross_games": 155,
+    "component": 0
+   },
+   "LTA N": {
+    "opponent_leagues": 5,
+    "cross_games": 143,
+    "component": 0
+   },
+   "PCL": {
+    "opponent_leagues": 6,
+    "cross_games": 203,
+    "component": 0
+   },
+   "HW": {
+    "opponent_leagues": 7,
+    "cross_games": 204,
+    "component": 0
+   },
+   "NL": {
+    "opponent_leagues": 2,
+    "cross_games": 58,
+    "component": 0
+   },
+   "CD": {
+    "opponent_leagues": 5,
+    "cross_games": 304,
+    "component": 0
+   },
+   "GLL": {
+    "opponent_leagues": 16,
+    "cross_games": 312,
+    "component": 0
+   },
+   "LRN": {
+    "opponent_leagues": 7,
+    "cross_games": 102,
+    "component": 0
+   },
+   "LRS": {
+    "opponent_leagues": 6,
+    "cross_games": 138,
+    "component": 0
+   },
+   "RL": {
+    "opponent_leagues": 18,
+    "cross_games": 307,
+    "component": 0
+   },
+   "HLL": {
+    "opponent_leagues": 12,
+    "cross_games": 251,
+    "component": 0
+   },
+   "EBL": {
+    "opponent_leagues": 14,
+    "cross_games": 85,
+    "component": 0
+   },
+   "LLA": {
+    "opponent_leagues": 10,
+    "cross_games": 227,
+    "component": 0
+   },
+   "LVP SL": {
+    "opponent_leagues": 27,
+    "cross_games": 554,
+    "component": 0
+   },
+   "NLC Aurora Open": {
+    "opponent_leagues": 1,
+    "cross_games": 15,
+    "component": 0
+   },
+   "LCKC": {
+    "opponent_leagues": 10,
+    "cross_games": 104,
+    "component": 0
+   },
+   "HM": {
+    "opponent_leagues": 16,
+    "cross_games": 325,
+    "component": 0
+   },
+   "WLRQ": {
+    "opponent_leagues": 3,
+    "cross_games": 7,
+    "component": 0
+   },
+   "LFL": {
+    "opponent_leagues": 29,
+    "cross_games": 680,
+    "component": 0
+   },
+   "LTA S": {
+    "opponent_leagues": 3,
+    "cross_games": 93,
+    "component": 0
+   },
+   "IGNIS": {
+    "opponent_leagues": 1,
+    "cross_games": 4,
+    "component": 0
+   },
+   "LCP": {
+    "opponent_leagues": 10,
+    "cross_games": 279,
+    "component": 0
+   },
+   "TCL": {
+    "opponent_leagues": 15,
+    "cross_games": 149,
+    "component": 0
+   },
+   "HC": {
+    "opponent_leagues": 3,
+    "cross_games": 261,
+    "component": 0
+   },
+   "NEXO": {
+    "opponent_leagues": 3,
+    "cross_games": 60,
+    "component": 0
+   },
+   "LJL": {
+    "opponent_leagues": 9,
+    "cross_games": 275,
+    "component": 0
+   },
+   "LPL": {
+    "opponent_leagues": 11,
+    "cross_games": 250,
+    "component": 0
+   },
+   "PGN": {
+    "opponent_leagues": 6,
+    "cross_games": 91,
+    "component": 0
+   },
+   "LMF": {
+    "opponent_leagues": 2,
+    "cross_games": 83,
+    "component": 0
+   },
+   "LDL": {
+    "opponent_leagues": 8,
+    "cross_games": 104,
+    "component": 0
+   },
+   "PCS": {
+    "opponent_leagues": 15,
+    "cross_games": 574,
+    "component": 0
+   },
+   "LCK": {
+    "opponent_leagues": 11,
+    "cross_games": 303,
+    "component": 0
+   },
+   "LEC": {
+    "opponent_leagues": 10,
+    "cross_games": 435,
+    "component": 0
+   },
+   "LCS": {
+    "opponent_leagues": 13,
+    "cross_games": 412,
+    "component": 0
+   },
+   "LPLOL": {
+    "opponent_leagues": 17,
+    "cross_games": 74,
+    "component": 0
+   },
+   "VCS": {
+    "opponent_leagues": 15,
+    "cross_games": 305,
+    "component": 0
+   },
+   "NLC": {
+    "opponent_leagues": 20,
+    "cross_games": 204,
+    "component": 0
+   },
+   "CBLOLA": {
+    "opponent_leagues": 6,
+    "cross_games": 212,
+    "component": 0
+   },
+   "PRMP": {
+    "opponent_leagues": 1,
+    "cross_games": 92,
+    "component": 0
+   },
+   "CBLOL": {
+    "opponent_leagues": 13,
+    "cross_games": 429,
+    "component": 0
+   },
+   "UL": {
+    "opponent_leagues": 12,
+    "cross_games": 284,
+    "component": 0
+   },
+   "ROL": {
+    "opponent_leagues": 16,
+    "cross_games": 249,
+    "component": 0
+   },
+   "PRM": {
+    "opponent_leagues": 22,
+    "cross_games": 371,
+    "component": 0
+   },
+   "EM": {
+    "opponent_leagues": 9,
+    "cross_games": 39,
+    "component": 0
+   },
+   "CCWS": {
+    "opponent_leagues": 1,
+    "cross_games": 29,
+    "component": 0
+   },
+   "CT": {
+    "opponent_leagues": 4,
+    "cross_games": 29,
+    "component": 0
+   },
+   "DCup": {
+    "opponent_leagues": 1,
+    "cross_games": 8,
+    "component": 0
+   },
+   "DDH": {
+    "opponent_leagues": 2,
+    "cross_games": 15,
+    "component": 0
+   },
+   "DL": {
+    "opponent_leagues": 2,
+    "cross_games": 55,
+    "component": 0
+   },
+   "UKLC": {
+    "opponent_leagues": 2,
+    "cross_games": 59,
+    "component": 0
+   },
+   "GL": {
+    "opponent_leagues": 1,
+    "cross_games": 21,
+    "component": 0
+   },
+   "GLLPA": {
+    "opponent_leagues": 2,
+    "cross_games": 8,
+    "component": 0
+   },
+   "KeSPA Cup": {
+    "opponent_leagues": 2,
+    "cross_games": 21,
+    "component": 0
+   },
+   "LES": {
+    "opponent_leagues": 9,
+    "cross_games": 88,
+    "component": 0
+   },
+   "LCO": {
+    "opponent_leagues": 5,
+    "cross_games": 105,
+    "component": 0
+   },
+   "LHE": {
+    "opponent_leagues": 2,
+    "cross_games": 55,
+    "component": 0
+   },
+   "UPL": {
+    "opponent_leagues": 2,
+    "cross_games": 69,
+    "component": 0
+   },
+   "IC": {
+    "opponent_leagues": 1,
+    "cross_games": 2,
+    "component": 0
+   },
+   "USP": {
+    "opponent_leagues": 2,
+    "cross_games": 21,
+    "component": 0
+   },
+   "WSCI": {
+    "opponent_leagues": 1,
+    "cross_games": 1,
+    "component": 0
+   }
+  }
+ },
+ "league_table": [
+  {
+   "league": "LCK",
+   "cross_games_24m": 303,
+   "opponent_leagues_24m": 11,
+   "bt_strength": 39.3123858751639,
+   "bt_ci95": [
+    13.353990633053904,
+    65.458542539013
+   ],
+   "bt_ci_width": 52.10455190595909,
+   "elo_level_published": 38.00959214541126,
+   "elo_level_range_across_configs": [
+    10.454492242983406,
+    44.56760109465836
+   ],
+   "warning": null
+  },
+  {
+   "league": "LCKC",
+   "cross_games_24m": 104,
+   "opponent_leagues_24m": 10,
+   "bt_strength": 4.58154589041817,
+   "bt_ci95": [
+    -115.16056164316603,
+    136.9513701559474
+   ],
+   "bt_ci_width": 252.11193179911342,
+   "elo_level_published": -117.94593128230849,
+   "elo_level_range_across_configs": [
+    -117.94593128230849,
+    -106.2179412167336
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "CCWS",
+   "cross_games_24m": 29,
+   "opponent_leagues_24m": 1,
+   "bt_strength": -29.998271925492986,
+   "bt_ci95": [
+    -185.93565266572028,
+    151.32668106078634
+   ],
+   "bt_ci_width": 337.26233372650665,
+   "elo_level_published": -342.9997194763296,
+   "elo_level_range_across_configs": [
+    -386.0101763918301,
+    -278.5351606031277
+   ],
+   "warning": "few cross-league games"
+  },
+  {
+   "league": "LPL",
+   "cross_games_24m": 250,
+   "opponent_leagues_24m": 11,
+   "bt_strength": -39.31238587516384,
+   "bt_ci95": [
+    -65.45854253901298,
+    -13.353990633053964
+   ],
+   "bt_ci_width": 52.10455190595901,
+   "elo_level_published": -38.00959214541126,
+   "elo_level_range_across_configs": [
+    -44.56760109465836,
+    -10.454492242983406
+   ],
+   "warning": null
+  },
+  {
+   "league": "EM",
+   "cross_games_24m": 39,
+   "opponent_leagues_24m": 9,
+   "bt_strength": -43.32548901781024,
+   "bt_ci95": [
+    -197.33363753557987,
+    106.79599948694812
+   ],
+   "bt_ci_width": 304.12963702252796,
+   "elo_level_published": -385.90807090024555,
+   "elo_level_range_across_configs": [
+    -430.23080832771393,
+    -307.0736730540036
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "LFL",
+   "cross_games_24m": 680,
+   "opponent_leagues_24m": 29,
+   "bt_strength": -46.07356487056228,
+   "bt_ci95": [
+    -130.64226473698852,
+    26.078795785393545
+   ],
+   "bt_ci_width": 156.72106052238206,
+   "elo_level_published": -0.8622824420740471,
+   "elo_level_range_across_configs": [
+    -18.171640089781704,
+    17.279469496377033
+   ],
+   "warning": null
+  },
+  {
+   "league": "USP",
+   "cross_games_24m": 21,
+   "opponent_leagues_24m": 2,
+   "bt_strength": -90.55032469142154,
+   "bt_ci95": [
+    -257.7865560733031,
+    294.5362325207495
+   ],
+   "bt_ci_width": 552.3227885940526,
+   "elo_level_published": -377.8857278258174,
+   "elo_level_range_across_configs": [
+    -455.37611060296626,
+    -290.8178976311615
+   ],
+   "warning": "few cross-league games"
+  },
+  {
+   "league": "LVP SL",
+   "cross_games_24m": 554,
+   "opponent_leagues_24m": 27,
+   "bt_strength": -118.97967142232037,
+   "bt_ci95": [
+    -191.67146746766147,
+    -43.848209905871514
+   ],
+   "bt_ci_width": 147.82325756178994,
+   "elo_level_published": -141.19197884226537,
+   "elo_level_range_across_configs": [
+    -209.43025495568213,
+    -78.17996176391853
+   ],
+   "warning": null
+  },
+  {
+   "league": "LFL2",
+   "cross_games_24m": 335,
+   "opponent_leagues_24m": 10,
+   "bt_strength": -121.7876221793278,
+   "bt_ci95": [
+    -212.62437185183467,
+    -41.116365729312605
+   ],
+   "bt_ci_width": 171.50800612252206,
+   "elo_level_published": -205.99955595620804,
+   "elo_level_range_across_configs": [
+    -252.94179356619088,
+    -178.94429386453453
+   ],
+   "warning": null
+  },
+  {
+   "league": "LEC",
+   "cross_games_24m": 435,
+   "opponent_leagues_24m": 10,
+   "bt_strength": -126.09221473253064,
+   "bt_ci95": [
+    -194.94340733405605,
+    -62.47541723182384
+   ],
+   "bt_ci_width": 132.4679901022322,
+   "elo_level_published": -219.40143057390628,
+   "elo_level_range_across_configs": [
+    -269.69146688012097,
+    -173.821755977463
+   ],
+   "warning": null
+  },
+  {
+   "league": "LCS",
+   "cross_games_24m": 412,
+   "opponent_leagues_24m": 13,
+   "bt_strength": -146.1936879667235,
+   "bt_ci95": [
+    -214.63360285644677,
+    -80.06499216883996
+   ],
+   "bt_ci_width": 134.5686106876068,
+   "elo_level_published": -244.5410786913019,
+   "elo_level_range_across_configs": [
+    -285.26960651805666,
+    -200.21868466484398
+   ],
+   "warning": null
+  },
+  {
+   "league": "KeSPA Cup",
+   "cross_games_24m": 21,
+   "opponent_leagues_24m": 2,
+   "bt_strength": -150.43011829902446,
+   "bt_ci95": [
+    -388.54555980633717,
+    19.136480320933888
+   ],
+   "bt_ci_width": 407.6820401272711,
+   "elo_level_published": -349.53677096088836,
+   "elo_level_range_across_configs": [
+    -382.6329061688034,
+    -284.01997680486124
+   ],
+   "warning": "few cross-league games"
+  },
+  {
+   "league": "PRM",
+   "cross_games_24m": 371,
+   "opponent_leagues_24m": 22,
+   "bt_strength": -157.84302788235712,
+   "bt_ci95": [
+    -246.44565729909968,
+    -69.43524447494683
+   ],
+   "bt_ci_width": 177.01041282415287,
+   "elo_level_published": -139.47625970895047,
+   "elo_level_range_across_configs": [
+    -191.17378880090996,
+    -87.663469514908
+   ],
+   "warning": null
+  },
+  {
+   "league": "NLC",
+   "cross_games_24m": 204,
+   "opponent_leagues_24m": 20,
+   "bt_strength": -186.25154634703316,
+   "bt_ci95": [
+    -287.5086640172198,
+    -83.86909755299652
+   ],
+   "bt_ci_width": 203.6395664642233,
+   "elo_level_published": -362.6720424477794,
+   "elo_level_range_across_configs": [
+    -451.26575637510155,
+    -263.99168163547347
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "LES",
+   "cross_games_24m": 88,
+   "opponent_leagues_24m": 9,
+   "bt_strength": -200.30388394477077,
+   "bt_ci95": [
+    -331.8473811137858,
+    -89.89375189977935
+   ],
+   "bt_ci_width": 241.95362921400644,
+   "elo_level_published": -434.64127943929384,
+   "elo_level_range_across_configs": [
+    -509.5373378597649,
+    -333.2530572833605
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "TCL",
+   "cross_games_24m": 149,
+   "opponent_leagues_24m": 15,
+   "bt_strength": -203.26380464269602,
+   "bt_ci95": [
+    -302.2815222728345,
+    -106.23866822527967
+   ],
+   "bt_ci_width": 196.0428540475548,
+   "elo_level_published": -305.2213044866919,
+   "elo_level_range_across_configs": [
+    -400.0005234191203,
+    -219.69256958738947
+   ],
+   "warning": null
+  },
+  {
+   "league": "UPL",
+   "cross_games_24m": 69,
+   "opponent_leagues_24m": 2,
+   "bt_strength": -213.82299655607068,
+   "bt_ci95": [
+    -339.22332845382783,
+    -83.94289632989054
+   ],
+   "bt_ci_width": 255.2804321239373,
+   "elo_level_published": -522.9611676100869,
+   "elo_level_range_across_configs": [
+    -576.4082128790867,
+    -427.1732832458749
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "UKLC",
+   "cross_games_24m": 59,
+   "opponent_leagues_24m": 2,
+   "bt_strength": -215.26701865846212,
+   "bt_ci95": [
+    -354.90863430615354,
+    -69.56164712530258
+   ],
+   "bt_ci_width": 285.346987180851,
+   "elo_level_published": -465.54484845529237,
+   "elo_level_range_across_configs": [
+    -529.1446237018595,
+    -365.88257030029445
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "LTA N",
+   "cross_games_24m": 143,
+   "opponent_leagues_24m": 5,
+   "bt_strength": -217.48443034569272,
+   "bt_ci95": [
+    -306.54571959804326,
+    -128.32926337377296
+   ],
+   "bt_ci_width": 178.2164562242703,
+   "elo_level_published": -393.1368777257487,
+   "elo_level_range_across_configs": [
+    -453.41005568077776,
+    -310.1415269333713
+   ],
+   "warning": null
+  },
+  {
+   "league": "LDL",
+   "cross_games_24m": 104,
+   "opponent_leagues_24m": 8,
+   "bt_strength": -231.00871815154346,
+   "bt_ci95": [
+    -364.3188804226482,
+    -117.37114835513427
+   ],
+   "bt_ci_width": 246.94773206751393,
+   "elo_level_published": -294.1247950246543,
+   "elo_level_range_across_configs": [
+    -294.1247950246543,
+    -263.6134849411021
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "LCP",
+   "cross_games_24m": 279,
+   "opponent_leagues_24m": 10,
+   "bt_strength": -260.1290781097015,
+   "bt_ci95": [
+    -358.5495787463943,
+    -174.87057250043773
+   ],
+   "bt_ci_width": 183.67900624595654,
+   "elo_level_published": -348.51495295280415,
+   "elo_level_range_across_configs": [
+    -425.08083366418987,
+    -275.79448944689375
+   ],
+   "warning": null
+  },
+  {
+   "league": "NLC Aurora Open",
+   "cross_games_24m": 15,
+   "opponent_leagues_24m": 1,
+   "bt_strength": -260.3964805500281,
+   "bt_ci95": [
+    -510.2955114371919,
+    -61.08273313719581
+   ],
+   "bt_ci_width": 449.2127782999961,
+   "elo_level_published": -407.87300418579184,
+   "elo_level_range_across_configs": [
+    -466.9294336972828,
+    -321.57342938138413
+   ],
+   "warning": "few cross-league games"
+  },
+  {
+   "league": "NACL",
+   "cross_games_24m": 238,
+   "opponent_leagues_24m": 8,
+   "bt_strength": -262.93600073143523,
+   "bt_ci95": [
+    -350.0949513151107,
+    -174.58014958538047
+   ],
+   "bt_ci_width": 175.5148017297302,
+   "elo_level_published": -372.36437427297733,
+   "elo_level_range_across_configs": [
+    -372.8475585255039,
+    -314.10187654419565
+   ],
+   "warning": null
+  },
+  {
+   "league": "AL",
+   "cross_games_24m": 113,
+   "opponent_leagues_24m": 16,
+   "bt_strength": -263.3618920078189,
+   "bt_ci95": [
+    -403.6802915432112,
+    -149.64419809356747
+   ],
+   "bt_ci_width": 254.03609344964372,
+   "elo_level_published": -393.6815105066837,
+   "elo_level_range_across_configs": [
+    -432.63745703992754,
+    -317.8879497208982
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "UL",
+   "cross_games_24m": 284,
+   "opponent_leagues_24m": 12,
+   "bt_strength": -267.1566478463326,
+   "bt_ci95": [
+    -379.04644509101416,
+    -158.2058120311858
+   ],
+   "bt_ci_width": 220.84063305982838,
+   "elo_level_published": -412.8208185679298,
+   "elo_level_range_across_configs": [
+    -503.0753398987124,
+    -315.7207346320715
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "CBLOL",
+   "cross_games_24m": 429,
+   "opponent_leagues_24m": 13,
+   "bt_strength": -277.7295228227424,
+   "bt_ci95": [
+    -366.2956169498752,
+    -195.76679103919057
+   ],
+   "bt_ci_width": 170.52882591068462,
+   "elo_level_published": -363.9729350013813,
+   "elo_level_range_across_configs": [
+    -431.96642097734707,
+    -284.4141298517575
+   ],
+   "warning": null
+  },
+  {
+   "league": "VCS",
+   "cross_games_24m": 305,
+   "opponent_leagues_24m": 15,
+   "bt_strength": -288.5791966203508,
+   "bt_ci95": [
+    -384.17362990304963,
+    -214.8834189059008
+   ],
+   "bt_ci_width": 169.29021099714882,
+   "elo_level_published": -463.1837138836938,
+   "elo_level_range_across_configs": [
+    -547.4803159570033,
+    -359.91334441146387
+   ],
+   "warning": null
+  },
+  {
+   "league": "PCS",
+   "cross_games_24m": 574,
+   "opponent_leagues_24m": 15,
+   "bt_strength": -292.611115132821,
+   "bt_ci95": [
+    -393.968379781393,
+    -208.9339433978395
+   ],
+   "bt_ci_width": 185.03443638355353,
+   "elo_level_published": -477.46676734679045,
+   "elo_level_range_across_configs": [
+    -576.0287607224052,
+    -355.03569862252243
+   ],
+   "warning": null
+  },
+  {
+   "league": "PRMP",
+   "cross_games_24m": 92,
+   "opponent_leagues_24m": 1,
+   "bt_strength": -315.4124770997875,
+   "bt_ci95": [
+    -432.6273040579246,
+    -206.71265543048722
+   ],
+   "bt_ci_width": 225.9146486274374,
+   "elo_level_published": -493.2529355856818,
+   "elo_level_range_across_configs": [
+    -546.2373944495366,
+    -404.2310973178171
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "RL",
+   "cross_games_24m": 307,
+   "opponent_leagues_24m": 18,
+   "bt_strength": -316.06408485130316,
+   "bt_ci95": [
+    -422.81544390058144,
+    -207.87176346854537
+   ],
+   "bt_ci_width": 214.94368043203607,
+   "elo_level_published": -466.64130022067866,
+   "elo_level_range_across_configs": [
+    -563.969701497663,
+    -353.10397566281836
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "ROL",
+   "cross_games_24m": 249,
+   "opponent_leagues_24m": 16,
+   "bt_strength": -324.65664396883733,
+   "bt_ci95": [
+    -439.7026391286027,
+    -219.63729508752488
+   ],
+   "bt_ci_width": 220.06534404107782,
+   "elo_level_published": -393.36158886941394,
+   "elo_level_range_across_configs": [
+    -478.7479158672943,
+    -299.7844313861485
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "CBLOLA",
+   "cross_games_24m": 212,
+   "opponent_leagues_24m": 6,
+   "bt_strength": -326.6986156314769,
+   "bt_ci95": [
+    -434.44474980568685,
+    -216.66954843104463
+   ],
+   "bt_ci_width": 217.77520137464222,
+   "elo_level_published": -522.702956721972,
+   "elo_level_range_across_configs": [
+    -671.268738509079,
+    -374.5223307258768
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "GLL",
+   "cross_games_24m": 312,
+   "opponent_leagues_24m": 16,
+   "bt_strength": -329.22186511206996,
+   "bt_ci95": [
+    -476.8443285133655,
+    -218.60432573774528
+   ],
+   "bt_ci_width": 258.2400027756202,
+   "elo_level_published": -459.3565228549769,
+   "elo_level_range_across_configs": [
+    -547.2057940774805,
+    -346.8832976534011
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "LLA",
+   "cross_games_24m": 227,
+   "opponent_leagues_24m": 10,
+   "bt_strength": -334.072739345569,
+   "bt_ci95": [
+    -442.7749647220706,
+    -235.12161534403975
+   ],
+   "bt_ci_width": 207.65334937803084,
+   "elo_level_published": -336.4416953583857,
+   "elo_level_range_across_configs": [
+    -413.442191511348,
+    -247.79891283903044
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "HW",
+   "cross_games_24m": 204,
+   "opponent_leagues_24m": 7,
+   "bt_strength": -375.39278791747546,
+   "bt_ci95": [
+    -521.1490123649671,
+    -266.5039805865507
+   ],
+   "bt_ci_width": 254.6450317784164,
+   "elo_level_published": -517.3975877704684,
+   "elo_level_range_across_configs": [
+    -659.681782538707,
+    -375.92751297437917
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "LTA S",
+   "cross_games_24m": 93,
+   "opponent_leagues_24m": 3,
+   "bt_strength": -376.8365312229426,
+   "bt_ci95": [
+    -515.8112237697226,
+    -267.0577822615609
+   ],
+   "bt_ci_width": 248.7534415081617,
+   "elo_level_published": -387.7963929203106,
+   "elo_level_range_across_configs": [
+    -426.5052248453735,
+    -311.41187090475387
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "CD",
+   "cross_games_24m": 304,
+   "opponent_leagues_24m": 5,
+   "bt_strength": -382.20316100700416,
+   "bt_ci95": [
+    -492.72597359234635,
+    -280.7485034158737
+   ],
+   "bt_ci_width": 211.97747017647265,
+   "elo_level_published": -459.9809800214057,
+   "elo_level_range_across_configs": [
+    -539.503518020751,
+    -358.0021098963473
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "ESLOL",
+   "cross_games_24m": 228,
+   "opponent_leagues_24m": 13,
+   "bt_strength": -387.20950440726085,
+   "bt_ci95": [
+    -504.47131594031737,
+    -282.93850309848614
+   ],
+   "bt_ci_width": 221.53281284183123,
+   "elo_level_published": -596.9034167854825,
+   "elo_level_range_across_configs": [
+    -757.1044667560252,
+    -437.6110169824933
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "EBL",
+   "cross_games_24m": 85,
+   "opponent_leagues_24m": 14,
+   "bt_strength": -391.2827345375367,
+   "bt_ci95": [
+    -533.4343611545003,
+    -273.73595800798415
+   ],
+   "bt_ci_width": 259.6984031465161,
+   "elo_level_published": -582.1159108281004,
+   "elo_level_range_across_configs": [
+    -653.065707559138,
+    -464.5482290142711
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "PCL",
+   "cross_games_24m": 203,
+   "opponent_leagues_24m": 6,
+   "bt_strength": -391.4312585359299,
+   "bt_ci95": [
+    -503.13758012119376,
+    -289.43456669519037
+   ],
+   "bt_ci_width": 213.7030134260034,
+   "elo_level_published": -427.55314306085506,
+   "elo_level_range_across_configs": [
+    -530.2698931873729,
+    -305.5985709281588
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "WSCI",
+   "cross_games_24m": 1,
+   "opponent_leagues_24m": 1,
+   "bt_strength": -394.9289348670362,
+   "bt_ci95": [
+    -536.0010909707407,
+    -293.2903344739332
+   ],
+   "bt_ci_width": 242.7107564968075,
+   "elo_level_published": -433.1448825585569,
+   "elo_level_range_across_configs": [
+    -527.9102919701124,
+    -327.2232904539676
+   ],
+   "warning": "few cross-league games"
+  },
+  {
+   "league": "HM",
+   "cross_games_24m": 325,
+   "opponent_leagues_24m": 16,
+   "bt_strength": -404.7524954239922,
+   "bt_ci95": [
+    -526.854282711846,
+    -302.2730720781019
+   ],
+   "bt_ci_width": 224.58121063374415,
+   "elo_level_published": -603.1653439221143,
+   "elo_level_range_across_configs": [
+    -763.4895547516585,
+    -435.618765427108
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "CT",
+   "cross_games_24m": 29,
+   "opponent_leagues_24m": 4,
+   "bt_strength": -413.9404476102431,
+   "bt_ci95": [
+    -687.2369734554726,
+    -261.9624973691941
+   ],
+   "bt_ci_width": 425.27447608627847,
+   "elo_level_published": -595.6699706398406,
+   "elo_level_range_across_configs": [
+    -778.2531831676165,
+    -423.4324768835777
+   ],
+   "warning": "few cross-league games"
+  },
+  {
+   "league": "DL",
+   "cross_games_24m": 55,
+   "opponent_leagues_24m": 2,
+   "bt_strength": -416.72939854287023,
+   "bt_ci95": [
+    -584.5163561614046,
+    -278.88263474791455
+   ],
+   "bt_ci_width": 305.63372141349004,
+   "elo_level_published": -442.94984419089064,
+   "elo_level_range_across_configs": [
+    -549.0373449335175,
+    -329.88016627105867
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "HLL",
+   "cross_games_24m": 251,
+   "opponent_leagues_24m": 12,
+   "bt_strength": -417.50467799036574,
+   "bt_ci95": [
+    -570.6382102522065,
+    -296.9298756468927
+   ],
+   "bt_ci_width": 273.7083346053138,
+   "elo_level_published": -475.73601376157353,
+   "elo_level_range_across_configs": [
+    -588.0595412906744,
+    -359.60502797776326
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "PGN",
+   "cross_games_24m": 91,
+   "opponent_leagues_24m": 6,
+   "bt_strength": -428.8743349998224,
+   "bt_ci95": [
+    -597.4019032013014,
+    -296.333042713124
+   ],
+   "bt_ci_width": 301.0688604881774,
+   "elo_level_published": -447.5298239405247,
+   "elo_level_range_across_configs": [
+    -556.1849937843422,
+    -338.57931312241885
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "DDH",
+   "cross_games_24m": 15,
+   "opponent_leagues_24m": 2,
+   "bt_strength": -429.9252384335606,
+   "bt_ci95": [
+    -713.2801276296216,
+    -193.45787970936735
+   ],
+   "bt_ci_width": 519.8222479202542,
+   "elo_level_published": -424.18498724356573,
+   "elo_level_range_across_configs": [
+    -539.6709821030549,
+    -314.4483565359335
+   ],
+   "warning": "few cross-league games"
+  },
+  {
+   "league": "NL",
+   "cross_games_24m": 58,
+   "opponent_leagues_24m": 2,
+   "bt_strength": -442.0093648099006,
+   "bt_ci95": [
+    -629.236151669898,
+    -314.1445640017565
+   ],
+   "bt_ci_width": 315.0915876681415,
+   "elo_level_published": -544.9150473760367,
+   "elo_level_range_across_configs": [
+    -677.4273362298532,
+    -402.6248155469493
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "IC",
+   "cross_games_24m": 2,
+   "opponent_leagues_24m": 1,
+   "bt_strength": -454.83051466320717,
+   "bt_ci95": [
+    -655.7877635710763,
+    -291.2991606590444
+   ],
+   "bt_ci_width": 364.4886029120319,
+   "elo_level_published": -411.3365046817132,
+   "elo_level_range_across_configs": [
+    -473.454932067184,
+    -325.0529059395051
+   ],
+   "warning": "few cross-league games"
+  },
+  {
+   "league": "NEXO",
+   "cross_games_24m": 60,
+   "opponent_leagues_24m": 3,
+   "bt_strength": -462.0308895142327,
+   "bt_ci95": [
+    -764.9330325109466,
+    -301.2140571832858
+   ],
+   "bt_ci_width": 463.71897532766087,
+   "elo_level_published": -500.9344322529794,
+   "elo_level_range_across_configs": [
+    -587.4142915262726,
+    -391.0926978383495
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "HC",
+   "cross_games_24m": 261,
+   "opponent_leagues_24m": 3,
+   "bt_strength": -462.82836001527687,
+   "bt_ci95": [
+    -602.0073377846375,
+    -347.31262367646826
+   ],
+   "bt_ci_width": 254.6947141081692,
+   "elo_level_published": -605.8614714876951,
+   "elo_level_range_across_configs": [
+    -756.8114254157651,
+    -447.92569533373535
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "LPLOL",
+   "cross_games_24m": 74,
+   "opponent_leagues_24m": 17,
+   "bt_strength": -463.3009176755114,
+   "bt_ci95": [
+    -603.3451427648453,
+    -347.00653313613515
+   ],
+   "bt_ci_width": 256.3386096287101,
+   "elo_level_published": -626.7628175769421,
+   "elo_level_range_across_configs": [
+    -767.7976061397126,
+    -480.247166093076
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "LIT",
+   "cross_games_24m": 155,
+   "opponent_leagues_24m": 17,
+   "bt_strength": -475.4584061514709,
+   "bt_ci95": [
+    -616.1119256314878,
+    -374.28530158577956
+   ],
+   "bt_ci_width": 241.82662404570823,
+   "elo_level_published": -548.0519229810134,
+   "elo_level_range_across_configs": [
+    -694.0078437633983,
+    -402.83792364914507
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "LRN",
+   "cross_games_24m": 102,
+   "opponent_leagues_24m": 7,
+   "bt_strength": -475.896420657426,
+   "bt_ci95": [
+    -625.7801495322453,
+    -359.2029185642992
+   ],
+   "bt_ci_width": 266.57723096794615,
+   "elo_level_published": -578.4279363968221,
+   "elo_level_range_across_configs": [
+    -700.2251200166124,
+    -428.23875406120965
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "LJL",
+   "cross_games_24m": 275,
+   "opponent_leagues_24m": 9,
+   "bt_strength": -488.2947542805932,
+   "bt_ci95": [
+    -602.1424012550478,
+    -397.5395102299055
+   ],
+   "bt_ci_width": 204.60289102514236,
+   "elo_level_published": -774.7497372535756,
+   "elo_level_range_across_configs": [
+    -946.1732216549433,
+    -582.2628344398381
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "WLRQ",
+   "cross_games_24m": 7,
+   "opponent_leagues_24m": 3,
+   "bt_strength": -505.63458015310516,
+   "bt_ci95": [
+    -823.4670004402767,
+    -192.2299099853086
+   ],
+   "bt_ci_width": 631.2370904549681,
+   "elo_level_published": -441.6164906904164,
+   "elo_level_range_across_configs": [
+    -536.0887584156162,
+    -333.5195185285386
+   ],
+   "warning": "few cross-league games"
+  },
+  {
+   "league": "LCO",
+   "cross_games_24m": 105,
+   "opponent_leagues_24m": 5,
+   "bt_strength": -545.5605676589009,
+   "bt_ci95": [
+    -681.9921433200819,
+    -432.74989454520295
+   ],
+   "bt_ci_width": 249.242248774879,
+   "elo_level_published": -669.8771681728019,
+   "elo_level_range_across_configs": [
+    -821.9003371031038,
+    -492.28260470844134
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "GL",
+   "cross_games_24m": 21,
+   "opponent_leagues_24m": 1,
+   "bt_strength": -581.1954919867752,
+   "bt_ci95": [
+    -845.0069779454815,
+    -375.5606449718458
+   ],
+   "bt_ci_width": 469.44633297363566,
+   "elo_level_published": -560.7328698265519,
+   "elo_level_range_across_configs": [
+    -726.9136832107183,
+    -401.65785705343114
+   ],
+   "warning": "few cross-league games"
+  },
+  {
+   "league": "LHE",
+   "cross_games_24m": 55,
+   "opponent_leagues_24m": 2,
+   "bt_strength": -597.3686652311951,
+   "bt_ci95": [
+    -830.3417059388563,
+    -387.26354735426395
+   ],
+   "bt_ci_width": 443.07815858459236,
+   "elo_level_published": -523.3247732755417,
+   "elo_level_range_across_configs": [
+    -657.6598862021158,
+    -390.8870489569881
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "DCup",
+   "cross_games_24m": 8,
+   "opponent_leagues_24m": 1,
+   "bt_strength": -609.7442319343193,
+   "bt_ci95": [
+    -740.5976895384093,
+    -441.04251328324295
+   ],
+   "bt_ci_width": 299.5551762551664,
+   "elo_level_published": -472.45461359864476,
+   "elo_level_range_across_configs": [
+    -540.5617518023885,
+    -375.7057812099017
+   ],
+   "warning": "few cross-league games"
+  },
+  {
+   "league": "LRS",
+   "cross_games_24m": 138,
+   "opponent_leagues_24m": 6,
+   "bt_strength": -646.8419807508939,
+   "bt_ci95": [
+    -857.6843275326145,
+    -464.4537750989347
+   ],
+   "bt_ci_width": 393.23055243367975,
+   "elo_level_published": -528.091941565642,
+   "elo_level_range_across_configs": [
+    -682.377355559234,
+    -381.9370709894795
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "LMF",
+   "cross_games_24m": 83,
+   "opponent_leagues_24m": 2,
+   "bt_strength": -649.4585008766876,
+   "bt_ci95": [
+    -871.6628822155287,
+    -433.46626516326927
+   ],
+   "bt_ci_width": 438.19661705225946,
+   "elo_level_published": -529.3126925074075,
+   "elo_level_range_across_configs": [
+    -712.5620905806356,
+    -374.9447892970047
+   ],
+   "warning": "wide interval"
+  },
+  {
+   "league": "IGNIS",
+   "cross_games_24m": 4,
+   "opponent_leagues_24m": 1,
+   "bt_strength": -746.0778903463528,
+   "bt_ci95": [
+    -991.108290261005,
+    -304.6122854765914
+   ],
+   "bt_ci_width": 686.4960047844136,
+   "elo_level_published": -460.3741274440797,
+   "elo_level_range_across_configs": [
+    -580.2852512044501,
+    -341.05139324581273
+   ],
+   "warning": "few cross-league games"
+  },
+  {
+   "league": "GLLPA",
+   "cross_games_24m": 8,
+   "opponent_leagues_24m": 2,
+   "bt_strength": -908.7959525192514,
+   "bt_ci95": [
+    -1107.431162840264,
+    -519.6029838478025
+   ],
+   "bt_ci_width": 587.8281789924615,
+   "elo_level_published": -616.8429688363162,
+   "elo_level_range_across_configs": [
+    -810.8310514175419,
+    -433.8598796669114
+   ],
+   "warning": "few cross-league games"
+  }
+ ],
+ "spearman_bt_vs_elo_wellconnected": {
+  "rho": 0.8375565610859728,
+  "p": 1.8372113629430743e-14,
+  "n": 51
+ },
+ "spearman_games_vs_ci_width": {
+  "rho": -0.840274762232187,
+  "n": 64
+ },
+ "connectivity_and_forecasts": [
+  {
+   "bin": "[0.0, 50.0)",
+   "n": 507,
+   "brier_form": 0.18560178742083452,
+   "brier_exp": 0.1826448171721977,
+   "mean_forecast_exp": 0.5449010819583897,
+   "blue_win_rate": 0.5404339250493096,
+   "exp_vs_form": {
+    "difference": -0.002956970248636836,
+    "ci95_low": -0.00873669926805192,
+    "ci95_high": 0.002697011499010592,
+    "share_bootstrap_model_better": 0.8515,
+    "n_units": 315
+   }
+  },
+  {
+   "bin": "[50.0, 200.0)",
+   "n": 2351,
+   "brier_form": 0.20719520792356902,
+   "brier_exp": 0.20369629521077753,
+   "mean_forecast_exp": 0.5442394046174754,
+   "blue_win_rate": 0.5427477669076989,
+   "exp_vs_form": {
+    "difference": -0.003498912712791481,
+    "ci95_low": -0.005944793581589619,
+    "ci95_high": -0.001113359021012368,
+    "share_bootstrap_model_better": 0.9985,
+    "n_units": 1132
+   }
+  },
+  {
+   "bin": "[200.0, inf)",
+   "n": 237,
+   "brier_form": 0.2256436924101066,
+   "brier_exp": 0.22216896339970724,
+   "mean_forecast_exp": 0.5788210756471828,
+   "blue_win_rate": 0.5949367088607594,
+   "exp_vs_form": {
+    "difference": -0.0034747290103993777,
+    "ci95_low": -0.006753503088242896,
+    "ci95_high": -0.00022427774477281237,
+    "share_bootstrap_model_better": 0.981,
+    "n_units": 91
+   }
+  }
+ ]
+}

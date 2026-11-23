@@ -1,5 +1,7 @@
 # Audit and improvements, version 1.2 (18 November 2026)
 
+> Historical record, kept as written. Current status of every issue: [`ISSUE_STATUS.md`](ISSUE_STATUS.md) (23 November 2026).
+
 Data: Oracle's Elixir 2020-2026 (75,830 games). Model version `1.0.0+c8b6f8e19c`.
 All numbers below come from `evaluation.json`, the `analysis_outputs` table and the
 data quality report of this run.

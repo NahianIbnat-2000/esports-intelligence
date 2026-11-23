@@ -1,0 +1,43 @@
+{
+ "model": "skill_exp",
+ "features": [
+  "elo_diff",
+  "recent_wr_diff",
+  "hist_wr_diff",
+  "opp_strength_diff",
+  "experience_diff",
+  "elo_diff_x_intl",
+  "wr_shr_diff",
+  "gd15_shr_diff",
+  "pelo_prev_diff",
+  "lineup_elo_diff",
+  "exp_log_diff"
+ ],
+ "C": 10.0,
+ "fit_games": 57156,
+ "elo": {
+  "k": 40,
+  "carryover_shrink": 0.5,
+  "k_league": 16.0
+ },
+ "player_elo": {
+  "k": 40,
+  "carryover_shrink": 0.1,
+  "k_league": 16.0
+ },
+ "feature_code": [
+  "machine_learning/experiments/player_history.py",
+  "machine_learning/experiments/player_elo.py",
+  "machine_learning/experiments/mechanisms.py (build_setting)"
+ ],
+ "main_test_brier_for_reference": 0.20961801845200165,
+ "data": "c8b6f8e19c",
+ "frozen_sha256": {
+  "research/preregistration_2027/skill_exp.joblib": "0bd7d113105d6b9d384c071ec03a9dd14fdd6594ab83438197c64284cd416cd3",
+  "machine_learning/models/artifacts/1.0.0+c8b6f8e19c/logreg.joblib": "466f5280ed94a9101a40cf9d6f05a022e3a02441f4b7153a625a3ffe91fa2752",
+  "machine_learning/models/artifacts/1.0.0+c8b6f8e19c/elo_logit.joblib": "4be6b3ece6a32e7286eff8b2c44906e4e994a0e6f53340efdd4077ac04908ca2",
+  "machine_learning/models/artifacts/1.0.0+c8b6f8e19c/logreg_player.joblib": "9c9eadc2e79d51549c981177da5baab832acb97be2b02460aa9416d2c4b40003",
+  "machine_learning/models/artifacts/1.0.0+c8b6f8e19c/evaluation.json": "950e45a617672f1799b477ac64cf484e2b588b27e8ca7ade7847db359aca9886",
+  "machine_learning/models/artifacts/1.0.0+c8b6f8e19c/evaluation_logreg_player.json": "81ad3cfd1577e5a6e75ebfcc6cc53d9c357a737bbaa1051452464cfbc2c153e9"
+ }
+}
